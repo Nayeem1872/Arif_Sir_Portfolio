@@ -31,13 +31,13 @@ export const navLinks: NavLink[] = [
   {
     title: "Professional Stuff",
     icon: <IconBrandLinkedin className="text-fg h-full w-full" />,
-    href: "https://www.linkedin.com/in/hthantoo",
+    href: "https://www.linkedin.com/in/arifrahim",
     type: "external",
   },
   {
     title: "More Codes",
     icon: <IconBrandGithub className="text-fg h-full w-full" />,
-    href: "https://github.com/IndieCoderMM",
+    href: "https://github.com/arifrahim",
     type: "external",
   },
 ];

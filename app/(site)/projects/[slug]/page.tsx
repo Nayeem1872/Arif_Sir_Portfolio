@@ -1,11 +1,6 @@
 import AnimatedStack from "@/features/projects/components/animated-stack";
 import ProjectImages from "@/features/projects/components/project-image";
-import { ProjectDetailQueryResult } from "@/sanity.types";
-import {
-  getProjectDetail,
-  getProjects,
-  getProjectSlugs,
-} from "@/sanity/lib/query";
+import { getProjectDetail, getProjects, getProjectSlugs } from "@/lib/queries";
 import { getLanguageColor } from "@/utils/get-language-color";
 import { getMetadata } from "@/utils/meta";
 import {
@@ -20,7 +15,7 @@ import {
   IconWorld,
 } from "@tabler/icons-react";
 import { Metadata } from "next";
-import { PortableText } from "next-sanity";
+// Removed PortableText import - using simple text rendering
 import Link from "next/link";
 
 export const revalidate = 3600; // Revalidate every hour
@@ -72,7 +67,7 @@ export default async function ProjectPage({
     data?.stack?.filter((tech) => tech.title && tech.icon?.asset?.url) ?? [];
 
   const renderStatusIcon = (
-    status: NonNullable<ProjectDetailQueryResult>["status"],
+    status: "live" | "archived" | "development" | null,
   ) => {
     switch (status) {
       case "live":
@@ -168,7 +163,15 @@ export default async function ProjectPage({
               <h2 className="border-primary mb-4 border-l-4 pl-4 text-lg font-medium capitalize md:text-xl lg:text-2xl">
                 Project Description
               </h2>
-              <PortableText value={data.description} />
+              <div>
+                {data.description?.map((block, index) => (
+                  <p key={index}>
+                    {block.children?.map((child, childIndex) => (
+                      <span key={childIndex}>{child.text}</span>
+                    ))}
+                  </p>
+                ))}
+              </div>
             </article>
           )}
 
@@ -177,7 +180,15 @@ export default async function ProjectPage({
               <h2 className="border-primary mb-4 border-l-4 pl-4 text-lg font-medium capitalize md:text-xl lg:text-2xl">
                 Features
               </h2>
-              <PortableText value={data.features} />
+              <div>
+                {data.features?.map((block, index) => (
+                  <p key={index}>
+                    {block.children?.map((child, childIndex) => (
+                      <span key={childIndex}>{child.text}</span>
+                    ))}
+                  </p>
+                ))}
+              </div>
             </article>
           )}
 
@@ -186,7 +197,15 @@ export default async function ProjectPage({
               <h2 className="border-primary mb-4 border-l-4 pl-4 text-lg font-medium capitalize md:text-xl lg:text-2xl">
                 Development
               </h2>
-              <PortableText value={data.development} />
+              <div>
+                {data.development?.map((block, index) => (
+                  <p key={index}>
+                    {block.children?.map((child, childIndex) => (
+                      <span key={childIndex}>{child.text}</span>
+                    ))}
+                  </p>
+                ))}
+              </div>
             </article>
           )}
 

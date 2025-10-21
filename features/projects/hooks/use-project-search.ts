@@ -1,4 +1,4 @@
-import { ProjectsQueryResult } from "@/sanity.types";
+import { ProjectsQueryResult } from "@/types/data";
 import { useEffect, useMemo, useState } from "react";
 
 export function useProjectSearch(projects: ProjectsQueryResult) {

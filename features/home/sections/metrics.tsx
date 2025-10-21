@@ -4,7 +4,7 @@ import Heading from "@/components/common/heading";
 import { SectionContainer } from "@/components/layout/section";
 import { homepage } from "@/config/content/pages";
 import Socials from "@/features/contact/components/socials";
-import { ProfileQueryResult } from "@/sanity.types";
+import { ProfileQueryResult } from "@/types/data";
 import { IconBriefcase } from "@tabler/icons-react";
 
 type Metrics = NonNullable<ProfileQueryResult>["metrics"] | undefined;

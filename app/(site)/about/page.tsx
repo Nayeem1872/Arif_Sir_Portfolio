@@ -1,7 +1,7 @@
 import { metaTexts } from "@/config/metadata";
 import AboutMeSection from "@/features/about/sections/about-me";
 import ExperienceSection from "@/features/about/sections/experience";
-import { getProfile } from "@/sanity/lib/query";
+import { getProfile } from "@/lib/queries";
 import { getMetadata } from "@/utils/meta";
 import { Metadata } from "next";
 

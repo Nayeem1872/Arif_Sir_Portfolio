@@ -1,6 +1,6 @@
 import { SectionContainer } from "@/components/layout/section";
 import { ParallaxText } from "@/components/ui/parallax-text";
-import { TechQueryResult } from "@/sanity.types";
+import { TechQueryResult } from "@/types/data";
 
 const TechnologySection = ({ techs }: { techs: TechQueryResult }) => {
   return (

@@ -1,5 +1,5 @@
 export const profile = {
-  name: "Hein Thant",
-  title: "Full-Stack Developer",
-  copyright: "© 2025 Hein Thant",
+  name: "Arif Rahim",
+  title: "Software Engineer & DevOps Specialist",
+  copyright: "© 2025 Arif Rahim",
 };

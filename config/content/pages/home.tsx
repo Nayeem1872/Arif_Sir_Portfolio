@@ -2,8 +2,8 @@ export const homepage = {
   badge: "Built for developers",
   heading: (
     <>
-      Stellar Portfolio from
-      <br /> Galaxies Far Far Away
+      Arif Rahim's Portfolio
+      <br /> Software Engineer & DevOps Expert
     </>
   ),
   ctaText: "Get in touch",

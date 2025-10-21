@@ -4,7 +4,7 @@
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/IndieCoderMM/stellar-portfolio)
 
-A modern developer portfolio website built with [Next.js](https://nextjs.org), packed with smooth animations, customizable content, and [Sanity CMS](https://www.sanity.io) integration.
+A modern developer portfolio website built with [Next.js](https://nextjs.org), packed with smooth animations and customizable content.
 
 Perfect for developers who want a fast, unique, and fully customizable site to showcase their work.
 
@@ -13,7 +13,7 @@ Perfect for developers who want a fast, unique, and fully customizable site to s
 - Sleek, modern layout – Clean design focused on clarity and structure.
 - Subtle motion effects – Thoughtful animations add life without getting in the way.
 - Optimized for SEO – Static pages, auto-generated sitemap and built-in Open Graph support via `next/og`.
-- Live content editing – Change content live using integrated Sanity dashboard.
+- Easy content management – Update content through simple data files.
 - Easy customization – Personalize site content and structure easily.
 - Built-in contact form – Emails are delivered instantly with EmailJS integration.
 - Responsive by default – Designed to look great on all screen sizes out of the box.
@@ -21,7 +21,7 @@ Perfect for developers who want a fast, unique, and fully customizable site to s
 ## Tech Stack
 
 - Next.js – React framework for SSR and performance
-- Sanity.io – Headless CMS for content management
+- Static data files – Simple content management without external dependencies
 - Motion.dev – Animation library for React
 - Tailwind CSS – Utility-first CSS framework
 - EmailJS – Email service for handling contact form messages
@@ -57,12 +57,14 @@ npm run dev
 
 Your app should now be running at [http://localhost:3000](http://localhost:3000)
 
-5. **Open Sanity Dashboard**
+5. **Customize Your Content**
 
-Once the app is running, you can access the Sanity Studio at [http://localhost:3000/dashboard](http://localhost:3000/dashboard) to manage your content.
+Update the data files in the `/data` directory to customize your portfolio content:
 
-> [!NOTE]
-> Make sure to add your data to the Sanity dataset before deploying or using the site.
+- `profile.ts` - Your personal information and bio
+- `projects.ts` - Your project portfolio
+- `services.ts` - Services you offer
+- `technologies.ts` - Technologies you work with
 
 ## Customization
 
@@ -70,21 +72,16 @@ All page content can be modified in the `/config/` folder.
 
 _No need to dig into components unless you want to._
 
-## Content Management (Sanity)
+## Content Management
 
-This template is integrated with [Sanity Studio](https://www.sanity.io/) for flexible content editing.
+This template uses simple TypeScript data files for content management, making it easy to customize without external dependencies.
 
-- You can manage projects, skills, and other dynamic content through the Sanity dashboard.
-- The Sanity Studio is available at `/dashboard` once the project is running.
-- To set it up:
-  1. Create a project at [sanity.io](https://www.sanity.io/)
-  2. Copy the project ID and dataset name into your `.env.local` file
-  3. Run both frontend and Sanity Studio locally, or deploy them together
+- Update `/data/profile.ts` for personal information
+- Modify `/data/projects.ts` to showcase your projects
+- Edit `/data/services.ts` to list your services
+- Customize `/data/technologies.ts` for your tech stack
 
-You can also customize the schema or extend it for additional content types as needed.
-
-> [!NOTE]
-> If you want to change the refresh frequency, customize `contentRefreshInterval` in `/config/index.ts` to set how often the content is fetched from Sanity. _Default is 3600 seconds (1 hr)._
+All content is statically generated at build time for optimal performance.
 
 ## Contact Form
 

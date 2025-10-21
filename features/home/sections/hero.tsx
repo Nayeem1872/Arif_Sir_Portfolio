@@ -1,7 +1,7 @@
 import { HoverBorderButton } from "@/components/ui/hover-button";
 import { SlideIn, Transition } from "@/components/ui/transitions";
 import { homepage } from "@/config/content/pages";
-import { ProfileQueryResult } from "@/sanity.types";
+import { ProfileQueryResult } from "@/types/data";
 import { IconMessage } from "@tabler/icons-react";
 import Link from "next/link";
 import HeroBadge from "../components/badge";

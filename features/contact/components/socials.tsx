@@ -1,4 +1,4 @@
-import { getProfile } from "@/sanity/lib/query";
+import { getProfile } from "@/lib/queries";
 import {
   IconBrandBluesky,
   IconBrandGithub,

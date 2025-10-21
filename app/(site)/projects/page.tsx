@@ -2,7 +2,7 @@ import { metaTexts } from "@/config/metadata";
 import ContactCTA from "@/features/projects/sections/contact-cta";
 import GallerySection from "@/features/projects/sections/gallery";
 import ProjectRepos from "@/features/projects/sections/repos";
-import { getProjects } from "@/sanity/lib/query";
+import { getProjects } from "@/lib/queries";
 import { getMetadata } from "@/utils/meta";
 import { Metadata } from "next";
 

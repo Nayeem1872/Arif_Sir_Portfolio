@@ -1,6 +1,6 @@
 import { siteUrl } from "@/config";
 import { navLinks } from "@/config/navLinks";
-import { getProjects } from "@/sanity/lib/query";
+import { getProjects } from "@/lib/queries";
 
 export default async function sitemap() {
   const projectList = await getProjects();

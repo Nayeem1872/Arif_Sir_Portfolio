@@ -2,7 +2,7 @@ import Heading from "@/components/common/heading";
 import { SectionContainer } from "@/components/layout/section";
 import { SlideIn } from "@/components/ui/transitions";
 import { homepage } from "@/config/content/pages";
-import { ServicesQueryResult } from "@/sanity.types";
+import { ServicesQueryResult } from "@/types/data";
 import { cn } from "@/utils/cn";
 import { IconBriefcase } from "@tabler/icons-react";
 import Image from "next/image";

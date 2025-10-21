@@ -3,12 +3,7 @@ import Metrics from "@/features/home/sections/metrics";
 import ProjectSection from "@/features/home/sections/projects";
 import ServiceSection from "@/features/home/sections/service";
 import TechnologySection from "@/features/home/sections/technology";
-import {
-  getProfile,
-  getProjects,
-  getServices,
-  getTech,
-} from "@/sanity/lib/query";
+import { getProfile, getProjects, getServices, getTech } from "@/lib/queries";
 
 export const revalidate = 60;
 

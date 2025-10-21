@@ -2,7 +2,7 @@
 
 import Heading from "@/components/common/heading";
 import { homepage } from "@/config/content/pages";
-import { ProjectsQueryResult } from "@/sanity.types";
+import { ProjectsQueryResult } from "@/types/data";
 import { IconFolder, IconRocket } from "@tabler/icons-react";
 import Link from "next/link";
 import ProjectCard from "../components/project-card";

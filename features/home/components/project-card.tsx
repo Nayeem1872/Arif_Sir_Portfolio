@@ -1,6 +1,6 @@
 "use client";
 
-import { ProjectsQueryResult } from "@/sanity.types";
+import { ProjectsQueryResult } from "@/types/data";
 import { IconArrowUpRight } from "@tabler/icons-react";
 import { motion } from "motion/react";
 import Image from "next/image";

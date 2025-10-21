@@ -2,8 +2,7 @@ import Heading from "@/components/common/heading";
 import { SectionContainer } from "@/components/layout/section";
 import { Transition } from "@/components/ui/transitions";
 import { aboutPage } from "@/config/content/pages";
-import { ProfileQueryResult } from "@/sanity.types";
-import { PortableText } from "next-sanity";
+import { ProfileQueryResult } from "@/types/data";
 import ProfileCard from "../components/profile-card";
 
 const AboutMeSection = ({ profile }: { profile: ProfileQueryResult }) => {
@@ -14,7 +13,7 @@ const AboutMeSection = ({ profile }: { profile: ProfileQueryResult }) => {
       </Heading>
       <div className="grid w-full grid-cols-12 px-4 py-4 sm:py-10 md:px-8 lg:px-12">
         <div className="text-md text-fg col-span-12 space-y-4 leading-tight tracking-tight md:col-span-6 md:text-lg lg:col-span-8 lg:text-3xl">
-          <PortableText value={profile?.about ?? []} />
+          <p>{profile?.about}</p>
         </div>
 
         <div className="col-span-12 flex justify-center md:col-span-6 lg:col-span-4">

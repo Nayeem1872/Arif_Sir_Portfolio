@@ -9,63 +9,62 @@ import Image from "next/image";
 
 export const timelineData: TimelineEntry[] = [
   {
-    title: "2023",
+    title: "2024",
     content: (
       <div className="text-md text-fg/90 leading-tight tracking-tight md:col-span-6 md:text-lg lg:col-span-8 lg:text-2xl">
         <div className="text-fg mb-4 text-lg font-semibold md:text-xl lg:text-4xl">
-          Full-Stack Developer{" "}
+          Senior Software Engineer{" "}
           <LinkPreview
-            url="https://heinthantoo.vercel.app"
+            url="https://github.com/arifrahim"
             isStatic={false}
             className="text-primary underline"
           >
-            @IndieCoder
+            @TechSolutions
           </LinkPreview>
         </div>
         <p className="mb-8">
-          Focused on expanding my skills through diverse projects, open-source
-          contributions and sharing knowledge with the community.
+          Leading backend development with C++ and Java, implementing CI/CD
+          pipelines and managing cloud infrastructure on AWS and Azure.
         </p>
         <ul className="mb-8 list-disc">
           <li className="mb-2">
-            Built a personal blog website to share my journey and knowledge with
-            the community. Wrote articles on web development, programming, and
-            productivity tips.
+            Architected and developed high-performance trading systems using C++
+            with sub-microsecond latency requirements.
           </li>
           <li className="mb-2">
-            Contributed to open-source projects, worked extensively with Next.js
-            and explored large-scale system design.
+            Implemented enterprise microservices architecture using Java Spring
+            Boot, deployed on Kubernetes clusters with comprehensive monitoring.
           </li>
           <li className="mb-2">
-            Designed and developed responsive, user-friendly websites using
-            modern frameworks and tools.
+            Automated cloud infrastructure deployment using Terraform and
+            Jenkins, reducing deployment time by 80%.
           </li>
         </ul>
         <div className="grid grid-cols-2 gap-4">
           <Image
             src="/screenshots/blog-full.webp"
-            alt="IndieCoder's Blog"
+            alt="Trading System Dashboard"
             width={500}
             height={500}
             className="h-20 w-full rounded-lg object-cover shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] md:h-44 lg:h-60"
           />
           <Image
             src="/screenshots/convoz-full.webp"
-            alt="Convoz Chat App"
+            alt="Microservices Architecture"
             width={500}
             height={500}
             className="h-20 w-full rounded-lg object-cover shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] md:h-44 lg:h-60"
           />
           <Image
             src="/screenshots/iptracker-full.webp"
-            alt="IP Address Tracker"
+            alt="Cloud Infrastructure"
             width={500}
             height={500}
             className="h-20 w-full rounded-lg object-cover shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] md:h-44 lg:h-60"
           />
           <Image
             src="/screenshots/billio-full.webp"
-            alt="Modern landing page"
+            alt="DevOps Pipeline"
             width={500}
             height={500}
             className="h-20 w-full rounded-lg object-cover shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] md:h-44 lg:h-60"
@@ -79,38 +78,35 @@ export const timelineData: TimelineEntry[] = [
     content: (
       <div className="text-md text-fg/90 leading-tight tracking-tight md:col-span-6 md:text-lg lg:col-span-8 lg:text-2xl">
         <div className="text-fg mb-4 text-lg font-semibold md:text-xl lg:text-4xl">
-          Full-Stack Developer{" "}
+          DevOps Engineer{" "}
           <LinkPreview
-            url="https://github.com/IndieCoderMM"
+            url="https://github.com/arifrahim"
             isStatic={false}
             className="text-primary underline"
           >
-            @Github
+            @CloudTech
           </LinkPreview>
         </div>
         <ul className="mb-8 list-disc">
           <li className="mb-2">
-            Collaborated with developers from across the world to build
-            full-stack applications using React and Ruby on Rails.
+            Automated deployment processes using Docker and Kubernetes, managing
+            cloud infrastructure across multiple environments.
           </li>
           <li className="mb-2">
-            Developed a strong understanding of industry standards, including
-            best practices for clean code, version control, and scalable
-            architecture.
+            Implemented comprehensive monitoring and logging solutions using
+            Prometheus, Grafana, and ELK stack for system observability.
           </li>
           <li className="mb-2">
-            Worked in a professional remote environment, utilizing tools like
-            Kanban boards, daily stand-ups, and time-blocking techniques to stay
-            organized and productive.
+            Optimized system performance and reduced infrastructure costs by 40%
+            through efficient resource allocation and auto-scaling policies.
           </li>
           <li className="mb-2">
-            Improved problem-solving skills through pair programming, code
-            reviews, and collaborative problem solving.
+            Established CI/CD pipelines with Jenkins and GitLab, enabling
+            continuous integration and deployment for development teams.
           </li>
           <li className="mb-2">
-            Gained experience in balancing technical tasks with effective
-            communication, laying a solid foundation for working in diverse,
-            distributed teams.
+            Collaborated with development teams to implement Infrastructure as
+            Code practices using Terraform and Ansible.
           </li>
         </ul>
         <div className="grid grid-cols-3 place-items-center gap-4">
@@ -127,41 +123,54 @@ export const timelineData: TimelineEntry[] = [
     ),
   },
   {
-    title: "2020",
+    title: "2019",
     content: (
       <div className="text-md text-fg/90 leading-tight tracking-tight md:col-span-6 md:text-lg lg:col-span-8 lg:text-2xl">
+        <div className="text-fg mb-4 text-lg font-semibold md:text-xl lg:text-4xl">
+          Software Developer{" "}
+          <LinkPreview
+            url="https://github.com/arifrahim"
+            isStatic={false}
+            className="text-primary underline"
+          >
+            @InnovationHub
+          </LinkPreview>
+        </div>
         <p className="mb-4">
-          I discovered my passion for coding while building games, which turned
-          into a fun way to learn. Along the way, I explored various algorithms
-          and improved my skills through hands-on projects from YouTube and
-          Coursera.
+          Started my journey in systems programming, focusing on
+          high-performance applications and learning enterprise development
+          practices with C/C++ and Java.
         </p>
         <ul className="mb-8 list-disc">
           <li className="mb-2">
-            Built 10+ games using <em>Pygame</em> and <em>Raylib (C)</em>.
+            Developed high-performance applications using <em>C++</em> and{" "}
+            <em>Java</em>, focusing on memory optimization and algorithm
+            efficiency.
           </li>
           <li className="mb-2">
-            Learned Django frameworkd, and core data sciene concepts and tools
-            like Numpy and Pandas <strong>Coursera</strong>.
+            Built enterprise-grade systems with Java Spring framework and
+            implemented RESTful APIs for business applications.
           </li>
           <li className="mb-2">
-            Developed an AI assistant with Python and OpenAI's Davinci engine.
+            Learned system design principles and database optimization
+            techniques with PostgreSQL and Redis.
           </li>
           <li className="mb-2">
-            Wrote tutorials about Python and game development.
+            Contributed to open-source C++ libraries and wrote technical
+            documentation for system architecture.
           </li>
         </ul>
         <div className="grid grid-cols-2 gap-4">
           <Image
             src="/screenshots/smartone.png"
-            alt="hero template"
+            alt="C++ Application"
             width={500}
             height={500}
             className="h-20 w-full rounded-lg object-cover shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] md:h-44 lg:h-60"
           />
           <Image
             src="/screenshots/zombieland.png"
-            alt="feature template"
+            alt="Java Enterprise System"
             width={500}
             height={500}
             className="h-20 w-full rounded-lg object-cover shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] md:h-44 lg:h-60"

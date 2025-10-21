@@ -3,7 +3,7 @@
 import Heading from "@/components/common/heading";
 import { SectionContainer } from "@/components/layout/section";
 import { projectPage } from "@/config/content/pages";
-import { ProjectsQueryResult } from "@/sanity.types";
+import { ProjectsQueryResult } from "@/types/data";
 import { cn } from "@/utils/cn";
 import {
   IconCoffee,

@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
-import { ProjectDetailQueryResult, ProjectsQueryResult } from "@/sanity.types";
+import { ProjectDetailQueryResult, ProjectsQueryResult } from "@/types/data";
 import {
   IconArchive,
   IconArrowUpRight,

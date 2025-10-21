@@ -1,5 +1,5 @@
 "use client";
-import { ProjectsQueryResult } from "@/sanity.types";
+import { ProjectsQueryResult } from "@/types/data";
 import { getLanguageColor } from "@/utils/get-language-color";
 
 const LanguageBar = ({ project }: { project: ProjectsQueryResult[number] }) => {

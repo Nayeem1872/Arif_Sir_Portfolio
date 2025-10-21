@@ -1,5 +1,5 @@
 import { navbarContent } from "@/config/content/navbar";
-import { getProfile } from "@/sanity/lib/query";
+import { getProfile } from "@/lib/queries";
 import Link from "next/link";
 import DownloadButton from "../common/download-button";
 

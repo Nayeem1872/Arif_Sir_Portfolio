@@ -7,8 +7,8 @@ export const navbarContent = {
         <IconCode className="h-5 w-5" />
       </div>
       <h1 className="text-lg font-medium tracking-[-0.08rem] sm:text-2xl">
-        <span className="text-white">hein</span>
-        <span className="text-primary">Thant</span>
+        <span className="text-white">Arif</span>
+        <span className="text-primary">Rahim</span>
       </h1>
     </div>
   ),

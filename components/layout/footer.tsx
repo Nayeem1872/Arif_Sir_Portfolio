@@ -1,7 +1,7 @@
 import { footerLinks } from "@/config/footerLinks";
 import { profile as profileInfo } from "@/config/profile";
-import { ProfileQueryResult } from "@/sanity.types";
-import { getProfile } from "@/sanity/lib/query";
+import { getProfile } from "@/lib/queries";
+import { ProfileQueryResult } from "@/types/data";
 import { formatTimeFromNow } from "@/utils/dayjs";
 import {
   IconBrandBluesky,

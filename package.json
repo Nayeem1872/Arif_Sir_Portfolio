@@ -1,6 +1,6 @@
 {
-  "name": "stellar-portfolio",
-  "description": "Sleek, modern developer portfolio template built with Next.js, Tailwind CSS, and Sanity CMS",
+  "name": "arif-rahim-portfolio",
+  "description": "Arif Rahim's professional portfolio - Expert in C, C++, Java, and DevOps",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,7 +8,6 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "sanity:typegen": "npx sanity schema extract && npx sanity typegen generate",
     "knip": "knip"
   },
   "overrides": {
@@ -18,19 +17,14 @@
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
     "@radix-ui/react-hover-card": "^1.1.2",
-    "@sanity/image-url": "^1.1.0",
-    "@sanity/vision": "^3.64.0",
     "@tabler/icons-react": "^3.21.0",
     "dayjs": "^1.11.13",
     "mini-svg-data-uri": "^1.4.4",
     "motion": "^12.23.0",
     "next": "15.3.4",
-    "next-sanity": "^9.8.3-canary.1",
     "qss": "^3.0.0",
     "react": "19.0.0-rc-02c0e824-20241028",
     "react-dom": "19.0.0-rc-02c0e824-20241028",
-    "sanity": "^3.64.0",
-    "sanity-plugin-markdown": "^5.0.0",
     "styled-components": "^6.1.13"
   },
   "devDependencies": {
@@ -55,9 +49,8 @@
     "nextjs",
     "portfolio",
     "template",
-    "sanity",
     "tailwind",
     "vercel"
   ],
-  "homepage": "https://heinthant.vercel.app"
+  "homepage": "https://arifrahim.vercel.app"
 }
