@@ -1,13 +1,13 @@
 "use client";
 
-import { ProjectsQueryResult } from "@/types/data";
+import type { Project } from "@/types/data";
 import { IconArrowUpRight } from "@tabler/icons-react";
 import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
-const ProjectCard = ({ project }: { project: ProjectsQueryResult[number] }) => {
+const ProjectCard = ({ project }: { project: Project }) => {
   const [hover, setHover] = useState(false);
 
   const mouseEnter = () => {

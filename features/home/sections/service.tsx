@@ -2,12 +2,12 @@ import Heading from "@/components/common/heading";
 import { SectionContainer } from "@/components/layout/section";
 import { SlideIn } from "@/components/ui/transitions";
 import { homepage } from "@/config/content/pages";
-import { ServicesQueryResult } from "@/types/data";
+import { Service } from "@/types/data";
 import { cn } from "@/utils/cn";
 import { IconBriefcase } from "@tabler/icons-react";
 import Image from "next/image";
 
-const ServiceSection = ({ services }: { services: ServicesQueryResult }) => {
+const ServiceSection = ({ services }: { services: Service[] }) => {
   return (
     <SectionContainer className="sm:py-16">
       <div className="mb-10 w-full px-4">
@@ -20,8 +20,8 @@ const ServiceSection = ({ services }: { services: ServicesQueryResult }) => {
       {services.length > 0 ? (
         <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {services?.map((service, index) => (
-            <SlideIn key={service._id}>
-              <Service key={service._id} {...service} index={index} />
+            <SlideIn key={index}>
+              <ServiceComponent key={index} {...service} index={index} />
             </SlideIn>
           ))}
         </div>
@@ -39,18 +39,15 @@ const ServiceSection = ({ services }: { services: ServicesQueryResult }) => {
 
 export default ServiceSection;
 
-const Service = ({
+const ServiceComponent = ({
   title,
   description,
   icon,
   index,
 }: {
-  title: string | null;
-  description: string | null;
-  icon: {
-    alt: string | null;
-    url: string | null;
-  } | null;
+  title: string;
+  description: string;
+  icon: string;
   index: number;
 }) => {
   return (
@@ -69,11 +66,11 @@ const Service = ({
         <div className="from-primary/10 pointer-events-none absolute inset-0 h-full w-full bg-gradient-to-b to-transparent opacity-0 transition duration-200 group-hover/feature:opacity-100" />
       )}
       <div className="relative z-10 mb-4 px-10 text-neutral-200">
-        {icon?.url ? (
+        {icon ? (
           <div className="relative h-8 w-8">
             <Image
-              src={icon.url}
-              alt={icon.alt ?? title ?? "Service"}
+              src={icon}
+              alt={title ?? "Service"}
               width={32}
               height={32}
               className="absolute inset-0 h-8 w-8 object-contain transition duration-300"

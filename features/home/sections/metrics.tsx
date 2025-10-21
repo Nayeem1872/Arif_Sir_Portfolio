@@ -1,17 +1,14 @@
-import AnimatedNumber from "@/components/common/animated-number";
 import CTA from "@/components/common/call-to-action";
 import Heading from "@/components/common/heading";
 import { SectionContainer } from "@/components/layout/section";
 import { homepage } from "@/config/content/pages";
 import Socials from "@/features/contact/components/socials";
-import { ProfileQueryResult } from "@/types/data";
+import type { Profile } from "@/types/data";
 import { IconBriefcase } from "@tabler/icons-react";
 
-type Metrics = NonNullable<ProfileQueryResult>["metrics"] | undefined;
+type Metrics = Profile["metrics"] | undefined;
 
 const Metrics = ({ metrics }: { metrics: Metrics }) => {
-  let { apps, websites, users, years } = metrics ?? {};
-
   return (
     <SectionContainer className="relative w-full">
       <div className="relative">
@@ -19,52 +16,17 @@ const Metrics = ({ metrics }: { metrics: Metrics }) => {
           <Heading as="h2">{homepage.metricHeading}</Heading>
         </div>
 
-        <div className="text-fg relative my-8 grid grid-cols-3 gap-8 text-center sm:place-items-center sm:gap-x-8 lg:my-14">
-          <div>
-            <h3 className="text-4xl font-bold sm:text-6xl md:text-7xl">
-              <AnimatedNumber
-                value={apps ?? 0}
-                className="bg-gradient-to-r from-emerald-400 to-green-400 bg-clip-text text-transparent"
-              />
-              <span className="bg-gradient-to-r from-emerald-400 to-green-400 bg-clip-text text-transparent">
-                {"+"}
-              </span>
-            </h3>
-            <p className="mt-4 font-medium sm:text-xl">Apps launched</p>
-            <p className="mt-0.5 text-xs sm:text-base">
-              In last {years ?? 0} years
-            </p>
-          </div>
-
-          <div>
-            <h3 className="text-4xl font-bold sm:text-6xl md:text-7xl">
-              <AnimatedNumber
-                value={websites ?? 0}
-                className="bg-gradient-to-r from-emerald-400 to-green-400 bg-clip-text text-transparent"
-              />
-              <span className="bg-gradient-to-r from-emerald-400 to-green-400 bg-clip-text text-transparent">
-                {"+"}
-              </span>
-            </h3>
-            <p className="mt-4 font-medium sm:text-xl">Projects</p>
-            <p className="mt-0.5 text-xs sm:text-base">
-              Completed and delivered
-            </p>
-          </div>
-
-          <div className="col-span-1">
-            <h3 className="text-4xl font-bold sm:text-6xl md:text-7xl">
-              <AnimatedNumber
-                value={users ?? 0}
-                className="bg-gradient-to-r from-emerald-400 to-green-400 bg-clip-text text-transparent"
-              />
-              <span className="bg-gradient-to-r from-emerald-400 to-green-400 bg-clip-text text-transparent">
-                {"K+"}
-              </span>
-            </h3>
-            <p className="mt-4 font-medium sm:text-xl">Satisfied users</p>
-            <p className="mt-0.5 text-xs sm:text-base">Across all projects</p>
-          </div>
+        <div className="text-fg relative my-8 grid grid-cols-2 gap-8 text-center sm:place-items-center sm:gap-x-8 lg:my-14 lg:grid-cols-4">
+          {metrics?.map((metric, index) => (
+            <div key={index}>
+              <h3 className="text-4xl font-bold sm:text-6xl md:text-7xl">
+                <span className="bg-gradient-to-r from-emerald-400 to-green-400 bg-clip-text text-transparent">
+                  {metric.value}
+                </span>
+              </h3>
+              <p className="mt-4 font-medium sm:text-xl">{metric.label}</p>
+            </div>
+          ))}
         </div>
 
         <CTA
@@ -76,7 +38,7 @@ const Metrics = ({ metrics }: { metrics: Metrics }) => {
           buttonContent={
             <>
               <IconBriefcase />
-              <span>Let's Talk Success</span>
+              <span>Let&apos;s Talk Success</span>
             </>
           }
         >

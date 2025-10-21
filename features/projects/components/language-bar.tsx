@@ -1,8 +1,8 @@
 "use client";
-import { ProjectsQueryResult } from "@/types/data";
+import { Project } from "@/types/data";
 import { getLanguageColor } from "@/utils/get-language-color";
 
-const LanguageBar = ({ project }: { project: ProjectsQueryResult[number] }) => {
+const LanguageBar = ({ project }: { project: Project }) => {
   if (!project) return null;
 
   return (

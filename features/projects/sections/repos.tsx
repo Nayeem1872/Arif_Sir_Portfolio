@@ -3,7 +3,7 @@
 import Heading from "@/components/common/heading";
 import { SectionContainer } from "@/components/layout/section";
 import { projectPage } from "@/config/content/pages";
-import { ProjectsQueryResult } from "@/types/data";
+import type { Project } from "@/types/data";
 import { cn } from "@/utils/cn";
 import {
   IconCoffee,
@@ -14,7 +14,7 @@ import { useRef } from "react";
 import GitHubCard from "../components/github-card";
 import { useProjectSearch } from "../hooks/use-project-search";
 
-const ProjectRepos = ({ projects }: { projects: ProjectsQueryResult }) => {
+const ProjectRepos = ({ projects }: { projects: Project[] }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const {
     activeTags,
@@ -76,10 +76,9 @@ const ProjectRepos = ({ projects }: { projects: ProjectsQueryResult }) => {
             Filter by Tags:
           </span>
           <ul className="flex flex-1 flex-wrap items-center gap-1">
-            {tags.map((tag) => (
-              <li>
+            {(tags as string[]).map((tag) => (
+              <li key={tag}>
                 <button
-                  key={tag}
                   onClick={() => handleTagChange(tag.toLowerCase())}
                   className={cn(
                     "border-border/40 hover:bg-secondary-fg/30 text-secondary-fg cursor-pointer rounded-full border px-2 py-px text-xs lg:text-sm",
@@ -108,7 +107,7 @@ const ProjectRepos = ({ projects }: { projects: ProjectsQueryResult }) => {
         </div>
 
         <div className="relative grid w-full grid-cols-1 gap-2 md:grid-cols-3 lg:my-18 lg:gap-4">
-          {activeProjects.map((product) => (
+          {activeProjects.map((product: Project) => (
             <GitHubCard key={product._id} project={product} />
           ))}
           {activeProjects.length === 0 && (

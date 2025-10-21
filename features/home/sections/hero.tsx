@@ -1,12 +1,12 @@
 import { HoverBorderButton } from "@/components/ui/hover-button";
 import { SlideIn, Transition } from "@/components/ui/transitions";
 import { homepage } from "@/config/content/pages";
-import { ProfileQueryResult } from "@/types/data";
+import { Profile } from "@/types/data";
 import { IconMessage } from "@tabler/icons-react";
 import Link from "next/link";
 import HeroBadge from "../components/badge";
 
-const HeroSection = ({ profile }: { profile: ProfileQueryResult }) => {
+const HeroSection = ({ profile }: { profile: Profile }) => {
   return (
     <div className="relative min-h-[60vh] w-full pt-10 pb-4">
       <Transition>

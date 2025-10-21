@@ -1,14 +1,12 @@
 import { footerLinks } from "@/config/footerLinks";
 import { profile as profileInfo } from "@/config/profile";
 import { getProfile } from "@/lib/queries";
-import { ProfileQueryResult } from "@/types/data";
-import { formatTimeFromNow } from "@/utils/dayjs";
+import type { Profile } from "@/types/data";
 import {
   IconBrandBluesky,
   IconBrandGithub,
   IconBrandLinkedin,
   IconExternalLink,
-  IconHistory,
   IconMail,
   IconMapPin,
 } from "@tabler/icons-react";
@@ -102,7 +100,7 @@ const FooterGroup = ({ title, links }: FooterGroupProps) => {
   );
 };
 
-const FooterDescription = ({ profile }: { profile: ProfileQueryResult }) => {
+const FooterDescription = ({ profile }: { profile: Profile }) => {
   return (
     <div className={"flex max-w-sm flex-col"}>
       <div className={"mb-3 text-sm text-slate-400"}>About Me</div>
@@ -224,14 +222,6 @@ const Footer = async () => {
           }
         >
           <div className={"font-semibold"}>{profileInfo.copyright}</div>
-          {profile?._updatedAt ? (
-            <div className="text-fg flex items-center justify-center gap-2 text-xs">
-              <IconHistory className="h-4 w-4" />
-              <p className="">
-                Updated {formatTimeFromNow(profile._updatedAt)}
-              </p>
-            </div>
-          ) : null}
         </div>
       </div>
     </footer>

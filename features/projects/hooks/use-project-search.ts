@@ -1,8 +1,8 @@
-import { ProjectsQueryResult } from "@/types/data";
+import { Project } from "@/types/data";
 import { useEffect, useMemo, useState } from "react";
 
-export function useProjectSearch(projects: ProjectsQueryResult) {
-  const [filtered, setFiltered] = useState<ProjectsQueryResult>([]);
+export function useProjectSearch(projects: Project[]) {
+  const [filtered, setFiltered] = useState<Project[]>([]);
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
   const [activeTags, setActiveTags] = useState<string[]>([]);
 
@@ -32,7 +32,7 @@ export function useProjectSearch(projects: ProjectsQueryResult) {
     }, 500);
 
     return () => clearTimeout(timeoutId);
-  }, [debouncedSearch]);
+  }, [debouncedSearch, projects]);
 
   // Tags change based on filtered projects
   const tags = useMemo(() => {
@@ -63,13 +63,13 @@ export function useProjectSearch(projects: ProjectsQueryResult) {
 
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const sortValue = event.target.value;
-    let sortedProjects = [...filtered];
+    const sortedProjects = [...filtered];
 
     if (sortValue === "recent") {
       sortedProjects.sort(
         (a, b) =>
-          new Date(b.developedAt ?? "").getTime() -
-          new Date(a.developedAt ?? "").getTime(),
+          new Date(b._updatedAt ?? "").getTime() -
+          new Date(a._updatedAt ?? "").getTime(),
       );
     } else if (sortValue === "alphabetical") {
       sortedProjects.sort((a, b) => a.name?.localeCompare(b.name || "") || 0);

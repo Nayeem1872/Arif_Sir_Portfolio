@@ -2,10 +2,10 @@ import Heading from "@/components/common/heading";
 import { SectionContainer } from "@/components/layout/section";
 import { Transition } from "@/components/ui/transitions";
 import { aboutPage } from "@/config/content/pages";
-import { ProfileQueryResult } from "@/types/data";
+import { Profile } from "@/types/data";
 import ProfileCard from "../components/profile-card";
 
-const AboutMeSection = ({ profile }: { profile: ProfileQueryResult }) => {
+const AboutMeSection = ({ profile }: { profile: Profile }) => {
   return (
     <SectionContainer className="lg:pt-10">
       <Heading className="mb-4 px-4 sm:mx-auto sm:mb-8">

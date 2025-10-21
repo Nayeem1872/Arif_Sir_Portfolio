@@ -1,8 +1,8 @@
 import { SectionContainer } from "@/components/layout/section";
 import { ParallaxText } from "@/components/ui/parallax-text";
-import { TechQueryResult } from "@/types/data";
+import { Technology } from "@/types/data";
 
-const TechnologySection = ({ techs }: { techs: TechQueryResult }) => {
+const TechnologySection = ({ techs }: { techs: Technology[] }) => {
   return (
     <SectionContainer className="relative flex w-full items-center justify-center overflow-hidden">
       <div className="flex flex-col gap-2">
@@ -20,20 +20,17 @@ const TechnologySection = ({ techs }: { techs: TechQueryResult }) => {
   );
 };
 
-const TechStack = ({ techs }: { techs: TechQueryResult }) => {
+const TechStack = ({ techs }: { techs: Technology[] }) => {
   return (
     <>
-      {techs.map(
-        (tech) =>
-          !tech.hidden && (
-            <p
-              key={tech._id}
-              className="text-fg/30 text-3xl font-semibold tracking-tighter uppercase md:text-7xl md:font-bold"
-            >
-              <span className="hover:text-fg">{tech.title}</span> •
-            </p>
-          ),
-      )}
+      {techs.map((tech, index) => (
+        <p
+          key={index}
+          className="text-fg/30 text-3xl font-semibold tracking-tighter uppercase md:text-7xl md:font-bold"
+        >
+          <span className="hover:text-fg">{tech.title}</span> •
+        </p>
+      ))}
     </>
   );
 };

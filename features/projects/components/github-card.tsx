@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
-import { ProjectDetailQueryResult, ProjectsQueryResult } from "@/types/data";
+import { Project } from "@/types/data";
 import {
   IconArchive,
   IconArrowUpRight,
@@ -11,16 +11,11 @@ import {
   IconLock,
   IconWorld,
 } from "@tabler/icons-react";
-import Image from "next/image";
 import Link from "next/link";
 import LanguageBar from "./language-bar";
 
-type Project = ProjectsQueryResult[number];
-
 const GitHubCard = ({ project }: { project: Project }) => {
-  const renderStatusIcon = (
-    status: NonNullable<ProjectDetailQueryResult>["status"],
-  ) => {
+  const renderStatusIcon = (status: Project["status"]) => {
     switch (status) {
       case "live":
         return <IconWorld size={20} className="mr-1 inline-block" />;
@@ -38,21 +33,11 @@ const GitHubCard = ({ project }: { project: Project }) => {
       tooltip={
         <div className="flex w-full min-w-[200px] flex-col gap-px">
           <div className="mb-1 flex items-center">
-            {project.logoImage.url ? (
-              <Image
-                src={project.logoImage.url}
-                width={30}
-                height={30}
-                alt={project.logoImage.alt ?? ""}
-                className="h-8 w-8 rounded-full"
-              />
-            ) : (
-              <div className="bg-secondary-fg/20 flex h-8 w-8 items-center justify-center rounded-full">
-                <span className="text-secondary-fg/60 text-sm font-medium">
-                  {project.name?.charAt(0).toUpperCase()}
-                </span>
-              </div>
-            )}
+            <div className="bg-secondary-fg/20 flex h-8 w-8 items-center justify-center rounded-full">
+              <span className="text-secondary-fg/60 text-sm font-medium">
+                {project.name?.charAt(0).toUpperCase()}
+              </span>
+            </div>
             <span className="ml-2 text-sm font-medium capitalize">
               {project.name}
             </span>
@@ -76,15 +61,6 @@ const GitHubCard = ({ project }: { project: Project }) => {
                 <h3 className="text-lg font-medium">{project.slug}</h3>
                 <p className="text-secondary-fg text-xs">{project.tagline}</p>
               </div>
-              {project.logoImage.url && (
-                <Image
-                  src={project.logoImage.url}
-                  width={40}
-                  height={40}
-                  alt={project.logoImage.alt ?? ""}
-                  className="h-[40px] w-[40px]"
-                />
-              )}
             </div>
           </div>
 

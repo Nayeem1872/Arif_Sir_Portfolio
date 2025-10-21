@@ -14,6 +14,12 @@ export const profileData: Profile = {
     label: "Profile Photo",
     alt: "Arif Rahim - Software Engineer & DevOps Specialist",
   },
+  socials: {
+    linkedin: "https://www.linkedin.com/in/arifrahim",
+    github: "https://github.com/arifrahim",
+    email: "arif.rahim@example.com",
+    bluesky: "https://bsky.app/profile/arifrahim.bsky.social",
+  },
   metrics: [
     { label: "Years Experience", value: "5+" },
     { label: "Projects Delivered", value: "40+" },

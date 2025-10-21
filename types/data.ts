@@ -11,6 +11,12 @@ export interface Profile {
     label: string;
     alt: string;
   };
+  socials: {
+    linkedin?: string;
+    github?: string;
+    email?: string;
+    bluesky?: string;
+  };
   metrics: Array<{
     label: string;
     value: string;
