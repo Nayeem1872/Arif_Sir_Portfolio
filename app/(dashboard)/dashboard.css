@@ -1,0 +1,21 @@
+/* Dashboard-specific styles to override global styles */
+.dashboard-container {
+  background-color: white !important;
+  color: #374151 !important;
+}
+
+.dashboard-container.dark {
+  background-color: #111827 !important;
+  color: #f3f4f6 !important;
+}
+
+/* Override global body styles for dashboard */
+body:has(.dashboard-container) {
+  background-color: white !important;
+  color: #374151 !important;
+}
+
+body:has(.dashboard-container.dark) {
+  background-color: #111827 !important;
+  color: #f3f4f6 !important;
+}

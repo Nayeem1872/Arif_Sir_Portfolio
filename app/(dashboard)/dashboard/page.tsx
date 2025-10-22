@@ -12,8 +12,10 @@ const DashboardPage = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-fg text-3xl font-bold">Dashboard</h1>
-        <p className="text-fg/60">Welcome back!</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          Dashboard
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400">Welcome back!</p>
       </div>
 
       <DashboardStats />

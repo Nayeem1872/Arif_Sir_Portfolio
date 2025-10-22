@@ -43,20 +43,26 @@ const DashboardStats = () => {
       {stats.map((stat, index) => (
         <div
           key={index}
-          className="bg-card border-border hover:border-primary/20 rounded-lg border p-6 transition-colors"
+          className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-colors hover:border-blue-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-600"
         >
           <div className="mb-4 flex items-center justify-between">
-            <div className={`bg-secondary/40 rounded-md p-2 ${stat.color}`}>
+            <div
+              className={`rounded-md bg-gray-100 p-2 ${stat.color} dark:bg-gray-700`}
+            >
               <stat.icon size={20} />
             </div>
-            <div className="text-primary flex items-center gap-1 text-sm">
+            <div className="flex items-center gap-1 text-sm font-medium text-green-600 dark:text-green-400">
               <span>{stat.change}</span>
               <IconArrowUpRight size={16} />
             </div>
           </div>
           <div>
-            <h3 className="text-fg mb-1 text-2xl font-bold">{stat.value}</h3>
-            <p className="text-fg/60 text-sm">{stat.title}</p>
+            <h3 className="mb-1 text-2xl font-bold text-gray-900 dark:text-gray-100">
+              {stat.value}
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {stat.title}
+            </p>
           </div>
         </div>
       ))}

@@ -38,33 +38,39 @@ const activities = [
 
 const RecentActivity = () => {
   return (
-    <div className="bg-card border-border rounded-lg border p-6">
+    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
       <div className="mb-6 flex items-center justify-between">
-        <h3 className="text-fg text-lg font-semibold">Recent Activity</h3>
-        <IconClock className="text-fg/40" size={20} />
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          Recent Activity
+        </h3>
+        <IconClock className="text-gray-400 dark:text-gray-500" size={20} />
       </div>
 
       <div className="space-y-4">
         {activities.map((activity, index) => (
           <div
             key={index}
-            className="hover:bg-secondary/20 flex items-start gap-4 rounded-md p-3 transition-colors"
+            className="flex items-start gap-4 rounded-md p-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700"
           >
             <div
-              className={`bg-secondary/40 rounded-md p-2 ${activity.color} shrink-0`}
+              className={`rounded-md bg-gray-100 p-2 ${activity.color} shrink-0 dark:bg-gray-700`}
             >
               <activity.icon size={16} />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-fg text-sm">{activity.message}</p>
-              <p className="text-fg/60 mt-1 text-xs">{activity.time}</p>
+              <p className="text-sm text-gray-900 dark:text-gray-100">
+                {activity.message}
+              </p>
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                {activity.time}
+              </p>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="border-border mt-6 border-t pt-4">
-        <button className="text-primary hover:text-primary/80 text-sm font-medium transition-colors">
+      <div className="mt-6 border-t border-gray-200 pt-4 dark:border-gray-700">
+        <button className="text-sm font-medium text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
           View all activity
         </button>
       </div>
