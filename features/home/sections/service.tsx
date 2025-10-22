@@ -5,7 +5,6 @@ import { homepage } from "@/config/content/pages";
 import { Service } from "@/types/data";
 import { cn } from "@/utils/cn";
 import { IconBriefcase } from "@tabler/icons-react";
-import Image from "next/image";
 
 const ServiceSection = ({ services }: { services: Service[] }) => {
   return (
@@ -67,14 +66,8 @@ const ServiceComponent = ({
       )}
       <div className="relative z-10 mb-4 px-10 text-neutral-200">
         {icon ? (
-          <div className="relative h-8 w-8">
-            <Image
-              src={icon}
-              alt={title ?? "Service"}
-              width={32}
-              height={32}
-              className="absolute inset-0 h-8 w-8 object-contain transition duration-300"
-            />
+          <div className="relative flex h-8 w-8 items-center justify-center">
+            <span className="text-2xl">{icon}</span>
           </div>
         ) : (
           <IconBriefcase className="h-8 w-8 text-neutral-200" />
