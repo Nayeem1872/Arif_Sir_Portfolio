@@ -9,7 +9,7 @@ type AuthFieldProps = {
   value: string;
   placeholder: string;
   handleChange: (name: string, value: string) => void;
-  icon: React.FC<{ size?: number }>;
+  icon: React.ComponentType<any>;
   required?: boolean;
   rightIcon?: ReactNode;
 };

@@ -39,11 +39,11 @@ const AuthSection = () => {
           </div>
         </SlideIn>
 
-        <SlideIn delay={0.1}>
+        <SlideIn transition={{ duration: 0.5, delay: 0.4 }}>
           <AuthForm isSignUp={isSignUp} />
         </SlideIn>
 
-        <SlideIn delay={0.2}>
+        <SlideIn transition={{ duration: 0.5, delay: 0.5 }}>
           <div className="mt-8 text-center">
             <p className="text-fg/60 text-sm">
               {isSignUp ? "Already have an account?" : "Don't have an account?"}

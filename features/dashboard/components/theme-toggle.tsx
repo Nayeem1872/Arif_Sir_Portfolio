@@ -35,16 +35,10 @@ const ThemeToggle = () => {
   };
 
   const toggleTheme = () => {
-    console.log("Toggle clicked, current theme:", theme);
     const newTheme = theme === "light" ? "dark" : "light";
-    console.log("New theme:", newTheme);
     setTheme(newTheme);
     localStorage.setItem("dashboard-theme", newTheme);
     applyTheme(newTheme);
-    console.log(
-      "Document classes after toggle:",
-      document.documentElement.classList.toString(),
-    );
   };
 
   if (!mounted) {

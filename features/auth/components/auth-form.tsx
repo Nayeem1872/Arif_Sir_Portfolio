@@ -1,6 +1,7 @@
 "use client";
 
 import { HoverBorderButton } from "@/components/ui/hover-button";
+import { useAuth } from "@/hooks/use-auth";
 import {
   IconAt,
   IconEye,
@@ -20,38 +21,57 @@ interface AuthFormProps {
 const AuthForm = ({ isSignUp }: AuthFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [status, setStatus] = useState("idle");
   const [form, setForm] = useState({
-    name: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  const { isLoading, error, signup, signin } = useAuth();
 
   const handleChange = (name: string, value: string) => {
     setForm({ ...form, [name]: value });
+    // Clear validation error when user starts typing
+    if (validationError) setValidationError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setStatus("submitting");
+    setValidationError(null);
 
     // Basic validation
     if (!form.email || !form.password) {
-      setStatus("error");
+      setValidationError("Please fill in all required fields");
       return;
     }
 
-    if (isSignUp && (!form.name || form.password !== form.confirmPassword)) {
-      setStatus("error");
-      return;
-    }
+    if (isSignUp) {
+      if (!form.username) {
+        setValidationError("Username is required");
+        return;
+      }
+      if (form.password !== form.confirmPassword) {
+        setValidationError("Passwords do not match");
+        return;
+      }
+      if (form.password.length < 6) {
+        setValidationError("Password must be at least 6 characters long");
+        return;
+      }
 
-    // Simulate API call
-    setTimeout(() => {
-      setStatus("success");
-      console.log("Form submitted:", form);
-    }, 1500);
+      await signup({
+        username: form.username,
+        email: form.email,
+        password: form.password,
+      });
+    } else {
+      await signin({
+        email: form.email,
+        password: form.password,
+      });
+    }
   };
 
   return (
@@ -59,11 +79,11 @@ const AuthForm = ({ isSignUp }: AuthFormProps) => {
       <form onSubmit={handleSubmit} className="space-y-6">
         {isSignUp && (
           <AuthField
-            name="name"
+            name="username"
             type="text"
-            value={form.name}
+            value={form.username}
             handleChange={handleChange}
-            placeholder="Your full name"
+            placeholder="Your username"
             icon={IconUserCircle}
             required
           />
@@ -135,14 +155,16 @@ const AuthForm = ({ isSignUp }: AuthFormProps) => {
         )}
 
         <div className="pt-4">
-          <HoverBorderButton type="submit" className="w-full">
+          <HoverBorderButton
+            type="submit"
+            className="w-full"
+            disabled={isLoading}
+          >
             <div className="text-fg flex w-full cursor-pointer items-center justify-center gap-2 px-4 py-2 text-lg">
               <span
-                className={`font-semibold ${
-                  status === "submitting" ? "animate-pulse" : ""
-                }`}
+                className={`font-semibold ${isLoading ? "animate-pulse" : ""}`}
               >
-                {status === "submitting"
+                {isLoading
                   ? isSignUp
                     ? "Creating Account..."
                     : "Signing In..."
@@ -157,17 +179,9 @@ const AuthForm = ({ isSignUp }: AuthFormProps) => {
           </HoverBorderButton>
         </div>
 
-        {status === "error" && (
+        {(error || validationError) && (
           <div className="text-center text-sm text-red-400">
-            {isSignUp
-              ? "Please fill all fields and ensure passwords match"
-              : "Invalid email or password"}
-          </div>
-        )}
-
-        {status === "success" && (
-          <div className="text-primary text-center text-sm">
-            {isSignUp ? "Account created successfully!" : "Welcome back!"}
+            {error || validationError}
           </div>
         )}
       </form>

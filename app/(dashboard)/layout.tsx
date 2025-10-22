@@ -1,3 +1,4 @@
+import ProtectedRoute from "@/components/auth/protected-route";
 import DashboardHeader from "@/features/dashboard/components/header";
 import DashboardSidebar from "@/features/dashboard/components/sidebar";
 import ThemeScript from "@/features/dashboard/components/theme-script";
@@ -5,7 +6,7 @@ import { PropsWithChildren } from "react";
 
 const DashboardLayout = ({ children }: PropsWithChildren) => {
   return (
-    <>
+    <ProtectedRoute>
       <ThemeScript />
       <div className="min-h-screen bg-white dark:bg-gray-900">
         <div className="flex h-screen">
@@ -21,7 +22,7 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
           </div>
         </div>
       </div>
-    </>
+    </ProtectedRoute>
   );
 };
 
