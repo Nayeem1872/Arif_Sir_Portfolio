@@ -91,3 +91,28 @@ export interface Technology {
     };
   };
 }
+
+export interface Blog {
+  _id: string;
+  _updatedAt: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: Array<{
+    _type: string;
+    children: Array<{
+      _type: string;
+      text: string;
+    }>;
+  }>;
+  publishedAt: string;
+  readTime: string;
+  category: string;
+  tags: string[];
+  featured: boolean;
+  image: string;
+  author: {
+    name: string;
+    avatar: string;
+  };
+}

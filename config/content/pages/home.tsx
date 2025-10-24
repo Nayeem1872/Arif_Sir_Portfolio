@@ -2,7 +2,7 @@ export const homepage = {
   badge: "Built for developers",
   heading: (
     <>
-      Arif Rahim's Portfolio
+      Arif Rahim&apos;s Portfolio
       <br /> Software Engineer & DevOps Expert
     </>
   ),
@@ -15,10 +15,17 @@ export const homepage = {
   projectHeading: (
     <>
       Over 20+ projects done, <br />
-      Here're some of them
+      Here&apos;re some of them
     </>
   ),
   projectCta: "See More Projects",
+  blogHeading: (
+    <>
+      Insights & Knowledge <br />
+      Sharing through Blogs
+    </>
+  ),
+  blogCta: "Read All Blogs",
   metricHeading: (
     <>
       My Code compiled into

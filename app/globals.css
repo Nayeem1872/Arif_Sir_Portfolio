@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @theme {
   --font-body: var(--font-body);
@@ -48,16 +48,15 @@
     }
 
     50% {
-      box-shadow: 0 0 0 7px theme('colors.accent/0');
+      box-shadow: 0 0 0 7px theme("colors.accent/0");
       transform: scale(1.05);
     }
 
     100% {
-      box-shadow: 0 0 0 0 theme('colors.accent/0');
+      box-shadow: 0 0 0 0 theme("colors.accent/0");
       transform: scale(1);
     }
   }
-
 }
 
 @layer base {
@@ -107,7 +106,6 @@
   @apply mx-auto w-full max-w-6xl;
 }
 
-
 .background-image {
   &--fade-out {
     mask-image: linear-gradient(black, black, transparent);
@@ -115,38 +113,38 @@
 }
 
 .social-icon {
-  @apply flex h-12 w-12 items-center justify-center rounded-full border-2 border-primary p-2 text-primary transition hover:scale-110 hover:bg-primary hover:text-bg;
+  @apply border-primary text-primary hover:bg-primary hover:text-bg flex h-12 w-12 items-center justify-center rounded-full border-2 p-2 transition hover:scale-110;
 }
 
 .outline-button {
-  @apply flex items-center justify-center cursor-pointer gap-2 border border-primary px-8 py-2 text-center font-medium text-primary transition-colors hover:bg-primary hover:text-bg sm:text-lg md:px-10 md:py-3 md:text-xl;
+  @apply border-primary text-primary hover:bg-primary hover:text-bg flex cursor-pointer items-center justify-center gap-2 border px-8 py-2 text-center font-medium transition-colors sm:text-lg md:px-10 md:py-3 md:text-xl;
 }
 
 .label {
   @apply relative overflow-hidden rounded-md bg-slate-100 px-3 py-1 pb-1.5 text-[13px] font-semibold;
 
   &__indicator {
-    @apply absolute inset-x-0 bottom-0 h-0.5 rounded-full bg-primary;
+    @apply bg-primary absolute inset-x-0 bottom-0 h-0.5 rounded-full;
   }
 }
 
 .inner-container {
-  @apply mx-auto w-full px-2 sm:px-4 md:px-0 md:max-w-[90%];
+  @apply mx-auto w-full px-2 sm:px-4 md:max-w-[90%] md:px-0;
 }
 
 .description {
-  @apply text-fg text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed tracking-tight;
-  @apply max-w-3xl sm:mx-auto text-left sm:text-center;
+  @apply text-fg text-base leading-relaxed tracking-tight sm:text-lg md:text-xl lg:text-2xl;
+  @apply max-w-3xl text-left sm:mx-auto sm:text-center;
 }
 
 .section-badge {
-  @apply flex relative shadow-inner items-center justify-center sm:mx-auto mb-8 select-none self-start sm:self-center;
-  @apply min-w-[150px] py-3 px-8 w-fit rounded-full bg-gradient-to-r from-primary/40 via-primary/10 to-primary/0;
-  @apply text-fg font-medium tracking-wider text-sm capitalize;
+  @apply relative mb-8 flex items-center justify-center self-start shadow-inner select-none sm:mx-auto sm:self-center;
+  @apply from-primary/40 via-primary/10 to-primary/0 w-fit min-w-[150px] rounded-full bg-gradient-to-r px-8 py-3;
+  @apply text-fg text-sm font-medium tracking-wider capitalize;
 
   &::before {
-    @apply absolute -top-1 -left-1 -bottom-1 -right-1 rounded-full bg-gradient-to-r from-primary/20 to-primary/0;
-    content: '';
+    @apply from-primary/20 to-primary/0 absolute -top-1 -right-1 -bottom-1 -left-1 rounded-full bg-gradient-to-r;
+    content: "";
   }
 }
 
@@ -156,7 +154,7 @@
 }
 
 .section-label {
-  @apply text-fg text-lg md:text-xl lg:text-2xl sm:text-center;
+  @apply text-fg text-lg sm:text-center md:text-xl lg:text-2xl;
 }
 
 .blob-nova {
@@ -164,5 +162,20 @@
 }
 
 .text-gradient {
-  @apply bg-gradient-to-r from-white to-neutral-400 bg-clip-text bg-white/80 text-transparent;
+  @apply bg-white/80 bg-gradient-to-r from-white to-neutral-400 bg-clip-text text-transparent;
+}
+
+/* Line clamp utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

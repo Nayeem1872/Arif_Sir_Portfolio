@@ -1,8 +1,9 @@
+import { blogsData } from "@/data/blogs";
 import { profileData } from "@/data/profile";
 import { projectsData } from "@/data/projects";
 import { servicesData } from "@/data/services";
 import { technologiesData } from "@/data/technologies";
-import type { Profile, Project, Service, Technology } from "@/types/data";
+import type { Blog, Profile, Project, Service, Technology } from "@/types/data";
 
 export async function getProfile(): Promise<Profile> {
   return profileData;
@@ -30,4 +31,23 @@ export async function getProjectDetail({
 
 export async function getProjectSlugs(): Promise<string[]> {
   return projectsData.map((project) => project.slug);
+}
+
+export async function getBlogs(): Promise<Blog[]> {
+  return blogsData.sort(
+    (a, b) =>
+      new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
+  );
+}
+
+export async function getBlogDetail({
+  slug,
+}: {
+  slug: string;
+}): Promise<Blog | null> {
+  return blogsData.find((blog) => blog.slug === slug) || null;
+}
+
+export async function getBlogSlugs(): Promise<string[]> {
+  return blogsData.map((blog) => blog.slug);
 }

@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
       {
         hostname: "cdn.sanity.io",
       },
+      {
+        hostname: "images.unsplash.com",
+      },
     ],
   },
 };

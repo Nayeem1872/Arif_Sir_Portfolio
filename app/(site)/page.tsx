@@ -1,15 +1,15 @@
+import BlogSection from "@/features/home/sections/blogs";
 import HeroSection from "@/features/home/sections/hero";
 import Metrics from "@/features/home/sections/metrics";
-import ProjectSection from "@/features/home/sections/projects";
 import ServiceSection from "@/features/home/sections/service";
 import TechnologySection from "@/features/home/sections/technology";
-import { getProfile, getProjects, getServices, getTech } from "@/lib/queries";
+import { getBlogs, getProfile, getServices, getTech } from "@/lib/queries";
 
 export const revalidate = 60;
 
 const HomePage = async () => {
   const profile = await getProfile();
-  const projects = await getProjects();
+  const blogs = await getBlogs();
   const services = await getServices();
   const techs = await getTech();
 
@@ -18,7 +18,7 @@ const HomePage = async () => {
       <HeroSection profile={profile} />
       <TechnologySection techs={techs} />
       <ServiceSection services={services} />
-      <ProjectSection projects={projects} />
+      <BlogSection blogs={blogs} />
       <Metrics metrics={profile?.metrics} />
     </div>
   );
