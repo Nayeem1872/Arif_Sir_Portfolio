@@ -7,7 +7,7 @@ declare type NavLink = {
   title: string;
   icon: React.ReactNode;
   href: string;
-  type?: "internal" | "external";
+  type?: "internal" | "external" | "button";
 };
 
 declare type FooterLink = {

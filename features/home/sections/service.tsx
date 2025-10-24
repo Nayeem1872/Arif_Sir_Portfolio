@@ -52,9 +52,9 @@ const ServiceComponent = ({
   return (
     <div
       className={cn(
-        "group/feature relative flex flex-col border-neutral-800 py-10",
-        (index === 0 || index === 3) && "border-0 border-neutral-800",
-        index < 3 && "border-0 border-neutral-800",
+        "group/feature border-border relative flex flex-col py-10",
+        (index === 0 || index === 3) && "border-border border-0",
+        index < 3 && "border-border border-0",
         (index % 3 === 0 || index % 3 === 1) && "border-0",
       )}
     >
@@ -64,22 +64,22 @@ const ServiceComponent = ({
       {index >= 3 && (
         <div className="from-primary/10 pointer-events-none absolute inset-0 h-full w-full bg-gradient-to-b to-transparent opacity-0 transition duration-200 group-hover/feature:opacity-100" />
       )}
-      <div className="relative z-10 mb-4 px-10 text-neutral-200">
+      <div className="text-fg relative z-10 mb-4 px-10">
         {icon ? (
           <div className="relative flex h-8 w-8 items-center justify-center">
             <span className="text-2xl">{icon}</span>
           </div>
         ) : (
-          <IconBriefcase className="h-8 w-8 text-neutral-200" />
+          <IconBriefcase className="text-fg h-8 w-8" />
         )}
       </div>
       <div className="relative z-10 mb-2 px-10 text-lg font-bold">
-        <div className="group-hover/feature:bg-primary absolute inset-y-0 left-0 h-6 w-1 origin-center rounded-tr-full rounded-br-full bg-neutral-300 transition-all duration-200 group-hover/feature:h-8" />
-        <span className="group-hover/feature:text-primary inline-block text-lg text-neutral-100 transition duration-200 group-hover/feature:translate-x-2 md:text-xl lg:text-2xl">
+        <div className="group-hover/feature:bg-primary bg-text-secondary absolute inset-y-0 left-0 h-6 w-1 origin-center rounded-tr-full rounded-br-full transition-all duration-200 group-hover/feature:h-8" />
+        <span className="group-hover/feature:text-primary text-fg inline-block text-lg transition duration-200 group-hover/feature:translate-x-2 md:text-xl lg:text-2xl">
           {title}
         </span>
       </div>
-      <p className="relative z-10 max-w-sm px-10 text-sm text-neutral-300">
+      <p className="text-text-secondary relative z-10 max-w-sm px-10 text-sm">
         {description}
       </p>
     </div>

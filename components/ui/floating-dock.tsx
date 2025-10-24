@@ -65,13 +65,22 @@ const FloatingDockMobile = ({
                 }}
                 transition={{ delay: (items.length - 1 - idx) * 0.05 }}
               >
-                <Link
-                  href={item.href}
-                  key={item.title}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-900"
-                >
-                  <div className="h-4 w-4">{item.icon}</div>
-                </Link>
+                {item.type === "button" ? (
+                  <div
+                    key={item.title}
+                    className="bg-secondary flex h-10 w-10 items-center justify-center rounded-full"
+                  >
+                    <div className="h-4 w-4">{item.icon}</div>
+                  </div>
+                ) : (
+                  <Link
+                    href={item.href}
+                    key={item.title}
+                    className="bg-secondary flex h-10 w-10 items-center justify-center rounded-full"
+                  >
+                    <div className="h-4 w-4">{item.icon}</div>
+                  </Link>
+                )}
               </motion.div>
             ))}
           </motion.div>
@@ -79,9 +88,9 @@ const FloatingDockMobile = ({
       </AnimatePresence>
       <button
         onClick={() => setOpen(!open)}
-        className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-800"
+        className="bg-secondary flex h-10 w-10 items-center justify-center rounded-full"
       >
-        <IconCategory className="h-5 w-5 text-neutral-400" />
+        <IconCategory className="text-fg/60 h-5 w-5" />
       </button>
     </div>
   );
@@ -108,20 +117,21 @@ const FloatingDockDesktop = ({
         className,
       )}
     >
-      <div className="bg-secondary/40 pointer-events-none absolute inset-0 h-[100%] transform rounded-2xl p-[3px] shadow-sm backdrop-blur-md backdrop-brightness-125 dark:bg-neutral-900/30">
+      <div className="bg-secondary/40 pointer-events-none absolute inset-0 h-[100%] transform rounded-2xl p-[3px] shadow-sm backdrop-blur-md backdrop-brightness-125">
         <div className="h-[100%] w-full rounded-2xl backdrop-blur-lg" />
       </div>
       {items
-        .filter((i) => i.type !== "external")
+        .filter((i) => i.type !== "external" && i.type !== "button")
         .map((item) => (
           <IconContainer
             mouseX={mouseX}
             key={item.title}
             {...item}
             isActive={isActive(item.href)}
+            type={item.type}
           />
         ))}
-      <hr className="relative mt-3 h-[25px] w-[1px] self-center bg-neutral-600 dark:bg-neutral-400" />
+      <hr className="bg-border relative mt-3 h-[25px] w-[1px] self-center" />
       {items
         .filter((i) => i.type === "external")
         .map((item) => (
@@ -130,6 +140,18 @@ const FloatingDockDesktop = ({
             key={item.title}
             {...item}
             isActive={isActive(item.href)}
+            type={item.type}
+          />
+        ))}
+      {items
+        .filter((i) => i.type === "button")
+        .map((item) => (
+          <IconContainer
+            mouseX={mouseX}
+            key={item.title}
+            {...item}
+            isActive={false}
+            type={item.type}
           />
         ))}
     </motion.div>
@@ -142,12 +164,14 @@ function IconContainer({
   icon,
   href,
   isActive,
+  type,
 }: {
   mouseX: MotionValue;
   title: string;
   icon: React.ReactNode;
   href: string;
   isActive?: boolean;
+  type?: "internal" | "external" | "button";
 }) {
   let ref = useRef<HTMLDivElement>(null);
 
@@ -191,7 +215,7 @@ function IconContainer({
 
   const [hovered, setHovered] = useState(false);
 
-  const Elem = href.length > 0 ? Link : "div";
+  const Elem = type === "button" ? "div" : href.length > 0 ? Link : "div";
 
   return (
     <Elem
@@ -213,7 +237,7 @@ function IconContainer({
               initial={{ opacity: 0, y: 10, x: "-50%" }}
               animate={{ opacity: 1, y: 0, x: "-50%" }}
               exit={{ opacity: 0, y: 2, x: "-50%" }}
-              className="text-card-fg bg-card border-secondary/80 absolute -top-8 left-1/2 w-fit -translate-x-1/2 rounded-md border px-2 py-0.5 text-xs whitespace-pre"
+              className="border-border bg-card text-card-fg absolute -top-8 left-1/2 w-fit -translate-x-1/2 rounded-md border px-2 py-0.5 text-xs whitespace-pre"
             >
               {title}
             </motion.div>

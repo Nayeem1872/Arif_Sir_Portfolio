@@ -2,6 +2,8 @@ import { metaTexts } from "@/config/metadata";
 import { getMetadata } from "@/utils/meta";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
+// import { ThemeProvider } from "styled-components";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import "./globals.css";
 
 const bodyFont = Poppins({
@@ -21,8 +23,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${bodyFont.variable} antialiased`}>{children}</body>
+    <html lang="en" className="dark">
+      <body className={`${bodyFont.variable} antialiased`}>
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }

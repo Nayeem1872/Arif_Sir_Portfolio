@@ -6,36 +6,32 @@
   --gr-nova: circle, #ffccf9, #fba8ff 30%, #d074ff 60%, #9700ff 95%;
   --gr-burst: circle, #fff7f0, #ffd6d6 30%, #ff80b5 60%, #f72585 90%;
 
+  --color-dark: #181818;
+  --color-light: #f8f9fa;
+
+  --animate-move: move 5s linear infinite;
+  --animate-heartbeat: heartbeat 2s infinite ease-in-out;
+
+  /* Theme colors - Default (dark) */
   --color-bg: hsl(240, 10%, 5%);
   --color-fg: hsl(240, 5.79%, 78%);
   --color-card: hsl(240, 10%, 3.9%);
   --color-card-fg: hsl(0, 0%, 100%);
-
   --color-secondary: hsl(225, 6.67%, 11.76%);
   --color-secondary-fg: hsl(0, 0%, 88%);
-
   --color-border: hsl(37, 18%, 66%, 0.3);
-
   --color-primary: hsl(155, 100%, 72%);
   --color-primary-dark: #1ba568;
   --color-primary-darker: #1c8550;
-
   --color-grid: #333;
   --color-text-secondary: #adb5bd;
   --color-text-muted: #6c757d;
-
-  --color-dark: #181818;
-  --color-light: #f8f9fa;
   --color-accent: #2bc578;
-
-  --animate-move: move 5s linear infinite;
-  --animate-heartbeat: heartbeat 2s infinite ease-in-out;
 
   @keyframes move {
     0% {
       transform: translateX(-200px);
     }
-
     100% {
       transform: translateX(200px);
     }
@@ -46,24 +42,61 @@
       box-shadow: 0 0 0 0 var(--color-accent);
       transform: scale(1);
     }
-
     50% {
-      box-shadow: 0 0 0 7px theme("colors.accent/0");
+      box-shadow: 0 0 0 7px var(--color-accent);
       transform: scale(1.05);
     }
-
     100% {
-      box-shadow: 0 0 0 0 theme("colors.accent/0");
+      box-shadow: 0 0 0 0 var(--color-accent);
       transform: scale(1);
     }
   }
 }
 
 @layer base {
+  /* Light theme overrides */
+  .light {
+    --color-bg: hsl(0, 0%, 98%);
+    --color-fg: hsl(240, 10%, 10%);
+    --color-card: hsl(0, 0%, 100%);
+    --color-card-fg: hsl(240, 10%, 10%);
+    --color-secondary: hsl(0, 0%, 95%);
+    --color-secondary-fg: hsl(240, 10%, 10%);
+    --color-border: hsl(37, 18%, 66%, 0.4);
+    --color-primary: hsl(155, 85%, 35%);
+    --color-primary-dark: #1ba568;
+    --color-primary-darker: #1c8550;
+    --color-grid: #e5e5e5;
+    --color-text-secondary: hsl(240, 10%, 25%);
+    --color-text-muted: hsl(240, 10%, 40%);
+    --color-accent: #2bc578;
+  }
+
+  /* Dark theme (explicit) */
+  .dark {
+    --color-bg: hsl(240, 10%, 5%);
+    --color-fg: hsl(240, 5.79%, 78%);
+    --color-card: hsl(240, 10%, 3.9%);
+    --color-card-fg: hsl(0, 0%, 100%);
+    --color-secondary: hsl(225, 6.67%, 11.76%);
+    --color-secondary-fg: hsl(0, 0%, 88%);
+    --color-border: hsl(37, 18%, 66%, 0.3);
+    --color-primary: hsl(155, 100%, 72%);
+    --color-primary-dark: #1ba568;
+    --color-primary-darker: #1c8550;
+    --color-grid: #333;
+    --color-text-secondary: #adb5bd;
+    --color-text-muted: #6c757d;
+    --color-accent: #2bc578;
+  }
+
   body {
     font-family: var(--font-body);
     color: var(--color-fg);
     background-color: var(--color-bg);
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
   }
 
   .scrollbar-hide {
@@ -80,20 +113,20 @@
   }
 
   ::-webkit-scrollbar-track {
-    border-left: 1px solid #555;
-    background-color: #333;
+    border-left: 1px solid var(--color-grid);
+    background-color: var(--color-secondary);
   }
 
   ::-webkit-scrollbar-thumb {
     background-clip: padding-box;
     border-radius: 999px;
     border-radius: 8px;
-    background-color: #555;
-    border-color: #777;
+    background-color: var(--color-grid);
+    border-color: var(--color-border);
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background-color: #888;
+    background-color: var(--color-primary);
   }
 
   ::selection {
@@ -149,7 +182,7 @@
 }
 
 .footer-link {
-  @apply flex h-8 items-center gap-2 px-2 py-1 text-sm font-medium whitespace-nowrap text-neutral-200;
+  @apply text-fg flex h-8 items-center gap-2 px-2 py-1 text-sm font-medium whitespace-nowrap;
   @apply hover:text-primary transition-colors;
 }
 
@@ -162,7 +195,15 @@
 }
 
 .text-gradient {
-  @apply bg-white/80 bg-gradient-to-r from-white to-neutral-400 bg-clip-text text-transparent;
+  @apply bg-gradient-to-r bg-clip-text text-transparent;
+}
+
+.light .text-gradient {
+  @apply from-gray-900 to-gray-600;
+}
+
+.dark .text-gradient {
+  @apply from-white to-neutral-400;
 }
 
 /* Line clamp utilities */

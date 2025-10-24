@@ -1,3 +1,4 @@
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import {
   IconBrandGithub,
   IconBrandLinkedin,
@@ -39,5 +40,11 @@ export const navLinks: NavLink[] = [
     icon: <IconBrandGithub className="text-fg h-full w-full" />,
     href: "https://github.com/arifrahim",
     type: "external",
+  },
+  {
+    title: "Toggle Theme",
+    icon: <ThemeToggle />,
+    href: "#",
+    type: "button",
   },
 ];
