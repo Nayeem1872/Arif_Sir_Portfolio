@@ -29,7 +29,7 @@ const HeroBadge = ({ text }: { text: string }) => {
           }}
         />
       </span>
-      <span className="bg-bg/90 relative z-[1] flex w-full items-center justify-center gap-1 rounded-full px-4 py-2 pl-2">
+      <span className="bg-card/95 border-border/20 relative z-[1] flex w-full items-center justify-center gap-1 rounded-full border px-4 py-2 pl-2 backdrop-blur-sm">
         <span className="relative transition-transform duration-500 group-hover:scale-105 group-hover:rotate-[360deg]">
           <svg
             width={18}
@@ -87,7 +87,7 @@ const HeroBadge = ({ text }: { text: string }) => {
             }}
           />
         </span>
-        <span className="ml-1.5 transform-gpu bg-gradient-to-b from-white to-white/50 bg-clip-text text-xs text-transparent transition group-hover:scale-105">
+        <span className="text-fg ml-1.5 transform-gpu text-xs font-medium transition group-hover:scale-105">
           {text}
         </span>
       </span>
