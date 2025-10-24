@@ -9,10 +9,25 @@ import { config } from "./config";
 export async function getProfile(): Promise<Profile> {
   try {
     const response = await axios.get(`${config.apiBaseUrl}/profile`);
-    return response.data;
+    return response.data.data; // Extract data from the API response structure
   } catch (error) {
     console.error("Failed to fetch profile:", error);
     throw new Error("Failed to fetch profile data");
+  }
+}
+
+export async function updateProfile(
+  profileData: Partial<Profile>,
+): Promise<Profile> {
+  try {
+    const response = await axios.put(
+      `${config.apiBaseUrl}/profile`,
+      profileData,
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error("Failed to update profile:", error);
+    throw new Error("Failed to update profile data");
   }
 }
 
