@@ -12,6 +12,7 @@ const HomePage = async () => {
   const blogs = await getBlogs();
   const services = await getServices();
   const techs = await getTech();
+  console.log("profileeee", profile);
 
   return (
     <div className="relative flex w-full flex-col items-center justify-center">

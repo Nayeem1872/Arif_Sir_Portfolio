@@ -1,12 +1,19 @@
 import { blogsData } from "@/data/blogs";
-import { profileData } from "@/data/profile";
 import { projectsData } from "@/data/projects";
 import { servicesData } from "@/data/services";
 import { technologiesData } from "@/data/technologies";
 import type { Blog, Profile, Project, Service, Technology } from "@/types/data";
+import axios from "axios";
+import { config } from "./config";
 
 export async function getProfile(): Promise<Profile> {
-  return profileData;
+  try {
+    const response = await axios.get(`${config.apiBaseUrl}/profile`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch profile:", error);
+    throw new Error("Failed to fetch profile data");
+  }
 }
 
 export async function getProjects(): Promise<Project[]> {
