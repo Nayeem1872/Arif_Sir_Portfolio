@@ -2,7 +2,7 @@
 
 import { cn } from "@/utils/cn";
 import {
-  IconBriefcase,
+  IconArticle,
   IconChartArcs,
   IconChevronLeft,
   IconChevronRight,
@@ -28,9 +28,9 @@ const sidebarItems = [
     icon: IconUser,
   },
   {
-    title: "Projects",
-    href: "/dashboard/projects",
-    icon: IconBriefcase,
+    title: "Blogs",
+    href: "/dashboard/blogs",
+    icon: IconArticle,
   },
   {
     title: "Analytics",
