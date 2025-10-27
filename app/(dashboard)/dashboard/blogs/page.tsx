@@ -1,11 +1,10 @@
 "use client";
 
 import {
+  IconCheck,
   IconEdit,
   IconExternalLink,
-  IconEye,
   IconFilter,
-  IconHeart,
   IconPlus,
   IconSearch,
   IconStar,
@@ -28,8 +27,13 @@ interface Blog {
   images: string[];
   createdAt: string;
   updatedAt: string;
-  views?: number;
-  likes?: number;
+  __v?: number;
+}
+
+interface Notification {
+  id: string;
+  type: "success" | "error";
+  message: string;
 }
 
 const API_BASE_URL =
@@ -53,6 +57,23 @@ const BlogsPage = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingBlog, setEditingBlog] = useState<Blog | null>(null);
   const [updating, setUpdating] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  // Notification functions
+  const showNotification = (type: "success" | "error", message: string) => {
+    const id = Date.now().toString();
+    const notification: Notification = { id, type, message };
+    setNotifications((prev) => [...prev, notification]);
+
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+    }, 5000);
+  };
+
+  const removeNotification = (id: string) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+  };
 
   // Fetch blogs with filters
   const fetchBlogs = useCallback(async () => {
@@ -71,7 +92,9 @@ const BlogsPage = () => {
       if (featuredFilter !== null)
         params.append("isFeatured", featuredFilter.toString());
 
-      const response = await axios.get(`${API_BASE_URL}?${params}`);
+      const response = await axios.get(
+        `${API_BASE_URL}?${params}&includeContent=true`,
+      );
       setBlogs(response.data.posts || []);
       setTotalPages(response.data.pagination?.totalPages || 1);
     } catch (err) {
@@ -120,6 +143,15 @@ const BlogsPage = () => {
         formData.append("tags", tagsString);
       }
 
+      // Handle boolean fields - convert checkbox values to proper booleans
+      const published = formData.get("published") === "on";
+      const isFeatured = formData.get("isFeatured") === "on";
+
+      formData.delete("published");
+      formData.delete("isFeatured");
+      formData.append("published", published.toString());
+      formData.append("isFeatured", isFeatured.toString());
+
       const response = await axios.post(API_BASE_URL, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -132,9 +164,11 @@ const BlogsPage = () => {
         fetchBlogs(); // Refresh the list
         // Reset form
         (e.target as HTMLFormElement).reset();
+        showNotification("success", "Blog post created successfully!");
       }
     } catch (err) {
       setError("Failed to create blog post");
+      showNotification("error", "Failed to create blog post");
       console.error("Error creating blog:", err);
     } finally {
       setCreating(false);
@@ -164,6 +198,15 @@ const BlogsPage = () => {
         formData.append("tags", tagsString);
       }
 
+      // Handle boolean fields - convert checkbox values to proper booleans
+      const published = formData.get("published") === "on";
+      const isFeatured = formData.get("isFeatured") === "on";
+
+      formData.delete("published");
+      formData.delete("isFeatured");
+      formData.append("published", published.toString());
+      formData.append("isFeatured", isFeatured.toString());
+
       const response = await axios.put(
         `${API_BASE_URL}/${editingBlog._id}`,
         formData,
@@ -178,9 +221,11 @@ const BlogsPage = () => {
         setShowEditModal(false);
         setEditingBlog(null);
         fetchBlogs(); // Refresh the list
+        showNotification("success", "Blog post updated successfully!");
       }
     } catch (err) {
       setError("Failed to update blog post");
+      showNotification("error", "Failed to update blog post");
       console.error("Error updating blog:", err);
     } finally {
       setUpdating(false);
@@ -194,8 +239,10 @@ const BlogsPage = () => {
     try {
       await axios.delete(`${API_BASE_URL}/${id}`);
       fetchBlogs(); // Refresh the list
+      showNotification("success", "Blog post deleted successfully!");
     } catch (err) {
       setError("Failed to delete blog");
+      showNotification("error", "Failed to delete blog post");
       console.error("Error deleting blog:", err);
     }
   };
@@ -227,6 +274,37 @@ const BlogsPage = () => {
 
   return (
     <div className="space-y-6">
+      {/* Notifications */}
+      {notifications.length > 0 && (
+        <div className="fixed top-4 right-4 z-50 space-y-2">
+          {notifications.map((notification) => (
+            <div
+              key={notification.id}
+              className={`flex items-center gap-3 rounded-lg border px-4 py-3 shadow-lg transition-all duration-300 ${
+                notification.type === "success"
+                  ? "border-green-200 bg-green-50 text-green-800 dark:border-green-800 dark:bg-green-900/30 dark:text-green-400"
+                  : "border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-900/30 dark:text-red-400"
+              }`}
+            >
+              {notification.type === "success" ? (
+                <IconCheck size={20} className="flex-shrink-0" />
+              ) : (
+                <IconX size={20} className="flex-shrink-0" />
+              )}
+              <span className="text-sm font-medium">
+                {notification.message}
+              </span>
+              <button
+                onClick={() => removeNotification(notification.id)}
+                className="ml-auto flex-shrink-0 rounded-full p-1 hover:bg-black/10 dark:hover:bg-white/10"
+              >
+                <IconX size={16} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-fg text-3xl font-bold">Blog Posts</h1>
@@ -340,100 +418,100 @@ const BlogsPage = () => {
         {blogs.map((blog) => (
           <div
             key={blog._id}
-            className="bg-card border-border hover:border-primary/20 relative rounded-lg border p-6 transition-colors"
+            className="bg-card border-border hover:border-primary/30 relative overflow-hidden rounded-xl border p-0 transition-all duration-200 hover:shadow-lg"
           >
             {/* Featured Badge */}
             {blog.isFeatured && (
-              <div className="absolute top-4 right-4">
-                <IconStar
-                  size={16}
-                  className="text-yellow-500"
-                  fill="currentColor"
+              <div className="absolute top-3 right-3 z-10">
+                <div className="rounded-full bg-yellow-500 p-1.5 text-white shadow-md">
+                  <IconStar size={14} fill="currentColor" />
+                </div>
+              </div>
+            )}
+
+            {/* Blog Image */}
+            {blog.images && blog.images.length > 0 && (
+              <div className="relative h-48 w-full">
+                <img
+                  src={`http://localhost:8000${blog.images[0]}`}
+                  alt={blog.title}
+                  className="h-full w-full object-cover"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
               </div>
             )}
 
-            <div className="mb-4 flex items-start justify-between">
-              <h3 className="text-fg line-clamp-2 text-lg font-semibold">
-                {blog.title}
-              </h3>
-              <span
-                className={`ml-2 rounded-full px-2 py-1 text-xs font-medium ${
-                  blog.published
-                    ? "bg-primary/20 text-primary"
-                    : "bg-yellow-500/20 text-yellow-400"
-                }`}
-              >
-                {blog.published ? "Published" : "Draft"}
-              </span>
-            </div>
-
-            <p className="text-text-secondary mb-3 line-clamp-3 text-sm">
-              {blog.excerpt}
-            </p>
-
-            {/* Meta Info */}
-            <div className="mb-3 space-y-1">
-              <p className="text-text-muted text-xs">By {blog.author}</p>
-              <p className="text-text-muted text-xs">
-                {new Date(blog.createdAt).toLocaleDateString()}
-              </p>
-              <p className="text-primary text-xs font-medium">
-                {blog.category}
-              </p>
-            </div>
-
-            {/* Tags */}
-            {blog.tags && blog.tags.length > 0 && (
-              <div className="mb-4 flex flex-wrap gap-1">
-                {blog.tags.slice(0, 3).map((tag, index) => (
-                  <span
-                    key={index}
-                    className="bg-secondary/40 text-text-secondary rounded px-2 py-1 text-xs"
-                  >
-                    {tag}
-                  </span>
-                ))}
-                {blog.tags.length > 3 && (
-                  <span className="text-text-muted text-xs">
-                    +{blog.tags.length - 3} more
-                  </span>
-                )}
+            <div className="p-6">
+              <div className="mb-3 flex items-start justify-between">
+                <h3 className="text-fg line-clamp-2 text-lg leading-tight font-semibold">
+                  {blog.title}
+                </h3>
+                <span
+                  className={`ml-2 rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap ${
+                    blog.isFeatured
+                      ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                      : "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400"
+                  }`}
+                >
+                  Featured: {blog.isFeatured ? "True" : "False"}
+                </span>
               </div>
-            )}
 
-            {/* Stats */}
-            <div className="text-text-secondary mb-4 flex items-center justify-between text-sm">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1">
-                  <IconEye size={16} />
-                  <span>{blog.views || 0}</span>
+              <p className="text-text-secondary mb-4 line-clamp-2 text-sm leading-relaxed">
+                {blog.excerpt}
+              </p>
+
+              {/* Meta Info */}
+              <div className="mb-4 space-y-1">
+                <div className="flex items-center justify-between">
+                  <p className="text-text-muted text-xs">By {blog.author}</p>
+                  <p className="text-text-muted text-xs">
+                    {new Date(blog.createdAt).toLocaleDateString()}
+                  </p>
                 </div>
-                <div className="flex items-center gap-1">
-                  <IconHeart size={16} />
-                  <span>{blog.likes || 0}</span>
-                </div>
+                <p className="text-primary text-sm font-medium capitalize">
+                  {blog.category}
+                </p>
               </div>
-            </div>
 
-            {/* Actions */}
-            <div className="flex gap-2">
-              <button
-                onClick={() => openEditModal(blog)}
-                className="bg-secondary/40 hover:bg-secondary/60 text-fg flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors"
-              >
-                <IconEdit size={16} className="mr-1 inline" />
-                Edit
-              </button>
-              <button className="border-border hover:border-primary/50 text-text-secondary hover:text-primary rounded-md border px-3 py-2 text-sm font-medium transition-colors">
-                <IconExternalLink size={16} />
-              </button>
-              <button
-                onClick={() => deleteBlog(blog._id)}
-                className="rounded-md border border-red-200 px-3 py-2 text-sm font-medium text-red-600 transition-colors hover:border-red-300 hover:text-red-700"
-              >
-                <IconTrash size={16} />
-              </button>
+              {/* Tags */}
+              {blog.tags && blog.tags.length > 0 && (
+                <div className="mb-4 flex flex-wrap gap-1.5">
+                  {blog.tags.slice(0, 3).map((tag, index) => (
+                    <span
+                      key={index}
+                      className="bg-primary/10 text-primary rounded-full px-2.5 py-1 text-xs font-medium"
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                  {blog.tags.length > 3 && (
+                    <span className="text-text-muted self-center text-xs">
+                      +{blog.tags.length - 3} more
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => openEditModal(blog)}
+                  className="bg-primary/10 hover:bg-primary/20 text-primary flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 hover:scale-105"
+                >
+                  <IconEdit size={16} className="mr-1.5 inline" />
+                  Edit
+                </button>
+                <button className="border-border hover:border-primary/50 text-text-secondary hover:text-primary rounded-lg border px-3 py-2 text-sm font-medium transition-all duration-200 hover:scale-105">
+                  <IconExternalLink size={16} />
+                </button>
+                <button
+                  onClick={() => deleteBlog(blog._id)}
+                  className="rounded-lg border border-red-200 px-3 py-2 text-sm font-medium text-red-600 transition-all duration-200 hover:scale-105 hover:border-red-300 hover:text-red-700"
+                >
+                  <IconTrash size={16} />
+                </button>
+              </div>
             </div>
           </div>
         ))}
@@ -481,8 +559,14 @@ const BlogsPage = () => {
 
       {/* Create Blog Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-card border-border max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg border p-6 shadow-xl">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          onClick={() => setShowCreateModal(false)}
+        >
+          <div
+            className="bg-card border-border max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg border p-6 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-fg text-xl font-semibold">
                 Create New Blog Post
@@ -633,8 +717,17 @@ const BlogsPage = () => {
 
       {/* Edit Blog Modal */}
       {showEditModal && editingBlog && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-card border-border max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg border p-6 shadow-xl">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          onClick={() => {
+            setShowEditModal(false);
+            setEditingBlog(null);
+          }}
+        >
+          <div
+            className="bg-card border-border max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg border p-6 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-fg text-xl font-semibold">Edit Blog Post</h2>
               <button
@@ -744,7 +837,7 @@ const BlogsPage = () => {
                     {editingBlog.images.map((image, index) => (
                       <div key={index} className="relative">
                         <img
-                          src={image}
+                          src={`http://localhost:8000${image}`}
                           alt={`Blog image ${index + 1}`}
                           className="h-20 w-20 rounded object-cover"
                         />
