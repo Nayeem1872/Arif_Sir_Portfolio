@@ -94,25 +94,23 @@ export interface Technology {
 
 export interface Blog {
   _id: string;
-  _updatedAt: string;
   title: string;
-  slug: string;
+  content?: string;
   excerpt: string;
-  content: Array<{
-    _type: string;
-    children: Array<{
-      _type: string;
-      text: string;
-    }>;
-  }>;
-  publishedAt: string;
-  readTime: string;
+  author: string;
   category: string;
   tags: string[];
-  featured: boolean;
-  image: string;
-  author: {
-    name: string;
-    avatar: string;
-  };
+  published: boolean;
+  isFeatured: boolean;
+  images: string[];
+  createdAt: string;
+  updatedAt: string;
+  __v?: number;
+  // Legacy fields for backward compatibility
+  _updatedAt?: string;
+  slug?: string;
+  publishedAt?: string;
+  readTime?: string;
+  featured?: boolean;
+  image?: string;
 }

@@ -13,6 +13,12 @@ const nextConfig: NextConfig = {
       {
         hostname: "images.unsplash.com",
       },
+      {
+        hostname: "localhost",
+      },
+      {
+        hostname: "arif-sir-blog-backend.onrender.com",
+      },
     ],
   },
 };

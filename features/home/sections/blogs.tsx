@@ -61,14 +61,12 @@ const BlogSection = ({ blogs }: { blogs: Blog[] }) => {
         viewport={{ once: true }}
         transition={{ duration: 0.6, delay: 0.3 }}
       >
-        <Link href="/blogs">
-          <button
-            type="button"
-            className="outline-button group mt-8 rounded-full"
-          >
-            <IconTrendingUp className="transition-transform group-hover:scale-110" />
-            <span>{homepage.blogCta}</span>
-          </button>
+        <Link
+          href="/blogs"
+          className="outline-button group mt-8 inline-flex items-center gap-2 rounded-full px-6 py-3 transition-all duration-200 hover:scale-105"
+        >
+          <IconTrendingUp className="transition-transform group-hover:scale-110" />
+          <span>{homepage.blogCta}</span>
         </Link>
       </motion.div>
     </section>

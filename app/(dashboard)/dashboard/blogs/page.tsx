@@ -37,7 +37,10 @@ interface Notification {
 }
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_BLOG_API_BASE_URL || "http://localhost:8000/api/blog";
+  process.env.NEXT_PUBLIC_BLOG_API_BASE_URL ||
+  (process.env.NODE_ENV === "production"
+    ? "https://arif-sir-blog-backend.onrender.com/api/blog"
+    : "http://localhost:8000/api/blog");
 
 const BlogsPage = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
@@ -432,10 +435,17 @@ const BlogsPage = () => {
             {/* Blog Image */}
             {blog.images && blog.images.length > 0 && (
               <div className="relative h-48 w-full">
-                <img
-                  src={`http://localhost:8000${blog.images[0]}`}
-                  alt={blog.title}
-                  className="h-full w-full object-cover"
+                <div
+                  className="h-full w-full bg-cover bg-center"
+                  style={{
+                    backgroundImage: `url(${
+                      process.env.NODE_ENV === "production"
+                        ? "https://arif-sir-blog-backend.onrender.com"
+                        : "http://localhost:8000"
+                    }${blog.images[0]})`,
+                  }}
+                  role="img"
+                  aria-label={blog.title}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
               </div>
@@ -836,10 +846,17 @@ const BlogsPage = () => {
                   <div className="flex flex-wrap gap-2">
                     {editingBlog.images.map((image, index) => (
                       <div key={index} className="relative">
-                        <img
-                          src={`http://localhost:8000${image}`}
-                          alt={`Blog image ${index + 1}`}
-                          className="h-20 w-20 rounded object-cover"
+                        <div
+                          className="h-20 w-20 rounded bg-cover bg-center"
+                          style={{
+                            backgroundImage: `url(${
+                              process.env.NODE_ENV === "production"
+                                ? "https://arif-sir-blog-backend.onrender.com"
+                                : "http://localhost:8000"
+                            }${image})`,
+                          }}
+                          role="img"
+                          aria-label={`Blog image ${index + 1}`}
                         />
                         <button
                           type="button"

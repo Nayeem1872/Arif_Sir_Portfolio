@@ -12,7 +12,26 @@ export async function getProfile(): Promise<Profile> {
     return response.data.data; // Extract data from the API response structure
   } catch (error) {
     console.error("Failed to fetch profile:", error);
-    throw new Error("Failed to fetch profile data");
+    // Return default profile data as fallback
+    return {
+      name: "Arif Rahim",
+      tagline: "Software Engineer & DevOps Expert",
+      bio: "Passionate software engineer with expertise in full-stack development and DevOps practices.",
+      about:
+        "I'm a dedicated software engineer with a passion for creating efficient, scalable solutions.",
+      location: "Location",
+      email: "contact@example.com",
+      resumeURL: "",
+      photo: { url: "", label: "Profile Photo", alt: "Arif Rahim" },
+      socials: {},
+      metrics: [
+        { label: "Years Experience", value: "5+" },
+        { label: "Projects Completed", value: "50+" },
+        { label: "Technologies", value: "20+" },
+        { label: "Happy Clients", value: "30+" },
+      ],
+      experience: [],
+    };
   }
 }
 
@@ -56,10 +75,24 @@ export async function getProjectSlugs(): Promise<string[]> {
 }
 
 export async function getBlogs(): Promise<Blog[]> {
-  return blogsData.sort(
-    (a, b) =>
-      new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
-  );
+  try {
+    const response = await axios.get(
+      `${BLOG_API_BASE_URL}?isFeatured=true&includeContent=true`,
+    );
+    console.log("Featured blogs API response:", response.data);
+    console.log("Featured blogs posts:", response.data.posts);
+    console.log("Featured blogs pagination:", response.data.pagination);
+
+    return response.data.posts || [];
+  } catch (error) {
+    console.error("Failed to fetch featured blogs from API:", error);
+    // Fallback to local data if API fails
+    return blogsData.sort(
+      (a, b) =>
+        new Date(b.publishedAt || b.createdAt || new Date()).getTime() -
+        new Date(a.publishedAt || a.createdAt || new Date()).getTime(),
+    );
+  }
 }
 
 export async function getBlogDetail({
@@ -67,16 +100,38 @@ export async function getBlogDetail({
 }: {
   slug: string;
 }): Promise<Blog | null> {
-  return blogsData.find((blog) => blog.slug === slug) || null;
+  return (
+    blogsData.find((blog) => {
+      const blogSlug =
+        blog.slug ||
+        blog.title
+          .toLowerCase()
+          .replace(/\s+/g, "-")
+          .replace(/[^a-z0-9-]/g, "");
+      return blogSlug === slug;
+    }) || null
+  );
 }
 
 export async function getBlogSlugs(): Promise<string[]> {
-  return blogsData.map((blog) => blog.slug);
+  return blogsData
+    .map(
+      (blog) =>
+        blog.slug ||
+        blog.title
+          .toLowerCase()
+          .replace(/\s+/g, "-")
+          .replace(/[^a-z0-9-]/g, ""),
+    )
+    .filter((slug): slug is string => slug !== undefined);
 }
 
 // Blog API functions for dashboard
 const BLOG_API_BASE_URL =
-  process.env.NEXT_PUBLIC_BLOG_API_BASE_URL || "http://localhost:8000/api/blog";
+  process.env.NEXT_PUBLIC_BLOG_API_BASE_URL ||
+  (process.env.NODE_ENV === "production"
+    ? "https://arif-sir-blog-backend.onrender.com/api/blog"
+    : "http://localhost:8000/api/blog");
 
 export async function fetchBlogsFromAPI(params: {
   page?: number;

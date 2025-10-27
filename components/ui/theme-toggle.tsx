@@ -3,8 +3,24 @@
 import { useTheme } from "@/components/providers/theme-provider";
 import { IconMoon, IconSun } from "@tabler/icons-react";
 import { motion } from "motion/react";
+import { useEffect, useState } from "react";
 
 export function ThemeToggle() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Don't render anything on the server
+  if (!mounted) {
+    return (
+      <div className="flex h-8 w-8 items-center justify-center rounded-full">
+        <div className="h-4 w-4" />
+      </div>
+    );
+  }
+
   const { theme, toggleTheme } = useTheme();
 
   return (

@@ -10,8 +10,8 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
-  const [experiences, setExperiences] = useState<any[]>([]);
-  const [metrics, setMetrics] = useState<any[]>([]);
+  const [experiences, setExperiences] = useState<Profile["experience"]>([]);
+  const [metrics, setMetrics] = useState<Profile["metrics"]>([]);
 
   useEffect(() => {
     const fetchProfile = async () => {
