@@ -54,10 +54,11 @@ const BlogCard = ({ blog }: { blog: Blog }) => {
   // Check if featured (use isFeatured for new API, featured for legacy)
   const isFeatured = blog.isFeatured || blog.featured;
 
-  // Generate slug from title if not available
+  // Generate slug from title if not available, fallback to ID
   const getSlug = () => {
     return (
       blog.slug ||
+      blog._id ||
       blog.title
         .toLowerCase()
         .replace(/\s+/g, "-")

@@ -1,10 +1,31 @@
+"use client";
+
 import { navbarContent } from "@/config/content/navbar";
-import { getProfile } from "@/lib/queries";
+import { config } from "@/lib/config";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import DownloadButton from "../common/download-button";
 
-const Navbar = async () => {
-  const profile = await getProfile();
+const Navbar = () => {
+  const [hasCV, setHasCV] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Check if CV exists
+        const cvResponse = await fetch(`${config.apiBaseUrl}/cv`);
+        setHasCV(cvResponse.ok);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleDownloadCV = () => {
+    window.open(`${config.apiBaseUrl}/cv/download`, "_blank");
+  };
 
   return (
     <div className="z-30 w-full bg-transparent p-1">
@@ -12,16 +33,11 @@ const Navbar = async () => {
         <Link href="/" className="group flex items-center">
           {navbarContent.logo}
         </Link>
-        {profile?.resumeURL && (
+        {hasCV && (
           <div className="absolute right-0 flex items-center gap-4 sm:w-[200px]">
-            <a
-              href={`${profile.resumeURL}?dl=${
-                profile?.name ? profile.name.replaceAll(" ", "_") : "AWESOME"
-              }_CV.pdf`}
-              className=""
-            >
+            <button onClick={handleDownloadCV} className="">
               <DownloadButton text={navbarContent.cta.text} />
-            </a>
+            </button>
           </div>
         )}
       </div>
