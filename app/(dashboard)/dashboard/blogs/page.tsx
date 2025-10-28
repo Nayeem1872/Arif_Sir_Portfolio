@@ -12,7 +12,24 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import axios from "axios";
+import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
+
+// Dynamically import our custom RichTextEditor to avoid SSR issues
+const RichTextEditor = dynamic(
+  () => import("@/components/ui/rich-text-editor"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-48 items-center justify-center rounded-md border bg-gray-100">
+        Loading editor...
+      </div>
+    ),
+  },
+);
+
+// Import Quill styles
+import "quill/dist/quill.snow.css";
 
 interface Blog {
   _id: string;
@@ -61,6 +78,8 @@ const BlogsPage = () => {
   const [editingBlog, setEditingBlog] = useState<Blog | null>(null);
   const [updating, setUpdating] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [createContent, setCreateContent] = useState("");
+  const [editContent, setEditContent] = useState("");
 
   // Notification functions
   const showNotification = (type: "success" | "error", message: string) => {
@@ -136,6 +155,13 @@ const BlogsPage = () => {
     setCreating(true);
     setError("");
 
+    // Validate content
+    if (!createContent.trim() || createContent === "<p><br></p>") {
+      setError("Content is required");
+      setCreating(false);
+      return;
+    }
+
     try {
       const formData = new FormData(e.currentTarget);
 
@@ -146,13 +172,15 @@ const BlogsPage = () => {
         formData.append("tags", tagsString);
       }
 
+      // Handle content from Quill editor
+      formData.delete("content");
+      formData.append("content", createContent);
+
       // Handle boolean fields - convert checkbox values to proper booleans
-      const published = formData.get("published") === "on";
       const isFeatured = formData.get("isFeatured") === "on";
 
-      formData.delete("published");
       formData.delete("isFeatured");
-      formData.append("published", published.toString());
+      formData.append("published", "true"); // Default to published
       formData.append("isFeatured", isFeatured.toString());
 
       const response = await axios.post(API_BASE_URL, formData, {
@@ -164,6 +192,7 @@ const BlogsPage = () => {
       // Check if creation was successful (adjust based on your API response)
       if (response.data) {
         setShowCreateModal(false);
+        setCreateContent(""); // Reset Quill content
         fetchBlogs(); // Refresh the list
         // Reset form
         (e.target as HTMLFormElement).reset();
@@ -181,6 +210,7 @@ const BlogsPage = () => {
   // Edit blog
   const openEditModal = (blog: Blog) => {
     setEditingBlog(blog);
+    setEditContent(blog.content || "");
     setShowEditModal(true);
   };
 
@@ -190,6 +220,13 @@ const BlogsPage = () => {
 
     setUpdating(true);
     setError("");
+
+    // Validate content
+    if (!editContent.trim() || editContent === "<p><br></p>") {
+      setError("Content is required");
+      setUpdating(false);
+      return;
+    }
 
     try {
       const formData = new FormData(e.currentTarget);
@@ -201,13 +238,15 @@ const BlogsPage = () => {
         formData.append("tags", tagsString);
       }
 
+      // Handle content from Quill editor
+      formData.delete("content");
+      formData.append("content", editContent);
+
       // Handle boolean fields - convert checkbox values to proper booleans
-      const published = formData.get("published") === "on";
       const isFeatured = formData.get("isFeatured") === "on";
 
-      formData.delete("published");
       formData.delete("isFeatured");
-      formData.append("published", published.toString());
+      formData.append("published", "true"); // Default to published
       formData.append("isFeatured", isFeatured.toString());
 
       const response = await axios.put(
@@ -223,6 +262,7 @@ const BlogsPage = () => {
       if (response.data) {
         setShowEditModal(false);
         setEditingBlog(null);
+        setEditContent(""); // Reset Quill content
         fetchBlogs(); // Refresh the list
         showNotification("success", "Blog post updated successfully!");
       }
@@ -645,26 +685,11 @@ const BlogsPage = () => {
 
               <div>
                 <label className="text-fg mb-2 block text-sm font-medium">
-                  Excerpt *
-                </label>
-                <textarea
-                  name="excerpt"
-                  required
-                  rows={3}
-                  className="bg-secondary/40 border-border text-fg focus:ring-primary/50 w-full rounded-md border px-3 py-2 focus:ring-2 focus:outline-none"
-                  placeholder="Brief description of the blog post"
-                />
-              </div>
-
-              <div>
-                <label className="text-fg mb-2 block text-sm font-medium">
                   Content *
                 </label>
-                <textarea
-                  name="content"
-                  required
-                  rows={8}
-                  className="bg-secondary/40 border-border text-fg focus:ring-primary/50 w-full rounded-md border px-3 py-2 focus:ring-2 focus:outline-none"
+                <RichTextEditor
+                  value={createContent}
+                  onChange={setCreateContent}
                   placeholder="Write your blog content here..."
                 />
               </div>
@@ -686,14 +711,6 @@ const BlogsPage = () => {
               </div>
 
               <div className="flex items-center gap-4">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    name="published"
-                    className="text-primary focus:ring-primary/50 border-border rounded"
-                  />
-                  <span className="text-fg text-sm">Publish immediately</span>
-                </label>
                 <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -811,28 +828,11 @@ const BlogsPage = () => {
 
               <div>
                 <label className="text-fg mb-2 block text-sm font-medium">
-                  Excerpt *
-                </label>
-                <textarea
-                  name="excerpt"
-                  required
-                  rows={3}
-                  defaultValue={editingBlog.excerpt}
-                  className="bg-secondary/40 border-border text-fg focus:ring-primary/50 w-full rounded-md border px-3 py-2 focus:ring-2 focus:outline-none"
-                  placeholder="Brief description of the blog post"
-                />
-              </div>
-
-              <div>
-                <label className="text-fg mb-2 block text-sm font-medium">
                   Content *
                 </label>
-                <textarea
-                  name="content"
-                  required
-                  rows={8}
-                  defaultValue={editingBlog.content}
-                  className="bg-secondary/40 border-border text-fg focus:ring-primary/50 w-full rounded-md border px-3 py-2 focus:ring-2 focus:outline-none"
+                <RichTextEditor
+                  value={editContent}
+                  onChange={setEditContent}
                   placeholder="Write your blog content here..."
                 />
               </div>
@@ -897,15 +897,6 @@ const BlogsPage = () => {
               </div>
 
               <div className="flex items-center gap-4">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    name="published"
-                    defaultChecked={editingBlog.published}
-                    className="text-primary focus:ring-primary/50 border-border rounded"
-                  />
-                  <span className="text-fg text-sm">Published</span>
-                </label>
                 <label className="flex items-center gap-2">
                   <input
                     type="checkbox"

@@ -84,14 +84,14 @@ const BlogsPage = () => {
   }
 
   return (
-    <div className="min-h-screen py-16 sm:py-20">
+    <div className="py-16 sm:py-20">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="bg-primary/5 absolute -top-40 -right-40 h-80 w-80 rounded-full blur-3xl" />
         <div className="bg-primary/10 absolute -bottom-40 -left-40 h-80 w-80 rounded-full blur-3xl" />
       </div>
 
-      <div className="max-w-[1400px] px-6 xl:px-8">
+      <div className="relative mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 xl:px-12">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -134,7 +134,7 @@ const BlogsPage = () => {
         {/* Blog Grid */}
         {blogs.length > 0 ? (
           <>
-            <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="mb-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3">
               {blogs.map((blog, index) => (
                 <motion.div
                   key={blog._id}

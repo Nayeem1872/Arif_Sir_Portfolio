@@ -81,7 +81,7 @@ const BlogCard = ({ blog }: { blog: Blog }) => {
       )}
 
       {/* Image Container */}
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className="relative aspect-[16/10] overflow-hidden">
         <Image
           src={getImageUrl()}
           alt={blog.title}
@@ -113,9 +113,9 @@ const BlogCard = ({ blog }: { blog: Blog }) => {
       </div>
 
       {/* Content */}
-      <div className="p-4">
+      <div className="p-8">
         {/* Meta Information */}
-        <div className="text-fg/60 mb-2 flex items-center gap-3 text-xs">
+        <div className="text-fg/60 mb-4 flex items-center gap-4 text-base">
           <div className="flex items-center gap-1">
             <IconCalendar size={14} />
             <span>{formatDate(getPublishedDate())}</span>
@@ -127,38 +127,38 @@ const BlogCard = ({ blog }: { blog: Blog }) => {
         </div>
 
         {/* Title */}
-        <h3 className="text-fg group-hover:text-primary mb-2 line-clamp-2 text-lg font-bold transition-colors">
+        <h3 className="text-fg group-hover:text-primary mb-4 line-clamp-2 text-2xl font-bold transition-colors">
           <Link href={`/blogs/${getSlug()}`}>{blog.title}</Link>
         </h3>
 
         {/* Excerpt */}
-        <p className="text-fg/70 mb-3 line-clamp-2 text-sm leading-relaxed">
+        <p className="text-fg/70 mb-6 line-clamp-4 text-lg leading-relaxed">
           {blog.excerpt}
         </p>
 
         {/* Tags */}
-        <div className="mb-3 flex flex-wrap gap-1">
+        <div className="mb-4 flex flex-wrap gap-2">
           {blog.tags.slice(0, 2).map((tag, index) => (
             <span
               key={index}
-              className="bg-primary/20 text-primary rounded px-2 py-1 text-xs"
+              className="bg-primary/20 text-primary rounded-md px-3 py-1.5 text-sm"
             >
               #{tag}
             </span>
           ))}
           {blog.tags.length > 2 && (
-            <span className="bg-secondary text-fg/60 rounded px-2 py-1 text-xs">
+            <span className="bg-secondary text-fg/60 rounded-md px-3 py-1.5 text-sm">
               +{blog.tags.length - 2}
             </span>
           )}
         </div>
 
         {/* Author */}
-        <div className="border-primary/20 flex items-center gap-2 border-t pt-3">
-          <div className="bg-primary/20 text-primary flex h-6 w-6 items-center justify-center rounded-full">
-            <IconUser size={14} />
+        <div className="border-primary/20 flex items-center gap-3 border-t pt-4">
+          <div className="bg-primary/20 text-primary flex h-8 w-8 items-center justify-center rounded-full">
+            <IconUser size={16} />
           </div>
-          <div className="text-fg/80 flex items-center gap-1 text-xs">
+          <div className="text-fg/80 flex items-center gap-1 text-sm">
             <span>{blog.author}</span>
           </div>
         </div>

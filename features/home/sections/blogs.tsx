@@ -5,10 +5,18 @@ import { homepage } from "@/config/content/pages";
 import type { Blog } from "@/types/data";
 import { IconBookmark, IconTrendingUp } from "@tabler/icons-react";
 import { motion } from "motion/react";
-import Link from "next/link";
+
+import { useRouter } from "next/navigation";
 import BlogCard from "../components/blog-card";
 
 const BlogSection = ({ blogs }: { blogs: Blog[] }) => {
+  const router = useRouter();
+
+  const handleBlogsClick = () => {
+    console.log("Button clicked, navigating to /blogs");
+    router.push("/blogs");
+  };
+
   return (
     <section className="relative flex w-full flex-col items-center py-16 sm:py-20">
       {/* Background Elements */}
@@ -60,14 +68,16 @@ const BlogSection = ({ blogs }: { blogs: Blog[] }) => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6, delay: 0.3 }}
+        className="relative z-10"
       >
-        <Link
-          href="/blogs"
-          className="outline-button group mt-8 inline-flex items-center gap-2 rounded-full px-6 py-3 transition-all duration-200 hover:scale-105"
+        <button
+          onClick={handleBlogsClick}
+          className="outline-button group mt-8 inline-flex cursor-pointer items-center gap-2 rounded-full px-6 py-3 transition-all duration-200 hover:scale-105"
+          type="button"
         >
           <IconTrendingUp className="transition-transform group-hover:scale-110" />
           <span>{homepage.blogCta}</span>
-        </Link>
+        </button>
       </motion.div>
     </section>
   );
