@@ -103,6 +103,7 @@ export interface Blog {
   published: boolean;
   isFeatured: boolean;
   images: string[];
+  sourceCode?: string;
   createdAt: string;
   updatedAt: string;
   __v?: number;

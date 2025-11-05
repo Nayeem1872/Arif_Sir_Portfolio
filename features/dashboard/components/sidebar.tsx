@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/utils/cn";
 import {
   IconArticle,
@@ -52,6 +53,7 @@ const sidebarItems = [
 const DashboardSidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
+  const { logout } = useAuth();
 
   return (
     <div
@@ -110,7 +112,10 @@ const DashboardSidebar = () => {
 
       {/* Footer */}
       <div className="border-t border-gray-200 p-4 dark:border-gray-700">
-        <button className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-100">
+        <button
+          onClick={logout}
+          className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-100"
+        >
           <IconLogout size={20} />
           {!collapsed && <span className="font-medium">Logout</span>}
         </button>

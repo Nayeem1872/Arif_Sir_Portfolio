@@ -4,6 +4,7 @@ import {
   IconArrowLeft,
   IconCalendar,
   IconClock,
+  IconExternalLink,
   IconUser,
 } from "@tabler/icons-react";
 import axios from "axios";
@@ -21,6 +22,7 @@ interface Blog {
   category: string;
   tags: string[];
   images: string[];
+  sourceCode?: string;
   isFeatured: boolean;
   createdAt: string;
   updatedAt: string;
@@ -263,12 +265,33 @@ const BlogDetailsPage = () => {
           `}</style>
         </motion.div>
 
+        {/* Source Code Link */}
+        {blog.sourceCode && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="border-primary/20 mb-8 border-t pt-6"
+          >
+            <h3 className="text-fg mb-3 text-lg font-semibold">Source Code</h3>
+            <a
+              href={blog.sourceCode}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-primary/10 hover:bg-primary/20 text-primary border-primary/30 inline-flex items-center gap-2 rounded-lg border px-4 py-3 font-medium transition-all duration-200 hover:scale-105"
+            >
+              <IconExternalLink size={20} />
+              View Source Code
+            </a>
+          </motion.div>
+        )}
+
         {/* Tags */}
         {blog.tags && blog.tags.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
             className="border-primary/20 mb-8 border-t pt-6"
           >
             <h3 className="text-fg mb-3 text-lg font-semibold">Tags</h3>
@@ -290,7 +313,7 @@ const BlogDetailsPage = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
             className="border-primary/20 mb-8 border-t pt-6"
           >
             <h3 className="text-fg mb-4 text-lg font-semibold">Gallery</h3>
@@ -314,7 +337,7 @@ const BlogDetailsPage = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
+          transition={{ duration: 0.6, delay: 0.9 }}
           className="text-center"
         >
           <Link

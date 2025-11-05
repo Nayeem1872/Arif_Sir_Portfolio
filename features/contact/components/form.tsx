@@ -1,11 +1,11 @@
 "use client";
 
 import { HoverBorderButton } from "@/components/ui/hover-button";
-import { sendEmail } from "@/utils/email";
 import {
   IconArrowLeft,
   IconAt,
   IconBellRinging,
+  IconCheck,
   IconSend,
   IconUserCircle,
 } from "@tabler/icons-react";
@@ -17,6 +17,7 @@ const ContactForm = () => {
   const [current, setCurrent] = useState("name");
   const [status, setStatus] = useState("idle");
   const [notification, setNotification] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -25,12 +26,14 @@ const ContactForm = () => {
 
   useEffect(() => {
     if (status === "success") {
+      setShowSuccessModal(true);
       const timer = setTimeout(() => {
         setStatus("idle");
         setCurrent("name");
         setForm({ name: "", email: "", message: "" });
         setNotification("");
-      }, 3000);
+        setShowSuccessModal(false);
+      }, 5000);
       return () => clearTimeout(timer);
     }
   }, [status]);
@@ -69,19 +72,66 @@ const ContactForm = () => {
       setStatus("submitting");
 
       try {
-        await sendEmail(form);
-        setStatus("success");
-        setForm((form) => ({ ...form, message: "" }));
-        setNotification("Great! I've got your message.");
-      } catch (error: any) {
+        const apiUrl =
+          process.env.NODE_ENV === "production"
+            ? "https://arif-sir-blog-backend.onrender.com/api/contact"
+            : "http://localhost:8000/api/contact";
+
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: form.name,
+            email: form.email,
+            message: form.message,
+          }),
+        });
+
+        if (response.ok) {
+          setStatus("success");
+          setNotification("Great! I've got your message.");
+        } else {
+          setStatus("error");
+          setNotification("Something went wrong! Please try again.");
+        }
+      } catch (error: unknown) {
         setStatus("error");
-        setNotification("Something went wrong!");
+        setNotification("Something went wrong! Please try again.");
       }
     }
   };
 
   return (
     <div className="w-full">
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-card border-border mx-4 w-full max-w-md rounded-xl border p-6 shadow-xl">
+            <div className="mb-4 flex items-center justify-center">
+              <div className="bg-primary/20 text-primary flex h-16 w-16 items-center justify-center rounded-full">
+                <IconCheck size={32} />
+              </div>
+            </div>
+            <div className="text-center">
+              <h3 className="text-fg mb-2 text-xl font-semibold">
+                Message Sent Successfully!
+              </h3>
+              <p className="text-text-secondary mb-6 text-sm">
+                Thank you for reaching out! I&apos;ll get back to you shortly.
+              </p>
+              <button
+                onClick={() => setShowSuccessModal(false)}
+                className="bg-primary hover:bg-primary-dark text-bg w-full rounded-lg px-4 py-2 font-medium transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="mb-4 flex flex-wrap items-center gap-2 overflow-hidden sm:min-h-[80px]">
         {form.name && (
           <StateButton handleClick={() => setCurrent("name")}>

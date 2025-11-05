@@ -5,6 +5,7 @@ import {
   IconArrowUpRight,
   IconCalendar,
   IconClock,
+  IconExternalLink,
   IconUser,
 } from "@tabler/icons-react";
 import { motion } from "motion/react";
@@ -153,6 +154,21 @@ const BlogCard = ({ blog }: { blog: Blog }) => {
             </span>
           )}
         </div>
+
+        {/* Source Code Link */}
+        {blog.sourceCode && (
+          <div className="mb-4">
+            <a
+              href={blog.sourceCode}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:text-primary-dark inline-flex items-center gap-1.5 text-sm font-medium transition-colors"
+            >
+              <IconExternalLink size={14} />
+              View Source Code
+            </a>
+          </div>
+        )}
 
         {/* Author */}
         <div className="border-primary/20 flex items-center gap-3 border-t pt-4">

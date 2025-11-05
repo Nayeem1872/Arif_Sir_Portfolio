@@ -42,6 +42,7 @@ interface Blog {
   published: boolean;
   isFeatured: boolean;
   images: string[];
+  sourceCode?: string;
   createdAt: string;
   updatedAt: string;
   __v?: number;
@@ -543,6 +544,21 @@ const BlogsPage = () => {
                 </div>
               )}
 
+              {/* Source Code Link */}
+              {blog.sourceCode && (
+                <div className="mb-4">
+                  <a
+                    href={blog.sourceCode}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:text-primary-dark inline-flex items-center gap-1.5 text-sm font-medium transition-colors"
+                  >
+                    <IconExternalLink size={14} />
+                    View Source Code
+                  </a>
+                </div>
+              )}
+
               {/* Actions */}
               <div className="flex gap-2">
                 <button
@@ -681,6 +697,21 @@ const BlogsPage = () => {
                     placeholder="javascript,nodejs,tutorial (comma-separated)"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="text-fg mb-2 block text-sm font-medium">
+                  Source Code URL
+                </label>
+                <input
+                  type="url"
+                  name="sourceCode"
+                  className="bg-secondary/40 border-border text-fg focus:ring-primary/50 w-full rounded-md border px-3 py-2 focus:ring-2 focus:outline-none"
+                  placeholder="https://github.com/username/repo or https://gitlab.com/... or https://medium.com/..."
+                />
+                <p className="text-text-muted mt-1 text-xs">
+                  Optional: Link to GitHub, GitLab, Medium, or other source
+                </p>
               </div>
 
               <div>
@@ -824,6 +855,22 @@ const BlogsPage = () => {
                     placeholder="javascript,nodejs,tutorial (comma-separated)"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="text-fg mb-2 block text-sm font-medium">
+                  Source Code URL
+                </label>
+                <input
+                  type="url"
+                  name="sourceCode"
+                  defaultValue={editingBlog.sourceCode || ""}
+                  className="bg-secondary/40 border-border text-fg focus:ring-primary/50 w-full rounded-md border px-3 py-2 focus:ring-2 focus:outline-none"
+                  placeholder="https://github.com/username/repo or https://gitlab.com/... or https://medium.com/..."
+                />
+                <p className="text-text-muted mt-1 text-xs">
+                  Optional: Link to GitHub, GitLab, Medium, or other source
+                </p>
               </div>
 
               <div>

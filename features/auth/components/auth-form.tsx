@@ -15,7 +15,7 @@ import { useState } from "react";
 import AuthField from "./auth-field";
 
 interface AuthFormProps {
-  isSignUp: boolean;
+  isSignUp?: boolean;
 }
 
 const AuthForm = ({ isSignUp }: AuthFormProps) => {

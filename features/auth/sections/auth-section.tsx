@@ -3,12 +3,10 @@
 import Heading from "@/components/common/heading";
 import { SectionContainer } from "@/components/layout/section";
 import { SlideIn } from "@/components/ui/transitions";
-import { IconLogin, IconUserPlus } from "@tabler/icons-react";
-import { useState } from "react";
+import { IconLogin } from "@tabler/icons-react";
 import AuthForm from "../components/auth-form";
-
 const AuthSection = () => {
-  const [isSignUp, setIsSignUp] = useState(false);
+  // const [isSignUp, setIsSignUp] = useState(false);
 
   return (
     <SectionContainer className="px-4 py-16">
@@ -16,7 +14,7 @@ const AuthSection = () => {
         <SlideIn>
           <div className="mb-8 text-center">
             <div className="section-badge mx-auto mb-6">
-              {isSignUp ? (
+              {/* {isSignUp ? (
                 <>
                   <IconUserPlus className="mr-2" />
                   <span>Create Account</span>
@@ -26,24 +24,28 @@ const AuthSection = () => {
                   <IconLogin className="mr-2" />
                   <span>Welcome Back</span>
                 </>
-              )}
+              )} */}
+              <IconLogin className="mr-2" />
+              <span>Welcome Back</span>
             </div>
             <Heading as="h1" className="mb-4">
-              {isSignUp ? "Join Us" : "Sign In"}
+              {/* {isSignUp ? "Join Us" : "Sign In"} */}
+              Sign In
             </Heading>
             <p className="text-fg/80 text-base">
-              {isSignUp
+              {/* {isSignUp
                 ? "Create your account to get started"
-                : "Welcome back! Please sign in to your account"}
+                : "Welcome back! Please sign in to your account"} */}
+              Welcome back! Please sign in to your account
             </p>
           </div>
         </SlideIn>
 
         <SlideIn transition={{ duration: 0.5, delay: 0.4 }}>
-          <AuthForm isSignUp={isSignUp} />
+          <AuthForm />
         </SlideIn>
 
-        <SlideIn transition={{ duration: 0.5, delay: 0.5 }}>
+        {/* <SlideIn transition={{ duration: 0.5, delay: 0.5 }}>
           <div className="mt-8 text-center">
             <p className="text-fg/60 text-sm">
               {isSignUp ? "Already have an account?" : "Don't have an account?"}
@@ -55,7 +57,7 @@ const AuthSection = () => {
               </button>
             </p>
           </div>
-        </SlideIn>
+        </SlideIn> */}
       </div>
     </SectionContainer>
   );
