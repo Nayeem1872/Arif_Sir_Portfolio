@@ -1,5 +1,6 @@
 "use client";
 
+import { handleAuthError } from "@/lib/auth";
 import { config } from "@/lib/config";
 import { IconEye, IconEyeOff, IconMail, IconSearch } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
@@ -64,6 +65,7 @@ const MessagesPage = () => {
         setContacts(data.contacts);
         setPagination(data.pagination);
       } else {
+        if (handleAuthError(response)) return;
         setError("Failed to fetch messages");
       }
     } catch (err) {
@@ -83,6 +85,8 @@ const MessagesPage = () => {
       if (response.ok) {
         const data = await response.json();
         setStats(data);
+      } else {
+        handleAuthError(response);
       }
     } catch (err) {
       console.error("Error fetching stats:", err);
@@ -113,6 +117,7 @@ const MessagesPage = () => {
           setSelectedContact({ ...selectedContact, isRead: !currentStatus });
         }
       } else {
+        if (handleAuthError(response)) return;
         setError("Failed to update message status");
       }
     } catch (err) {
@@ -140,6 +145,7 @@ const MessagesPage = () => {
           setSelectedContact(null);
         }
       } else {
+        if (handleAuthError(response)) return;
         setError("Failed to delete message");
       }
     } catch (err) {
