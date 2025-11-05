@@ -18,7 +18,8 @@ export const profileData: Profile = {
     linkedin: "https://www.linkedin.com/in/arifrahim",
     github: "https://github.com/arifrahim",
     email: "arif.rahim@example.com",
-    bluesky: "https://bsky.app/profile/arifrahim.bsky.social",
+    facebook: "https://www.facebook.com/arifrahim",
+    twitter: "https://twitter.com/arifrahim",
   },
   metrics: [
     { label: "Years Experience", value: "5+" },

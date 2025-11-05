@@ -1,8 +1,9 @@
 import { getProfile } from "@/lib/queries";
 import {
-  IconBrandBluesky,
+  IconBrandFacebook,
   IconBrandGithub,
   IconBrandLinkedin,
+  IconBrandX,
   IconMail,
 } from "@tabler/icons-react";
 import { Variants } from "motion";
@@ -85,9 +86,14 @@ const Socials = async () => {
         icon={IconMail}
       />
       <SocialButton
-        href={profile?.socials?.bluesky ?? undefined}
-        title="Blue Sky"
-        icon={IconBrandBluesky}
+        href={profile?.socials?.facebook ?? undefined}
+        title="Facebook"
+        icon={IconBrandFacebook}
+      />
+      <SocialButton
+        href={profile?.socials?.twitter ?? undefined}
+        title="Twitter"
+        icon={IconBrandX}
       />
     </motion.div>
   );

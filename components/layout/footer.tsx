@@ -3,9 +3,10 @@ import { profile as profileInfo } from "@/config/profile";
 import { getProfile } from "@/lib/queries";
 import type { Profile } from "@/types/data";
 import {
-  IconBrandBluesky,
+  IconBrandFacebook,
   IconBrandGithub,
   IconBrandLinkedin,
+  IconBrandX,
   IconExternalLink,
   IconMail,
   IconMapPin,
@@ -137,14 +138,26 @@ const FooterDescription = ({ profile }: { profile: Profile }) => {
         </li>
         <li>
           <a
-            href={profile?.socials?.bluesky ?? undefined}
+            href={profile?.socials?.facebook ?? undefined}
             target="_blank"
             rel="noreferrer nofollow"
             className="hover:text-primary text-text-secondary flex h-9 w-9 items-center justify-center transition duration-100 hover:scale-105"
-            aria-label="My BlueSky account"
-            title="Visit my BlueSky account"
+            aria-label="My Facebook profile"
+            title="Visit my Facebook profile"
           >
-            <IconBrandBluesky className="h-5 w-5" />
+            <IconBrandFacebook className="h-5 w-5" />
+          </a>
+        </li>
+        <li>
+          <a
+            href={profile?.socials?.twitter ?? undefined}
+            target="_blank"
+            rel="noreferrer nofollow"
+            className="hover:text-primary text-text-secondary flex h-9 w-9 items-center justify-center transition duration-100 hover:scale-105"
+            aria-label="My Twitter profile"
+            title="Visit my Twitter profile"
+          >
+            <IconBrandX className="h-5 w-5" />
           </a>
         </li>
 

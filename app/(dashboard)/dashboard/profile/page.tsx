@@ -85,7 +85,8 @@ const ProfilePage = () => {
           linkedin: formData.get("linkedin") as string,
           github: formData.get("github") as string,
           email: formData.get("email") as string,
-          bluesky: formData.get("bluesky") as string,
+          facebook: formData.get("facebook") as string,
+          twitter: formData.get("twitter") as string,
         },
         experience: experiences,
         metrics: metrics,
@@ -261,14 +262,26 @@ const ProfilePage = () => {
             </div>
             <div>
               <label className="text-fg mb-2 block text-sm font-medium">
-                BlueSky
+                Facebook
               </label>
               <input
                 type="url"
-                name="bluesky"
+                name="facebook"
                 className="bg-secondary/40 border-border text-fg focus:ring-primary/50 w-full rounded-md border px-3 py-2 focus:ring-2 focus:outline-none"
-                defaultValue={profile.socials?.bluesky}
-                placeholder="https://bsky.app/profile/username"
+                defaultValue={profile.socials?.facebook}
+                placeholder="https://facebook.com/username"
+              />
+            </div>
+            <div>
+              <label className="text-fg mb-2 block text-sm font-medium">
+                Twitter
+              </label>
+              <input
+                type="url"
+                name="twitter"
+                className="bg-secondary/40 border-border text-fg focus:ring-primary/50 w-full rounded-md border px-3 py-2 focus:ring-2 focus:outline-none"
+                defaultValue={profile.socials?.twitter}
+                placeholder="https://twitter.com/username"
               />
             </div>
           </div>

@@ -15,7 +15,8 @@ export interface Profile {
     linkedin?: string;
     github?: string;
     email?: string;
-    bluesky?: string;
+    facebook?: string;
+    twitter?: string;
   };
   metrics: Array<{
     label: string;
