@@ -34,8 +34,8 @@ const sidebarItems = [
     icon: IconArticle,
   },
   {
-    title: "Analytics",
-    href: "/dashboard/analytics",
+    title: "Projects",
+    href: "/dashboard/projects",
     icon: IconChartArcs,
   },
   {
