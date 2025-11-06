@@ -107,11 +107,7 @@ export async function getProjects(): Promise<Project[]> {
         : ("development" as "live" | "archived" | "development"),
       githubURL: project.sourceCodeUrl,
       liveURL: project.liveUrl,
-      tags: project.technologies
-        ? Array.isArray(project.technologies)
-          ? project.technologies
-          : project.technologies[0]?.split(",").map((tag) => tag.trim()) || []
-        : [],
+      tags: project.technologies || [],
       screenshots: project.images
         ? project.images.map((img: string) => ({ url: img }))
         : undefined,

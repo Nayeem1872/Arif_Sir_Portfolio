@@ -1,5 +1,6 @@
 "use client";
 
+import { handleAuthError } from "@/lib/auth";
 import { config } from "@/lib/config";
 import React, { useState } from "react";
 
