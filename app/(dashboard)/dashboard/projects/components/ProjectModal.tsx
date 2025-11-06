@@ -2,7 +2,19 @@
 
 import { config } from "@/lib/config";
 import { IconPlus, IconTrash, IconX } from "@tabler/icons-react";
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+
+// Dynamically import ReactQuill to avoid SSR issues
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+
+// Helper function to get full image URL
+const getImageUrl = (imagePath: string) => {
+  if (imagePath.startsWith("http")) {
+    return imagePath;
+  }
+  return `http://localhost:8000${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
+};
 
 interface ProjectCategory {
   _id: string;
@@ -334,30 +346,79 @@ const ProjectModal = ({
               <label className="text-fg mb-2 block text-sm font-medium">
                 Short Description
               </label>
-              <input
-                type="text"
-                name="shortDescription"
-                value={formData.shortDescription}
-                onChange={handleChange}
-                className="bg-secondary/40 border-border text-fg focus:ring-primary/50 w-full rounded-md border px-3 py-2 focus:ring-2 focus:outline-none"
-                placeholder="Brief description for cards and previews..."
-                maxLength={300}
-              />
+              <div className="quill-wrapper">
+                <ReactQuill
+                  value={formData.shortDescription}
+                  onChange={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      shortDescription: value,
+                    }))
+                  }
+                  placeholder="Brief description for cards and previews..."
+                  modules={{
+                    toolbar: [
+                      ["bold", "italic", "underline"],
+                      ["link"],
+                      [{ list: "ordered" }, { list: "bullet" }],
+                      ["clean"],
+                    ],
+                  }}
+                  formats={[
+                    "bold",
+                    "italic",
+                    "underline",
+                    "link",
+                    "list",
+                    "bullet",
+                  ]}
+                  style={{ height: "120px", marginBottom: "50px" }}
+                />
+              </div>
             </div>
 
             <div>
               <label className="text-fg mb-2 block text-sm font-medium">
                 Detailed Description *
               </label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                rows={4}
-                className="bg-secondary/40 border-border text-fg focus:ring-primary/50 w-full rounded-md border px-3 py-2 focus:ring-2 focus:outline-none"
-                placeholder="Detailed project description..."
-                required
-              />
+              <div className="quill-wrapper">
+                <ReactQuill
+                  value={formData.description}
+                  onChange={(value) =>
+                    setFormData((prev) => ({ ...prev, description: value }))
+                  }
+                  placeholder="Detailed project description..."
+                  modules={{
+                    toolbar: [
+                      [{ header: [1, 2, 3, false] }],
+                      ["bold", "italic", "underline", "strike"],
+                      [{ color: [] }, { background: [] }],
+                      ["link", "image"],
+                      [{ list: "ordered" }, { list: "bullet" }],
+                      [{ indent: "-1" }, { indent: "+1" }],
+                      ["blockquote", "code-block"],
+                      ["clean"],
+                    ],
+                  }}
+                  formats={[
+                    "header",
+                    "bold",
+                    "italic",
+                    "underline",
+                    "strike",
+                    "color",
+                    "background",
+                    "link",
+                    "image",
+                    "list",
+                    "bullet",
+                    "indent",
+                    "blockquote",
+                    "code-block",
+                  ]}
+                  style={{ height: "200px", marginBottom: "50px" }}
+                />
+              </div>
             </div>
 
             {/* Images */}
@@ -365,6 +426,21 @@ const ProjectModal = ({
               <label className="text-fg mb-2 block text-sm font-medium">
                 Thumbnail Image *
               </label>
+
+              {/* Show existing thumbnail when editing */}
+              {isEditing && project?.thumbnailImage && (
+                <div className="mb-3">
+                  <p className="text-text-muted mb-2 text-sm">
+                    Current thumbnail:
+                  </p>
+                  <img
+                    src={getImageUrl(project.thumbnailImage)}
+                    alt="Current thumbnail"
+                    className="border-border h-20 w-20 rounded-lg border object-cover"
+                  />
+                </div>
+              )}
+
               <input
                 type="file"
                 name="thumbnailImage"
@@ -394,6 +470,29 @@ const ProjectModal = ({
                   Add Image
                 </button>
               </div>
+
+              {/* Show existing images when editing */}
+              {isEditing && project?.images && project.images.length > 0 && (
+                <div className="mb-4">
+                  <p className="text-text-muted mb-2 text-sm">
+                    Current images:
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {project.images.map((image, index) => (
+                      <img
+                        key={index}
+                        src={getImageUrl(image)}
+                        alt={`Project image ${index + 1}`}
+                        className="border-border h-16 w-16 rounded-lg border object-cover"
+                      />
+                    ))}
+                  </div>
+                  <p className="text-text-muted mt-1 text-xs">
+                    Upload new images below to replace existing ones
+                  </p>
+                </div>
+              )}
+
               {formData.images.map((image, index) => (
                 <div key={index} className="mb-2 flex gap-2">
                   <div className="flex-1">
@@ -610,6 +709,80 @@ const ProjectModal = ({
           </form>
         </div>
       </div>
+
+      {/* React Quill Styles */}
+      <style jsx global>{`
+        .quill-wrapper .ql-editor {
+          background-color: rgb(30 41 59 / 0.4);
+          border: 1px solid rgb(71 85 105);
+          color: rgb(248 250 252);
+          border-radius: 0.375rem;
+          min-height: 80px;
+        }
+
+        .quill-wrapper .ql-editor::before {
+          color: rgb(148 163 184);
+        }
+
+        .quill-wrapper .ql-toolbar {
+          background-color: rgb(30 41 59 / 0.6);
+          border: 1px solid rgb(71 85 105);
+          border-bottom: none;
+          border-radius: 0.375rem 0.375rem 0 0;
+        }
+
+        .quill-wrapper .ql-toolbar .ql-stroke {
+          stroke: rgb(148 163 184);
+        }
+
+        .quill-wrapper .ql-toolbar .ql-fill {
+          fill: rgb(148 163 184);
+        }
+
+        .quill-wrapper .ql-toolbar button:hover {
+          background-color: rgb(51 65 85);
+        }
+
+        .quill-wrapper .ql-toolbar button.ql-active {
+          background-color: rgb(59 130 246);
+        }
+
+        .quill-wrapper .ql-toolbar button.ql-active .ql-stroke {
+          stroke: white;
+        }
+
+        .quill-wrapper .ql-toolbar button.ql-active .ql-fill {
+          fill: white;
+        }
+
+        .quill-wrapper .ql-container {
+          border: 1px solid rgb(71 85 105);
+          border-top: none;
+          border-radius: 0 0 0.375rem 0.375rem;
+        }
+
+        .quill-wrapper .ql-editor.ql-blank::before {
+          color: rgb(148 163 184);
+          font-style: normal;
+        }
+
+        .quill-wrapper .ql-picker-label {
+          color: rgb(148 163 184);
+        }
+
+        .quill-wrapper .ql-picker-options {
+          background-color: rgb(30 41 59);
+          border: 1px solid rgb(71 85 105);
+        }
+
+        .quill-wrapper .ql-picker-item {
+          color: rgb(248 250 252);
+        }
+
+        .quill-wrapper .ql-picker-item:hover {
+          background-color: rgb(51 65 85);
+        }
+      `}</style>
     </div>
   );
 };

@@ -33,8 +33,7 @@ const GallerySection = async () => {
 
 const ProjectGridWrapper = async () => {
   const projects = await getProjects();
-  const featuredProjects = projects.slice(0, 6); // Show first 6 projects in grid
-
+  const featuredProjects = projects.slice(0, 6);
   return <ProjectGrid projects={featuredProjects} />;
 };
 
