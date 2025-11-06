@@ -10,6 +10,8 @@ import {
 import axios from "axios";
 import { motion } from "motion/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 import { useEffect, useState } from "react";
 
 const BLOG_API_BASE_URL =
@@ -19,6 +21,7 @@ const BLOG_API_BASE_URL =
     : "http://localhost:8000/api/blog");
 
 const BlogsPage = () => {
+  const router = useRouter();
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -57,6 +60,25 @@ const BlogsPage = () => {
       // Scroll to top when page changes
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
+  };
+
+  const handlePostClick = (blog: Blog) => {
+    const slug =
+      blog.slug ||
+      blog._id ||
+      blog.title
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-]/g, "");
+
+    console.log("Navigating to blog:", {
+      title: blog.title,
+      slug,
+      originalSlug: blog.slug,
+      id: blog._id,
+    });
+
+    router.push(`/blogs/${slug}`);
   };
 
   if (loading && blogs.length === 0) {
@@ -142,7 +164,7 @@ const BlogsPage = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                 >
-                  <BlogCard blog={blog} />
+                  <BlogCard blog={blog} onPostClick={handlePostClick} />
                 </motion.div>
               ))}
             </div>

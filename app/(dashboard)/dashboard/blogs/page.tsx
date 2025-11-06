@@ -210,9 +210,25 @@ const BlogsPage = () => {
 
   // Edit blog
   const openEditModal = (blog: Blog) => {
-    setEditingBlog(blog);
+    setEditingBlog({ ...blog }); // Create a copy to avoid mutating original
     setEditContent(blog.content || "");
     setShowEditModal(true);
+  };
+
+  // Remove image from editing blog
+  const removeImageFromEdit = (imageIndex: number) => {
+    if (!editingBlog) return;
+
+    if (confirm("Are you sure you want to remove this image?")) {
+      const updatedImages = editingBlog.images.filter(
+        (_, i) => i !== imageIndex,
+      );
+      setEditingBlog({
+        ...editingBlog,
+        images: updatedImages,
+      });
+      showNotification("success", "Image removed from blog post");
+    }
   };
 
   const updateBlog = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -242,6 +258,9 @@ const BlogsPage = () => {
       // Handle content from Quill editor
       formData.delete("content");
       formData.append("content", editContent);
+
+      // Handle existing images - send the current image list
+      formData.append("existingImages", JSON.stringify(editingBlog.images));
 
       // Handle boolean fields - convert checkbox values to proper booleans
       const isFeatured = formData.get("isFeatured") === "on";
@@ -888,13 +907,13 @@ const BlogsPage = () => {
               {editingBlog.images && editingBlog.images.length > 0 && (
                 <div>
                   <label className="text-fg mb-2 block text-sm font-medium">
-                    Current Images
+                    Current Images ({editingBlog.images.length})
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {editingBlog.images.map((image, index) => (
-                      <div key={index} className="relative">
+                      <div key={`${image}-${index}`} className="group relative">
                         <div
-                          className="h-20 w-20 rounded bg-cover bg-center"
+                          className="h-20 w-20 rounded border-2 border-transparent bg-cover bg-center transition-all duration-200 group-hover:border-red-300"
                           style={{
                             backgroundImage: `url(${
                               process.env.NODE_ENV === "production"
@@ -907,22 +926,32 @@ const BlogsPage = () => {
                         />
                         <button
                           type="button"
-                          onClick={() => {
-                            // Add logic to remove image
-                            const updatedImages = editingBlog.images.filter(
-                              (_, i) => i !== index,
-                            );
-                            setEditingBlog({
-                              ...editingBlog,
-                              images: updatedImages,
-                            });
-                          }}
-                          className="absolute -top-2 -right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
+                          onClick={() => removeImageFromEdit(index)}
+                          className="absolute -top-2 -right-2 rounded-full bg-red-500 p-1 text-white shadow-lg transition-all duration-200 hover:scale-110 hover:bg-red-600"
+                          title="Remove image"
                         >
                           <IconX size={12} />
                         </button>
                       </div>
                     ))}
+                  </div>
+                  <p className="text-text-muted mt-2 text-xs">
+                    Click the X button to remove images. Changes will be saved
+                    when you update the blog post.
+                  </p>
+                </div>
+              )}
+
+              {/* Show message if no images */}
+              {editingBlog.images && editingBlog.images.length === 0 && (
+                <div>
+                  <label className="text-fg mb-2 block text-sm font-medium">
+                    Current Images
+                  </label>
+                  <div className="bg-secondary/20 border-border rounded-lg border-2 border-dashed p-4 text-center">
+                    <p className="text-text-muted text-sm">
+                      No images currently attached to this blog post
+                    </p>
                   </div>
                 </div>
               )}

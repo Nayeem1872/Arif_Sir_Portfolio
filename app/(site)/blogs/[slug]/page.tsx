@@ -1,5 +1,6 @@
 "use client";
 
+import type { Blog } from "@/types/data";
 import {
   IconArrowLeft,
   IconCalendar,
@@ -13,20 +14,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-
-interface Blog {
-  _id: string;
-  title: string;
-  content: string;
-  author: string;
-  category: string;
-  tags: string[];
-  images: string[];
-  sourceCode?: string;
-  isFeatured: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
 
 const BLOG_API_BASE_URL =
   process.env.NEXT_PUBLIC_BLOG_API_BASE_URL ||
@@ -45,7 +32,63 @@ const BlogDetailsPage = () => {
     const fetchBlog = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${BLOG_API_BASE_URL}/${slug}`);
+        console.log("Fetching blog with slug:", slug);
+        console.log("API Base URL:", BLOG_API_BASE_URL);
+
+        // Try different API endpoints
+        let response;
+        try {
+          // First try with slug
+          console.log(
+            "Trying direct API call:",
+            `${BLOG_API_BASE_URL}/${slug}`,
+          );
+          response = await axios.get(`${BLOG_API_BASE_URL}/${slug}`);
+          console.log("Direct API call successful:", response.data);
+        } catch (slugError) {
+          console.log("Direct API call failed, trying fallback:", slugError);
+          // If slug fails, try getting all blogs and find by slug or title
+          try {
+            console.log("Fetching all blogs for fallback search");
+            const allBlogsResponse = await axios.get(BLOG_API_BASE_URL);
+            console.log("All blogs response:", allBlogsResponse.data);
+
+            // Handle different response structures
+            const blogs =
+              allBlogsResponse.data.posts || allBlogsResponse.data || [];
+            console.log("Blogs array:", blogs);
+
+            const foundBlog = blogs.find((blog: Blog) => {
+              const titleSlug = blog.title
+                .toLowerCase()
+                .replace(/\s+/g, "-")
+                .replace(/[^a-z0-9-]/g, "");
+
+              console.log("Comparing slug:", slug, "with:", {
+                blogSlug: blog.slug,
+                blogId: blog._id,
+                titleSlug,
+              });
+
+              return (
+                blog.slug === slug || blog._id === slug || titleSlug === slug
+              );
+            });
+
+            console.log("Found blog:", foundBlog);
+
+            if (foundBlog) {
+              response = { data: foundBlog };
+            } else {
+              throw new Error("Blog not found in fallback search");
+            }
+          } catch (fallbackError) {
+            console.error("Fallback search failed:", fallbackError);
+            throw new Error("Blog not found");
+          }
+        }
+
+        console.log("Setting blog data:", response.data);
         setBlog(response.data);
       } catch (err) {
         setError("Blog post not found");
@@ -192,78 +235,80 @@ const BlogDetailsPage = () => {
         )}
 
         {/* Content */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="mb-8"
-        >
-          <div
-            className="text-fg prose prose-lg max-w-none leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: blog.content }}
-          />
-          <style jsx global>{`
-            .prose h1,
-            .prose h2,
-            .prose h3,
-            .prose h4,
-            .prose h5,
-            .prose h6 {
-              color: rgb(248 250 252);
-              margin-top: 2rem;
-              margin-bottom: 1rem;
-            }
-            .prose p {
-              color: rgb(203 213 225);
-              margin-bottom: 1.5rem;
-              line-height: 1.75;
-            }
-            .prose a {
-              color: rgb(96 165 250);
-              text-decoration: underline;
-            }
-            .prose a:hover {
-              color: rgb(147 197 253);
-            }
-            .prose strong {
-              color: rgb(248 250 252);
-              font-weight: 600;
-            }
-            .prose em {
-              color: rgb(226 232 240);
-            }
-            .prose ul,
-            .prose ol {
-              color: rgb(203 213 225);
-              margin: 1.5rem 0;
-            }
-            .prose li {
-              margin: 0.5rem 0;
-            }
-            .prose blockquote {
-              border-left: 4px solid rgb(59 130 246);
-              padding-left: 1rem;
-              margin: 2rem 0;
-              color: rgb(203 213 225);
-              font-style: italic;
-            }
-            .prose code {
-              background: rgb(30 41 59);
-              color: rgb(226 232 240);
-              padding: 0.25rem 0.5rem;
-              border-radius: 0.25rem;
-              font-size: 0.875rem;
-            }
-            .prose pre {
-              background: rgb(15 23 42);
-              color: rgb(226 232 240);
-              padding: 1rem;
-              border-radius: 0.5rem;
-              overflow-x: auto;
-              margin: 1.5rem 0;
-            }
-          `}</style>
-        </motion.div>
+        {blog.content && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className="mb-8"
+          >
+            <div
+              className="text-fg prose prose-lg max-w-none leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: blog.content }}
+            />
+            <style jsx global>{`
+              .prose h1,
+              .prose h2,
+              .prose h3,
+              .prose h4,
+              .prose h5,
+              .prose h6 {
+                color: rgb(248 250 252);
+                margin-top: 2rem;
+                margin-bottom: 1rem;
+              }
+              .prose p {
+                color: rgb(203 213 225);
+                margin-bottom: 1.5rem;
+                line-height: 1.75;
+              }
+              .prose a {
+                color: rgb(96 165 250);
+                text-decoration: underline;
+              }
+              .prose a:hover {
+                color: rgb(147 197 253);
+              }
+              .prose strong {
+                color: rgb(248 250 252);
+                font-weight: 600;
+              }
+              .prose em {
+                color: rgb(226 232 240);
+              }
+              .prose ul,
+              .prose ol {
+                color: rgb(203 213 225);
+                margin: 1.5rem 0;
+              }
+              .prose li {
+                margin: 0.5rem 0;
+              }
+              .prose blockquote {
+                border-left: 4px solid rgb(59 130 246);
+                padding-left: 1rem;
+                margin: 2rem 0;
+                color: rgb(203 213 225);
+                font-style: italic;
+              }
+              .prose code {
+                background: rgb(30 41 59);
+                color: rgb(226 232 240);
+                padding: 0.25rem 0.5rem;
+                border-radius: 0.25rem;
+                font-size: 0.875rem;
+              }
+              .prose pre {
+                background: rgb(15 23 42);
+                color: rgb(226 232 240);
+                padding: 1rem;
+                border-radius: 0.5rem;
+                overflow-x: auto;
+                margin: 1.5rem 0;
+              }
+            `}</style>
+          </motion.div>
+        )}
 
         {/* Source Code Link */}
         {blog.sourceCode && (

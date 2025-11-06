@@ -1,16 +1,38 @@
 "use client";
 
-import Heading from "@/components/common/heading";
 import { homepage } from "@/config/content/pages";
-import type { Blog } from "@/types/data";
-import { IconBookmark, IconTrendingUp } from "@tabler/icons-react";
-import { motion } from "motion/react";
 
+import type { Blog } from "@/types/data";
+import { IconTrendingUp } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import BlogCard from "../components/blog-card";
 
-const BlogSection = ({ blogs }: { blogs: Blog[] }) => {
+interface BlogSectionProps {
+  blogs: Blog[];
+  className?: string;
+}
+
+const BlogSection = ({ blogs, className }: BlogSectionProps) => {
   const router = useRouter();
+
+  const handlePostClick = (blog: Blog) => {
+    const slug =
+      blog.slug ||
+      blog._id ||
+      blog.title
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-]/g, "");
+
+    console.log("Navigating to blog:", {
+      title: blog.title,
+      slug,
+      originalSlug: blog.slug,
+      id: blog._id,
+    });
+
+    router.push(`/blogs/${slug}`);
+  };
 
   const handleBlogsClick = () => {
     console.log("Button clicked, navigating to /blogs");
@@ -18,67 +40,47 @@ const BlogSection = ({ blogs }: { blogs: Blog[] }) => {
   };
 
   return (
-    <section className="relative flex w-full flex-col items-center py-16 sm:py-20">
-      {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="bg-primary/5 absolute -top-40 -right-40 h-80 w-80 rounded-full blur-3xl" />
-        <div className="bg-primary/10 absolute -bottom-40 -left-40 h-80 w-80 rounded-full blur-3xl" />
-      </div>
+    <section
+      className={`relative container mx-auto my-20 px-4 py-10 ${className || ""}`}
+    >
+      <h1 className="mb-2 text-center text-4xl !leading-[1.4] font-semibold capitalize md:text-5xl lg:text-6xl">
+        {homepage.blogHeading || "Our Most Popular Articles of 2024!"}
+      </h1>
 
-      <div className="max-container relative mb-8 px-4 sm:mb-16">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="section-badge"
-        >
-          <IconBookmark className="mr-2" />
-          <span>Latest Blogs</span>
-        </motion.div>
+      <span className="text-foreground/[0.025] absolute -top-10 -left-[18%] -z-50 text-[180px] leading-[1] font-extrabold text-black/[0.03] select-none md:text-[250px] lg:text-[400px]">
+        BLOG
+      </span>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-        >
-          <Heading as="h3">{homepage.blogHeading}</Heading>
-        </motion.div>
-      </div>
+      <p className="text-foreground/50 mx-auto mb-8 max-w-[800px] text-center text-xl !leading-[2] md:text-2xl">
+        Discover the most engaging content from our amazing community of
+        developers and designers
+      </p>
 
-      {/* Blog Grid */}
-      <div className="inner-container relative mb-4 grid grid-cols-1 gap-6 md:mb-10 md:grid-cols-2 lg:grid-cols-3">
-        {blogs.slice(0, 6).map((blog, index) => (
-          <motion.div
-            key={blog._id}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: index * 0.1 }}
-          >
-            <BlogCard blog={blog} />
-          </motion.div>
-        ))}
+      <div className="mb-8 grid h-auto grid-cols-1 gap-5 md:h-[650px] md:grid-cols-2 lg:grid-cols-[1fr_0.5fr]">
+        {blogs.slice(0, 3).map((blog, index) => {
+          const isPrimary = index === 0;
+          return (
+            <BlogCard
+              key={blog._id}
+              blog={blog}
+              isPrimary={isPrimary}
+              onPostClick={handlePostClick}
+            />
+          );
+        })}
       </div>
 
       {/* CTA Button */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, delay: 0.3 }}
-        className="relative z-10"
-      >
+      <div className="flex justify-center">
         <button
           onClick={handleBlogsClick}
           className="outline-button group mt-8 inline-flex cursor-pointer items-center gap-2 rounded-full px-6 py-3 transition-all duration-200 hover:scale-105"
           type="button"
         >
           <IconTrendingUp className="transition-transform group-hover:scale-110" />
-          <span>{homepage.blogCta}</span>
+          <span>{homepage.blogCta || "View All Blogs"}</span>
         </button>
-      </motion.div>
+      </div>
     </section>
   );
 };

@@ -1,34 +1,21 @@
-"use client";
-
 import type { Blog } from "@/types/data";
-import {
-  IconArrowUpRight,
-  IconCalendar,
-  IconClock,
-  IconExternalLink,
-  IconUser,
-} from "@tabler/icons-react";
-import { motion } from "motion/react";
-import Image from "next/image";
-import Link from "next/link";
-import { useState } from "react";
+import { IconArrowRight } from "@tabler/icons-react";
 
-const BlogCard = ({ blog }: { blog: Blog }) => {
-  const [hover, setHover] = useState(false);
+interface BlogCardProps {
+  blog: Blog;
+  isPrimary?: boolean;
+  onPostClick?: (blog: Blog) => void;
+}
 
-  const mouseEnter = () => {
-    setHover(true);
-  };
-  const mouseLeave = () => {
-    setHover(false);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
+const BlogCard = ({ blog, isPrimary = false, onPostClick }: BlogCardProps) => {
+  const handleClick = () => {
+    console.log("BlogCard clicked!", {
+      title: blog.title,
+      id: blog._id,
+      slug: blog.slug,
+      onPostClick: !!onPostClick,
     });
+    onPostClick?.(blog);
   };
 
   // Get the image URL with correct base URL for environment
@@ -47,140 +34,48 @@ const BlogCard = ({ blog }: { blog: Blog }) => {
     );
   };
 
-  // Get published date (use createdAt for new API, publishedAt for legacy)
-  const getPublishedDate = () => {
-    return blog.createdAt || blog.publishedAt || new Date().toISOString();
-  };
-
-  // Check if featured (use isFeatured for new API, featured for legacy)
-  const isFeatured = blog.isFeatured || blog.featured;
-
-  // Generate slug from title if not available, fallback to ID
-  const getSlug = () => {
-    return (
-      blog.slug ||
-      blog._id ||
-      blog.title
-        .toLowerCase()
-        .replace(/\s+/g, "-")
-        .replace(/[^a-z0-9-]/g, "")
-    );
-  };
+  // Extract read time number
+  const readTime = blog.readTime
+    ? parseInt(blog.readTime.replace(/\D/g, "")) || 5
+    : 5;
 
   return (
-    <motion.article
-      layout
-      className="group border-primary/20 bg-secondary/50 hover:border-primary/40 relative overflow-hidden rounded-xl border backdrop-blur-sm transition-all duration-300"
-      onMouseEnter={mouseEnter}
-      onMouseLeave={mouseLeave}
-      whileHover={{ y: -4 }}
+    <div
+      style={{ backgroundImage: `url(${getImageUrl()})` }}
+      className={`group relative row-span-1 flex size-full cursor-pointer flex-col justify-end overflow-hidden rounded-[16px] bg-cover bg-center bg-no-repeat p-4 text-white transition-all duration-300 hover:scale-[0.98] hover:rotate-[0.3deg] max-md:h-[250px] ${
+        isPrimary
+          ? "col-span-1 row-span-1 md:col-span-2 md:row-span-2 lg:col-span-1"
+          : ""
+      }`}
+      onClick={handleClick}
     >
-      {/* Featured Badge */}
-      {isFeatured && (
-        <div className="bg-primary text-bg absolute top-3 left-3 z-10 rounded-full px-2 py-1 text-xs font-semibold">
-          Featured
-        </div>
-      )}
+      <div className="absolute inset-0 -z-0 h-[130%] w-full bg-gradient-to-t from-black/80 to-transparent transition-all duration-500 group-hover:h-full" />
 
-      {/* Image Container */}
-      <div className="relative aspect-[16/10] overflow-hidden">
-        <Image
-          src={getImageUrl()}
-          alt={blog.title}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-110"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
-        {/* Category Badge */}
-        <div className="absolute bottom-3 left-3">
-          <span className="bg-primary/80 text-bg rounded-full px-2 py-1 text-xs font-medium backdrop-blur-sm">
-            {blog.category}
-          </span>
-        </div>
-
-        {/* Read More Button */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: hover ? 1 : 0, scale: hover ? 1 : 0.8 }}
-          className="absolute top-4 right-4"
-        >
-          <Link
-            href={`/blogs/${getSlug()}`}
-            className="bg-primary/80 text-bg hover:bg-primary flex h-8 w-8 items-center justify-center rounded-full backdrop-blur-sm transition-colors"
+      <article className="relative z-0 flex items-end">
+        <div className="flex flex-1 flex-col gap-2">
+          <h1
+            className={`leading-tight font-semibold ${isPrimary ? "text-xl md:text-2xl" : "text-lg md:text-xl"}`}
           >
-            <IconArrowUpRight size={16} />
-          </Link>
-        </motion.div>
-      </div>
+            {blog.title}
+          </h1>
 
-      {/* Content */}
-      <div className="p-8">
-        {/* Meta Information */}
-        <div className="text-fg/60 mb-4 flex items-center gap-4 text-base">
-          <div className="flex items-center gap-1">
-            <IconCalendar size={14} />
-            <span>{formatDate(getPublishedDate())}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <IconClock size={14} />
-            <span>{blog.readTime || "5 min read"}</span>
-          </div>
-        </div>
-
-        {/* Title */}
-        <h3 className="text-fg group-hover:text-primary mb-4 line-clamp-2 text-2xl font-bold transition-colors">
-          <Link href={`/blogs/${getSlug()}`}>{blog.title}</Link>
-        </h3>
-
-        {/* Excerpt */}
-        <p className="text-fg/70 mb-6 line-clamp-4 text-lg leading-relaxed">
-          {blog.excerpt}
-        </p>
-
-        {/* Tags */}
-        <div className="mb-4 flex flex-wrap gap-2">
-          {blog.tags.slice(0, 2).map((tag, index) => (
-            <span
-              key={index}
-              className="bg-primary/20 text-primary rounded-md px-3 py-1.5 text-sm"
-            >
-              #{tag}
+          <div className="flex flex-col gap-2">
+            <span className="w-fit rounded-md bg-white/40 px-2 py-1 text-xs text-white capitalize backdrop-blur-md">
+              {blog.category}
             </span>
-          ))}
-          {blog.tags.length > 2 && (
-            <span className="bg-secondary text-fg/60 rounded-md px-3 py-1.5 text-sm">
-              +{blog.tags.length - 2}
-            </span>
-          )}
+
+            <div className="text-sm font-medium">{readTime} min read</div>
+          </div>
         </div>
 
-        {/* Source Code Link */}
-        {blog.sourceCode && (
-          <div className="mb-4">
-            <a
-              href={blog.sourceCode}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:text-primary-dark inline-flex items-center gap-1.5 text-sm font-medium transition-colors"
-            >
-              <IconExternalLink size={14} />
-              View Source Code
-            </a>
-          </div>
-        )}
-
-        {/* Author */}
-        <div className="border-primary/20 flex items-center gap-3 border-t pt-4">
-          <div className="bg-primary/20 text-primary flex h-8 w-8 items-center justify-center rounded-full">
-            <IconUser size={16} />
-          </div>
-          <div className="text-fg/80 flex items-center gap-1 text-sm">
-            <span>{blog.author}</span>
-          </div>
-        </div>
-      </div>
-    </motion.article>
+        <IconArrowRight
+          className="transition-all duration-300 group-hover:translate-x-2"
+          color="white"
+          size={24}
+          stroke={1.5}
+        />
+      </article>
+    </div>
   );
 };
 
