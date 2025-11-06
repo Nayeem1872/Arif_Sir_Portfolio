@@ -1,5 +1,6 @@
 "use client";
 
+import { config } from "@/lib/config";
 import { IconPlus, IconTrash, IconX } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
@@ -56,8 +57,8 @@ const ProjectModal = ({
     description: "",
     shortDescription: "",
     categoryId: "",
-    thumbnailImage: "",
-    images: [""],
+    thumbnailImage: null as File | null,
+    images: [] as File[],
     technologies: [""],
     features: [""],
     liveUrl: "",
@@ -79,8 +80,8 @@ const ProjectModal = ({
         description: project.description,
         shortDescription: project.shortDescription,
         categoryId: project.categoryId._id,
-        thumbnailImage: project.thumbnailImage,
-        images: project.images.length > 0 ? project.images : [""],
+        thumbnailImage: null,
+        images: [],
         technologies:
           project.technologies.length > 0 ? project.technologies : [""],
         features: project.features.length > 0 ? project.features : [""],
@@ -102,29 +103,58 @@ const ProjectModal = ({
     setError("");
 
     try {
-      // Filter out empty strings from arrays
-      const cleanedData = {
-        ...formData,
-        images: formData.images.filter((img) => img.trim() !== ""),
-        technologies: formData.technologies.filter(
-          (tech) => tech.trim() !== "",
-        ),
-        features: formData.features.filter((feature) => feature.trim() !== ""),
-      };
+      const formDataToSend = new FormData();
+
+      // Add text fields
+      formDataToSend.append("title", formData.title);
+      formDataToSend.append("description", formData.description);
+      formDataToSend.append("shortDescription", formData.shortDescription);
+      formDataToSend.append("categoryId", formData.categoryId);
+      formDataToSend.append("liveUrl", formData.liveUrl);
+      formDataToSend.append("sourceCodeUrl", formData.sourceCodeUrl);
+      formDataToSend.append("demoUrl", formData.demoUrl);
+      formDataToSend.append("isPublished", formData.isPublished.toString());
+      formDataToSend.append("isFeatured", formData.isFeatured.toString());
+      formDataToSend.append("completedAt", formData.completedAt);
+
+      // Add arrays (filter out empty strings)
+      const cleanTechnologies = formData.technologies.filter(
+        (tech) => tech.trim() !== "",
+      );
+      const cleanFeatures = formData.features.filter(
+        (feature) => feature.trim() !== "",
+      );
+
+      cleanTechnologies.forEach((tech) => {
+        formDataToSend.append("technologies[]", tech);
+      });
+
+      cleanFeatures.forEach((feature) => {
+        formDataToSend.append("features[]", feature);
+      });
+
+      // Add thumbnail image
+      if (formData.thumbnailImage) {
+        formDataToSend.append("thumbnailImage", formData.thumbnailImage);
+      }
+
+      // Add additional images
+      formData.images.forEach((image) => {
+        formDataToSend.append("images", image);
+      });
 
       const url = isEditing
-        ? `http://localhost:8000/api/projects/${project._id}`
-        : "http://localhost:8000/api/projects";
+        ? `${config.apiBaseUrl}/projects/${project._id}`
+        : `${config.apiBaseUrl}/projects`;
 
       const method = isEditing ? "PUT" : "POST";
 
       const response = await fetch(url, {
         method,
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
-        body: JSON.stringify(cleanedData),
+        body: formDataToSend,
       });
 
       const data = await response.json();
@@ -155,6 +185,35 @@ const ProjectModal = ({
     }));
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, files } = e.target;
+    if (files && files.length > 0) {
+      if (name === "thumbnailImage") {
+        setFormData((prev) => ({
+          ...prev,
+          thumbnailImage: files[0],
+        }));
+      }
+    }
+  };
+
+  const handleMultipleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number,
+  ) => {
+    const { files } = e.target;
+    if (files && files.length > 0) {
+      setFormData((prev) => {
+        const newImages = [...prev.images];
+        newImages[index] = files[0];
+        return {
+          ...prev,
+          images: newImages,
+        };
+      });
+    }
+  };
+
   const handleArrayChange = (
     field: keyof typeof formData,
     index: number,
@@ -169,21 +228,44 @@ const ProjectModal = ({
   };
 
   const addArrayItem = (field: keyof typeof formData) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: [...(prev[field] as string[]), ""],
-    }));
+    if (field === "images") {
+      setFormData((prev) => ({
+        ...prev,
+        images: [...prev.images, null as unknown as File],
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: [...(prev[field] as string[]), ""],
+      }));
+    }
   };
 
   const removeArrayItem = (field: keyof typeof formData, index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: (prev[field] as string[]).filter((_, i) => i !== index),
-    }));
+    if (field === "images") {
+      setFormData((prev) => ({
+        ...prev,
+        images: prev.images.filter((_, i) => i !== index),
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: (prev[field] as string[]).filter((_, i) => i !== index),
+      }));
+    }
+  };
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      onClick={handleBackdropClick}
+    >
       <div className="bg-card border-border max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-lg border shadow-lg">
         <div className="bg-card border-border sticky top-0 border-b p-6">
           <div className="flex items-center justify-between">
@@ -284,14 +366,18 @@ const ProjectModal = ({
                 Thumbnail Image *
               </label>
               <input
-                type="url"
+                type="file"
                 name="thumbnailImage"
-                value={formData.thumbnailImage}
-                onChange={handleChange}
+                onChange={handleFileChange}
+                accept="image/*"
                 className="bg-secondary/40 border-border text-fg focus:ring-primary/50 w-full rounded-md border px-3 py-2 focus:ring-2 focus:outline-none"
-                placeholder="https://example.com/image.jpg"
-                required
+                required={!isEditing}
               />
+              {formData.thumbnailImage && (
+                <p className="text-text-muted mt-1 text-sm">
+                  Selected: {formData.thumbnailImage.name}
+                </p>
+              )}
             </div>
 
             <div>
@@ -310,15 +396,19 @@ const ProjectModal = ({
               </div>
               {formData.images.map((image, index) => (
                 <div key={index} className="mb-2 flex gap-2">
-                  <input
-                    type="url"
-                    value={image}
-                    onChange={(e) =>
-                      handleArrayChange("images", index, e.target.value)
-                    }
-                    className="bg-secondary/40 border-border text-fg focus:ring-primary/50 flex-1 rounded-md border px-3 py-2 focus:ring-2 focus:outline-none"
-                    placeholder="https://example.com/image.jpg"
-                  />
+                  <div className="flex-1">
+                    <input
+                      type="file"
+                      onChange={(e) => handleMultipleFileChange(e, index)}
+                      accept="image/*"
+                      className="bg-secondary/40 border-border text-fg focus:ring-primary/50 w-full rounded-md border px-3 py-2 focus:ring-2 focus:outline-none"
+                    />
+                    {image && (
+                      <p className="text-text-muted mt-1 text-xs">
+                        Selected: {image.name}
+                      </p>
+                    )}
+                  </div>
                   {formData.images.length > 1 && (
                     <button
                       type="button"

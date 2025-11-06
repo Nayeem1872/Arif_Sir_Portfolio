@@ -1,5 +1,6 @@
 "use client";
 
+import { config } from "@/lib/config";
 import { IconX } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
@@ -53,8 +54,8 @@ const CategoryModal = ({
 
     try {
       const url = isEditing
-        ? `http://localhost:8000/api/project-categories/${category._id}`
-        : "http://localhost:8000/api/project-categories";
+        ? `${config.apiBaseUrl}/project-categories/${category._id}`
+        : `${config.apiBaseUrl}/project-categories`;
 
       const method = isEditing ? "PUT" : "POST";
 
@@ -95,8 +96,17 @@ const CategoryModal = ({
     }));
   };
 
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      onClick={handleBackdropClick}
+    >
       <div className="bg-card border-border w-full max-w-md rounded-lg border p-6 shadow-lg">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-fg text-lg font-semibold">

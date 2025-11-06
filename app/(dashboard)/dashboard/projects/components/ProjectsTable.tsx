@@ -1,5 +1,6 @@
 "use client";
 
+import { config } from "@/lib/config";
 import {
   IconEdit,
   IconExternalLink,
@@ -82,6 +83,7 @@ const ProjectsTable = ({
       </div>
     );
   }
+  console.log("projects", projects);
 
   return (
     <div className="bg-card border-border overflow-hidden rounded-lg border">
@@ -99,9 +101,6 @@ const ProjectsTable = ({
                 Status
               </th>
               <th className="text-fg px-6 py-3 text-left text-sm font-medium">
-                Stats
-              </th>
-              <th className="text-fg px-6 py-3 text-left text-sm font-medium">
                 Technologies
               </th>
               <th className="text-fg px-6 py-3 text-right text-sm font-medium">
@@ -117,7 +116,7 @@ const ProjectsTable = ({
                     <div className="h-12 w-12 overflow-hidden rounded-lg bg-gray-200">
                       {project.thumbnailImage ? (
                         <img
-                          src={project.thumbnailImage}
+                          src={`${config.apiBaseUrl.replace("/api", "")}${project.thumbnailImage}`}
                           alt={project.title}
                           className="h-full w-full object-cover"
                         />
@@ -161,18 +160,7 @@ const ProjectsTable = ({
                     )}
                   </div>
                 </td>
-                <td className="px-6 py-4">
-                  <div className="text-text-muted flex flex-col gap-1 text-sm">
-                    <div className="flex items-center gap-1">
-                      <IconEye className="h-3 w-3" />
-                      {project.viewCount}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <IconHeart className="h-3 w-3" />
-                      {project.likes}
-                    </div>
-                  </div>
-                </td>
+
                 <td className="px-6 py-4">
                   <div className="flex max-w-xs flex-wrap gap-1">
                     {project.technologies.slice(0, 2).map((tech) => (
@@ -191,57 +179,76 @@ const ProjectsTable = ({
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <div className="flex items-center justify-end gap-1">
+                  <div className="flex items-center justify-end gap-2">
                     {project.liveUrl && (
                       <a
                         href={project.liveUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-primary hover:bg-primary/10 rounded p-1 transition-colors"
-                        title="View Live"
+                        className="flex items-center gap-1 rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-100"
+                        title="View Live Project"
                       >
-                        <IconExternalLink className="h-4 w-4" />
+                        <IconExternalLink className="h-3 w-3" />
+                        Live
                       </a>
                     )}
+
                     <button
                       onClick={() =>
                         onToggleFeatured(project._id, project.isFeatured)
                       }
-                      className={`rounded p-1 transition-colors ${
+                      className={`flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors ${
                         project.isFeatured
-                          ? "text-yellow-500 hover:bg-yellow-50"
-                          : "text-gray-400 hover:bg-gray-50"
+                          ? "bg-yellow-50 text-yellow-600 hover:bg-yellow-100"
+                          : "bg-gray-50 text-gray-500 hover:bg-gray-100"
                       }`}
-                      title="Toggle Featured"
+                      title={
+                        project.isFeatured
+                          ? "Remove from Featured"
+                          : "Mark as Featured"
+                      }
                     >
-                      <IconHeart className="h-4 w-4" />
+                      <IconHeart
+                        className={`h-3 w-3 ${project.isFeatured ? "fill-current" : ""}`}
+                      />
+                      {project.isFeatured ? "Featured" : "Feature"}
                     </button>
+
                     <button
                       onClick={() =>
                         onTogglePublished(project._id, project.isPublished)
                       }
-                      className={`rounded p-1 transition-colors ${
+                      className={`flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors ${
                         project.isPublished
-                          ? "text-green-500 hover:bg-green-50"
-                          : "text-gray-400 hover:bg-gray-50"
+                          ? "bg-green-50 text-green-600 hover:bg-green-100"
+                          : "bg-gray-50 text-gray-500 hover:bg-gray-100"
                       }`}
-                      title="Toggle Published"
+                      title={
+                        project.isPublished
+                          ? "Unpublish Project"
+                          : "Publish Project"
+                      }
                     >
-                      <IconEye className="h-4 w-4" />
+                      <IconEye className="h-3 w-3" />
+                      {project.isPublished ? "Published" : "Draft"}
                     </button>
+
                     <button
                       onClick={() => onEdit(project)}
-                      className="rounded p-1 text-blue-500 transition-colors hover:bg-blue-50"
+                      className="flex items-center gap-1 rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-100"
                       title="Edit Project"
                     >
-                      <IconEdit className="h-4 w-4" />
+                      <IconEdit className="h-3 w-3" />
+                      Edit
                     </button>
+
                     <button
                       onClick={() => onDelete(project._id)}
-                      className="rounded p-1 text-red-500 transition-colors hover:bg-red-50"
+                      className="flex items-center gap-1 rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-100"
                       title="Delete Project"
                     >
-                      <IconTrash className="h-4 w-4" />
+                      <IconTrash className="h-3 w-3" />
+                      Delete
                     </button>
                   </div>
                 </td>

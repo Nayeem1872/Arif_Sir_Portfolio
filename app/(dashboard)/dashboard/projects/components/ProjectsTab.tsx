@@ -1,5 +1,6 @@
 "use client";
 
+import { config } from "@/lib/config";
 import { IconPlus } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
 import ProjectModal from "./ProjectModal";
@@ -66,7 +67,7 @@ const ProjectsTab = () => {
       }
 
       const response = await fetch(
-        `http://localhost:8000/api/projects/admin?${params}`,
+        `${config.apiBaseUrl}/projects/admin?${params}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
@@ -87,9 +88,7 @@ const ProjectsTab = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:8000/api/project-categories",
-      );
+      const response = await fetch(`${config.apiBaseUrl}/project-categories`);
       const data = await response.json();
 
       if (data.success) {
@@ -119,7 +118,7 @@ const ProjectsTab = () => {
     if (!confirm("Are you sure you want to delete this project?")) return;
 
     try {
-      const response = await fetch(`http://localhost:8000/api/projects/${id}`, {
+      const response = await fetch(`${config.apiBaseUrl}/projects/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
@@ -140,7 +139,7 @@ const ProjectsTab = () => {
 
   const togglePublished = async (id: string, isPublished: boolean) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/projects/${id}`, {
+      const response = await fetch(`${config.apiBaseUrl}/projects/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -159,7 +158,7 @@ const ProjectsTab = () => {
 
   const toggleFeatured = async (id: string, isFeatured: boolean) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/projects/${id}`, {
+      const response = await fetch(`${config.apiBaseUrl}/projects/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

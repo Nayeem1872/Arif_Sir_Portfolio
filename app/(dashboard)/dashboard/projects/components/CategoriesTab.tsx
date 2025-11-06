@@ -1,6 +1,8 @@
 "use client";
 
 import { IconPlus } from "@tabler/icons-react";
+
+import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 import CategoriesTable from "./CategoriesTable";
 import CategoryModal from "./CategoryModal";
@@ -31,9 +33,7 @@ const CategoriesTab = () => {
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
-        "http://localhost:8000/api/project-categories",
-      );
+      const response = await fetch(`${config.apiBaseUrl}/project-categories`);
       const data = await response.json();
 
       if (data.success) {
@@ -61,7 +61,7 @@ const CategoriesTab = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/project-categories/${id}`,
+        `${config.apiBaseUrl}/project-categories/${id}`,
         {
           method: "DELETE",
           headers: {
