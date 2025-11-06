@@ -28,17 +28,29 @@ const getImageUrl = (url: string) => {
   return `${baseUrl}${url}`;
 };
 
+// Helper function to truncate text with ellipsis
+const truncateText = (text: string, maxLength: number = 80) => {
+  if (!text || text.length <= maxLength) return text;
+  return text.substring(0, maxLength).trim() + "...";
+};
+
+// Helper function to truncate title
+const truncateTitle = (title: string, maxLength: number = 25) => {
+  if (!title || title.length <= maxLength) return title;
+  return title.substring(0, maxLength).trim() + "...";
+};
+
 const GitHubCard = ({ project }: { project: Project }) => {
   const renderStatusIcon = (status: Project["status"]) => {
     switch (status) {
       case "live":
-        return <IconWorld size={20} className="mr-1 inline-block" />;
+        return <IconWorld size={16} className="mr-1 inline-block" />;
       case "archived":
-        return <IconArchive size={20} className="mr-1 inline-block" />;
+        return <IconArchive size={16} className="mr-1 inline-block" />;
       case "development":
-        return <IconCode size={20} className="mr-1 inline-block" />;
+        return <IconCode size={16} className="mr-1 inline-block" />;
       default:
-        return <IconCircleDotted size={20} className="mr-1 inline-block" />;
+        return <IconCircleDotted size={16} className="mr-1 inline-block" />;
     }
   };
 
@@ -52,11 +64,16 @@ const GitHubCard = ({ project }: { project: Project }) => {
                 {project.name?.charAt(0).toUpperCase()}
               </span>
             </div>
-            <span className="ml-2 text-sm font-medium capitalize">
-              {project.name}
+            <span
+              className="ml-2 text-sm font-medium capitalize"
+              title={project.name}
+            >
+              {truncateTitle(project.name || "", 20)}
             </span>
           </div>
-          <span className="text-xs">{project.tagline}</span>
+          <span className="text-xs" title={project.tagline}>
+            {truncateText(project.tagline || "", 60)}
+          </span>
           <div className="text-fg/80 flex items-center self-end text-xs">
             <span className="font-medium">Click to view</span>
             <IconArrowUpRight className="h-3 w-3" />
@@ -68,10 +85,10 @@ const GitHubCard = ({ project }: { project: Project }) => {
         href={`/projects/${project.slug}`}
         className="block h-full w-full p-1"
       >
-        <div className="bg-secondary/40 hover:bg-secondary relative flex min-h-[150px] w-full flex-col overflow-hidden rounded-lg">
-          {/* Project Image */}
-          {project.screenshots && project.screenshots.length > 0 && (
-            <div className="relative h-32 w-full">
+        <div className="bg-secondary/40 hover:bg-secondary relative flex h-[280px] w-full flex-col overflow-hidden rounded-lg transition-colors">
+          {/* Project Image or Placeholder */}
+          <div className="bg-secondary/10 relative h-32 w-full">
+            {project.screenshots && project.screenshots.length > 0 ? (
               <Image
                 src={getImageUrl(project.screenshots[0].url)}
                 alt={project.name || "Project image"}
@@ -81,29 +98,47 @@ const GitHubCard = ({ project }: { project: Project }) => {
                   e.currentTarget.style.display = "none";
                 }}
               />
-            </div>
-          )}
+            ) : (
+              <div className="text-secondary-fg/40 flex h-full items-center justify-center">
+                <div className="text-center">
+                  <IconCode className="mx-auto mb-2 h-8 w-8 opacity-50" />
+                  <p className="text-xs">No Preview</p>
+                </div>
+              </div>
+            )}
+          </div>
 
-          <div className="flex-1 px-4 pt-2 pb-4">
-            <div className="mb-1 flex-1">
-              <div className="flex w-full justify-between">
-                <div>
-                  <h3 className="text-lg font-medium">{project.name}</h3>
-                  <p className="text-secondary-fg text-xs">{project.tagline}</p>
+          <div className="flex flex-1 flex-col px-4 pt-3 pb-4">
+            {/* Title and Description */}
+            <div className="mb-3 flex-1">
+              <div className="overflow-hidden">
+                <h3
+                  className="mb-1 truncate text-sm font-medium"
+                  title={project.name}
+                >
+                  {truncateTitle(project.name || "", 25)}
+                </h3>
+                <div className="min-h-[32px]">
+                  <p
+                    className="text-secondary-fg text-xs leading-relaxed"
+                    title={project.tagline}
+                  >
+                    {truncateText(project.tagline || "", 80)}
+                  </p>
                 </div>
               </div>
             </div>
 
-            {/*Icons bar*/}
-            <div className="mt-auto flex gap-2">
+            {/* Icons bar */}
+            <div className="mb-2 flex gap-2">
               {project.githubURL ? (
                 <div className="bg-fg/10 flex items-center gap-1 rounded-lg px-2 py-1 text-xs">
-                  <IconBrandGithub size={20} className="stroke-[1.5]" />
+                  <IconBrandGithub size={16} className="stroke-[1.5]" />
                   <span>Public</span>
                 </div>
               ) : (
                 <div className="bg-fg/10 flex items-center gap-1 rounded-lg px-2 py-1 text-xs">
-                  <IconLock size={20} className="stroke-[1.5]" />
+                  <IconLock size={16} className="stroke-[1.5]" />
                   <span>Private</span>
                 </div>
               )}
@@ -115,8 +150,10 @@ const GitHubCard = ({ project }: { project: Project }) => {
               )}
             </div>
 
-            {/*Language bar*/}
-            <LanguageBar project={project} />
+            {/* Language bar - always at bottom */}
+            <div className="mt-auto">
+              <LanguageBar project={project} />
+            </div>
           </div>
         </div>
       </Link>

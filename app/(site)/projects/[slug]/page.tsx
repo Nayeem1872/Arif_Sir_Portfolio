@@ -30,6 +30,18 @@ const getImageUrl = (url: string) => {
   return `${baseUrl}${url}`;
 };
 
+// Helper function to truncate text with ellipsis
+const truncateText = (text: string, maxLength: number = 50) => {
+  if (!text || text.length <= maxLength) return text;
+  return text.substring(0, maxLength).trim() + "...";
+};
+
+// Helper function to truncate title
+const truncateTitle = (title: string, maxLength: number = 30) => {
+  if (!title || title.length <= maxLength) return title;
+  return title.substring(0, maxLength).trim() + "...";
+};
+
 export const revalidate = 3600; // Revalidate every hour
 
 export async function generateStaticParams() {
@@ -99,7 +111,7 @@ export default async function ProjectPage({
 
   return (
     <main className="max-container relative px-4">
-      <nav className="mb-2 text-sm tracking-wider">
+      <nav className="my-6 text-sm tracking-wider">
         <Link
           href="/projects"
           className="text-text-secondary flex w-fit items-center gap-1 hover:text-white"
@@ -192,31 +204,6 @@ export default async function ProjectPage({
                     ))}
                   </p>
                 ))}
-              </div>
-            </article>
-          )}
-
-          {/* Project Features */}
-          {data.features && (
-            <article className="prose prose-invert text-fg max-w-none lg:text-lg">
-              <h2 className="border-primary mb-6 border-l-4 pl-4 text-lg font-medium capitalize md:text-xl lg:text-2xl">
-                Key Features
-              </h2>
-              <div className="bg-secondary/20 rounded-lg p-6">
-                <ul className="space-y-3">
-                  {data.features?.map((block, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <span className="bg-primary/20 text-primary mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold">
-                        ✓
-                      </span>
-                      <span className="leading-relaxed">
-                        {block.children?.map((child, childIndex) => (
-                          <span key={childIndex}>{child.text}</span>
-                        ))}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
               </div>
             </article>
           )}
@@ -390,10 +377,13 @@ export default async function ProjectPage({
                     <Link
                       href={`/projects/${project.slug}`}
                       className="bg-secondary/20 hover:bg-secondary/40 block w-full rounded-lg p-3 transition-colors"
+                      title={`${project.name} - ${project.tagline}`}
                     >
-                      <div className="text-fg font-medium">{project.name}</div>
-                      <div className="text-secondary-fg/60 text-sm">
-                        {project.tagline}
+                      <div className="text-fg mb-1 text-sm leading-tight font-medium">
+                        {truncateTitle(project.name, 25)}
+                      </div>
+                      <div className="text-secondary-fg/60 text-xs leading-relaxed">
+                        {truncateText(project.tagline || "", 40)}
                       </div>
                     </Link>
                   </li>
