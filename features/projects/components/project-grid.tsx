@@ -1,7 +1,8 @@
 "use client";
 
 import { Project } from "@/types/data";
-import { IconCode } from "@tabler/icons-react";
+import { IconArrowRight, IconCode } from "@tabler/icons-react";
+import Link from "next/link";
 import { ProjectCard } from "./project-card";
 
 const ProjectGrid = ({ projects }: { projects: Project[] }) => {
@@ -23,6 +24,17 @@ const ProjectGrid = ({ projects }: { projects: Project[] }) => {
         {projects.map((project) => (
           <ProjectCard key={project._id} project={project} />
         ))}
+      </div>
+
+      {/* View All Projects Button */}
+      <div className="mt-6 flex justify-center">
+        <Link
+          href="/projects"
+          className="outline-button group mt-6 inline-flex cursor-pointer items-center gap-2 rounded-full px-6 py-3 transition-all duration-200 hover:scale-105"
+        >
+          <IconArrowRight className="h-4 w-4 transition-transform group-hover:scale-110" />
+          <span>View All Projects</span>
+        </Link>
       </div>
     </div>
   );
