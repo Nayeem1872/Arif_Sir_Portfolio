@@ -78,6 +78,31 @@ export interface Project {
   }>;
 }
 
+// API Response interfaces
+export interface ProjectApiResponse {
+  _id: string;
+  title: string;
+  description: string;
+  shortDescription: string;
+  categoryId: unknown;
+  images: string[];
+  thumbnailImage: string;
+  technologies: string[];
+  features: string[];
+  liveUrl: string;
+  sourceCodeUrl: string;
+  demoUrl: string;
+  isPublished: boolean;
+  isFeatured: boolean;
+  viewCount: number;
+  likes: number;
+  completedAt: string;
+  createdAt: string;
+  updatedAt: string;
+  slug: string;
+  __v: number;
+}
+
 export interface Service {
   title: string;
   description: string;

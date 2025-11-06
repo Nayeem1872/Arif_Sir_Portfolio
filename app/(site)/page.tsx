@@ -3,6 +3,7 @@ import HeroSection from "@/features/home/sections/hero";
 import Metrics from "@/features/home/sections/metrics";
 import ServiceSection from "@/features/home/sections/service";
 import TechnologySection from "@/features/home/sections/technology";
+import GallerySection from "@/features/projects/sections/gallery";
 import { getBlogs, getProfile, getServices, getTech } from "@/lib/queries";
 
 export const revalidate = 60;
@@ -19,6 +20,7 @@ const HomePage = async () => {
       <HeroSection profile={profile} />
       <TechnologySection techs={techs} />
       <ServiceSection services={services} />
+      <GallerySection />
       <BlogSection blogs={blogs} />
       <Metrics metrics={profile?.metrics} />
     </div>

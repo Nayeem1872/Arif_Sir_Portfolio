@@ -1,6 +1,5 @@
 import { metaTexts } from "@/config/metadata";
 import ContactCTA from "@/features/projects/sections/contact-cta";
-import GallerySection from "@/features/projects/sections/gallery";
 import ProjectRepos from "@/features/projects/sections/repos";
 import { getProjects } from "@/lib/queries";
 import { getMetadata } from "@/utils/meta";
@@ -12,15 +11,30 @@ export const metadata: Metadata = getMetadata({
 });
 
 const ProjectPage = async () => {
-  const projects = await getProjects();
+  try {
+    const projects = await getProjects();
+    console.log("Fetched projects:", projects.length);
 
-  return (
-    <div className="relative w-full">
-      <GallerySection />
-      <ProjectRepos projects={projects} />
-      <ContactCTA />
-    </div>
-  );
+    return (
+      <div className="relative w-full">
+        {/* <GallerySection /> */}
+        <ProjectRepos projects={projects} />
+        <ContactCTA />
+      </div>
+    );
+  } catch (error) {
+    console.error("Error loading projects page:", error);
+    return (
+      <div className="relative w-full">
+        <div className="flex min-h-[400px] items-center justify-center">
+          <p className="text-lg text-gray-600">
+            Failed to load projects. Please try again later.
+          </p>
+        </div>
+        <ContactCTA />
+      </div>
+    );
+  }
 };
 
 export const revalidate = 60;

@@ -11,8 +11,22 @@ import {
   IconLock,
   IconWorld,
 } from "@tabler/icons-react";
+import Image from "next/image";
 import Link from "next/link";
 import LanguageBar from "./language-bar";
+
+// Helper function to get full image URL
+const getImageUrl = (url: string) => {
+  if (url.startsWith("http")) {
+    return url; // Already a full URL
+  }
+  // Add the base URL for relative paths
+  const baseUrl =
+    process.env.NODE_ENV === "production"
+      ? "https://arif-sir-blog-backend.onrender.com"
+      : "http://localhost:8000";
+  return `${baseUrl}${url}`;
+};
 
 const GitHubCard = ({ project }: { project: Project }) => {
   const renderStatusIcon = (status: Project["status"]) => {
@@ -54,39 +68,56 @@ const GitHubCard = ({ project }: { project: Project }) => {
         href={`/projects/${project.slug}`}
         className="block h-full w-full p-1"
       >
-        <div className="bg-secondary/40 hover:bg-secondary relative flex min-h-[150px] w-full flex-col rounded-lg px-4 pt-2 pb-4">
-          <div className="mb-1 flex-1">
-            <div className="flex w-full justify-between">
-              <div>
-                <h3 className="text-lg font-medium">{project.slug}</h3>
-                <p className="text-secondary-fg text-xs">{project.tagline}</p>
+        <div className="bg-secondary/40 hover:bg-secondary relative flex min-h-[150px] w-full flex-col overflow-hidden rounded-lg">
+          {/* Project Image */}
+          {project.screenshots && project.screenshots.length > 0 && (
+            <div className="relative h-32 w-full">
+              <Image
+                src={getImageUrl(project.screenshots[0].url)}
+                alt={project.name || "Project image"}
+                fill
+                className="object-cover"
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                }}
+              />
+            </div>
+          )}
+
+          <div className="flex-1 px-4 pt-2 pb-4">
+            <div className="mb-1 flex-1">
+              <div className="flex w-full justify-between">
+                <div>
+                  <h3 className="text-lg font-medium">{project.name}</h3>
+                  <p className="text-secondary-fg text-xs">{project.tagline}</p>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/*Icons bar*/}
-          <div className="mt-auto flex gap-2">
-            {project.githubURL ? (
-              <div className="bg-fg/10 flex items-center gap-1 rounded-lg px-2 py-1 text-xs">
-                <IconBrandGithub size={20} className="stroke-[1.5]" />
-                <span>Public</span>
-              </div>
-            ) : (
-              <div className="bg-fg/10 flex items-center gap-1 rounded-lg px-2 py-1 text-xs">
-                <IconLock size={20} className="stroke-[1.5]" />
-                <span>Private</span>
-              </div>
-            )}
-            {project.status && (
-              <div className="bg-fg/10 flex items-center gap-1 rounded-lg px-2 py-1 text-xs hover:brightness-110">
-                {renderStatusIcon(project.status)}
-                <span className="capitalize">{project.status}</span>
-              </div>
-            )}
-          </div>
+            {/*Icons bar*/}
+            <div className="mt-auto flex gap-2">
+              {project.githubURL ? (
+                <div className="bg-fg/10 flex items-center gap-1 rounded-lg px-2 py-1 text-xs">
+                  <IconBrandGithub size={20} className="stroke-[1.5]" />
+                  <span>Public</span>
+                </div>
+              ) : (
+                <div className="bg-fg/10 flex items-center gap-1 rounded-lg px-2 py-1 text-xs">
+                  <IconLock size={20} className="stroke-[1.5]" />
+                  <span>Private</span>
+                </div>
+              )}
+              {project.status && (
+                <div className="bg-fg/10 flex items-center gap-1 rounded-lg px-2 py-1 text-xs hover:brightness-110">
+                  {renderStatusIcon(project.status)}
+                  <span className="capitalize">{project.status}</span>
+                </div>
+              )}
+            </div>
 
-          {/*Language bar*/}
-          <LanguageBar project={project} />
+            {/*Language bar*/}
+            <LanguageBar project={project} />
+          </div>
         </div>
       </Link>
     </AnimatedTooltip>

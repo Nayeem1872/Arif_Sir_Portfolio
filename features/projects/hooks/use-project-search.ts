@@ -20,9 +20,17 @@ export function useProjectSearch(projects: Project[]) {
             p.name?.toLowerCase().includes(debouncedSearch) ||
             p.tagline?.toLowerCase().includes(debouncedSearch) ||
             p.slug?.toLowerCase().includes(debouncedSearch) ||
-            p.tags?.some((tag) =>
-              tag.toLowerCase().includes(debouncedSearch),
-            ) ||
+            p.tags?.some((tag) => {
+              // Handle both array of strings and array with comma-separated string
+              if (typeof tag === "string" && tag.includes(",")) {
+                return tag
+                  .split(",")
+                  .some((t) =>
+                    t.trim().toLowerCase().includes(debouncedSearch),
+                  );
+              }
+              return tag.toLowerCase().includes(debouncedSearch);
+            }) ||
             p.languages?.some((l) =>
               l.language?.toLowerCase().includes(debouncedSearch),
             ),
@@ -36,7 +44,15 @@ export function useProjectSearch(projects: Project[]) {
 
   // Tags change based on filtered projects
   const tags = useMemo(() => {
-    const allTags = filtered.flatMap((project) => project.tags || []);
+    const allTags = filtered.flatMap((project) => {
+      if (!project.tags) return [];
+      // Handle both array of strings and array with comma-separated string
+      return project.tags.flatMap((tag) =>
+        typeof tag === "string" && tag.includes(",")
+          ? tag.split(",").map((t) => t.trim())
+          : [tag],
+      );
+    });
     return Array.from(new Set(allTags.map((tag) => tag.toLowerCase())));
   }, [filtered]);
 
@@ -45,9 +61,16 @@ export function useProjectSearch(projects: Project[]) {
     if (activeTags.length === 0) {
       return filtered;
     }
-    return filtered.filter((project) =>
-      project.tags?.some((tag) => activeTags.includes(tag.toLowerCase())),
-    );
+    return filtered.filter((project) => {
+      if (!project.tags) return false;
+      // Handle both array of strings and array with comma-separated string
+      const projectTags = project.tags.flatMap((tag) =>
+        typeof tag === "string" && tag.includes(",")
+          ? tag.split(",").map((t) => t.trim().toLowerCase())
+          : [tag.toLowerCase()],
+      );
+      return activeTags.some((activeTag) => projectTags.includes(activeTag));
+    });
   }, [filtered, activeTags]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {

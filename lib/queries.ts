@@ -2,7 +2,14 @@ import { blogsData } from "@/data/blogs";
 import { projectsData } from "@/data/projects";
 import { servicesData } from "@/data/services";
 import { technologiesData } from "@/data/technologies";
-import type { Blog, Profile, Project, Service, Technology } from "@/types/data";
+import type {
+  Blog,
+  Profile,
+  Project,
+  ProjectApiResponse,
+  Service,
+  Technology,
+} from "@/types/data";
 import axios from "axios";
 import { config } from "./config";
 
@@ -51,7 +58,81 @@ export async function updateProfile(
 }
 
 export async function getProjects(): Promise<Project[]> {
-  return projectsData;
+  try {
+    const apiUrl = `${config.apiBaseUrl}/projects?published=true`;
+    console.log("Fetching projects from:", apiUrl);
+
+    const response = await axios.get(apiUrl);
+    console.log("Projects API response status:", response.status);
+
+    // Check if response has the expected structure
+    if (!response.data || !response.data.success || !response.data.data) {
+      console.error("Unexpected API response structure:", response.data);
+      throw new Error("Invalid API response structure");
+    }
+
+    // Transform API data to match the Project interface
+    const projects = response.data.data.map((project: ProjectApiResponse) => ({
+      _id: project._id,
+      _updatedAt: project.updatedAt,
+      name: project.title,
+      slug: project.slug,
+      tagline: project.shortDescription || project.description,
+      description: project.description
+        ? [
+            {
+              _type: "block",
+              children: [
+                {
+                  _type: "span",
+                  text: project.description,
+                },
+              ],
+            },
+          ]
+        : undefined,
+      features: project.features
+        ? project.features.map((feature: string) => ({
+            _type: "block",
+            children: [
+              {
+                _type: "span",
+                text: feature,
+              },
+            ],
+          }))
+        : undefined,
+      status: project.isPublished
+        ? "live"
+        : ("development" as "live" | "archived" | "development"),
+      githubURL: project.sourceCodeUrl,
+      liveURL: project.liveUrl,
+      tags: project.technologies
+        ? Array.isArray(project.technologies)
+          ? project.technologies
+          : project.technologies[0]?.split(",").map((tag) => tag.trim()) || []
+        : [],
+      screenshots: project.images
+        ? project.images.map((img: string) => ({ url: img }))
+        : undefined,
+    }));
+
+    console.log("Transformed projects:", projects);
+    return projects;
+  } catch (error) {
+    console.error("Failed to fetch projects from API:", error);
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error details:", {
+        message: error.message,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+      });
+    }
+    // Fallback to local data if API fails
+    console.log("Falling back to local project data");
+    return projectsData;
+  }
 }
 
 export async function getServices(): Promise<Service[]> {
@@ -67,11 +148,27 @@ export async function getProjectDetail({
 }: {
   slug: string;
 }): Promise<Project | null> {
-  return projectsData.find((project) => project.slug === slug) || null;
+  try {
+    // First try to get from API
+    const projects = await getProjects();
+    return projects.find((project) => project.slug === slug) || null;
+  } catch (error) {
+    console.error("Failed to fetch project detail from API:", error);
+    // Fallback to local data
+    return projectsData.find((project) => project.slug === slug) || null;
+  }
 }
 
 export async function getProjectSlugs(): Promise<string[]> {
-  return projectsData.map((project) => project.slug);
+  try {
+    // First try to get from API
+    const projects = await getProjects();
+    return projects.map((project) => project.slug);
+  } catch (error) {
+    console.error("Failed to fetch project slugs from API:", error);
+    // Fallback to local data
+    return projectsData.map((project) => project.slug);
+  }
 }
 
 export async function getBlogs(): Promise<Blog[]> {
