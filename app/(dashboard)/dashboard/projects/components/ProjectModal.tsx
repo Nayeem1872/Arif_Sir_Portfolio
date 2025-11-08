@@ -30,12 +30,7 @@ const getPlainTextLength = (html: string): number => {
   return (div.textContent || div.innerText || "").trim().length;
 };
 
-// Helper function to get plain text from HTML
-const getPlainText = (html: string): string => {
-  const div = document.createElement("div");
-  div.innerHTML = html;
-  return (div.textContent || div.innerText || "").trim();
-};
+
 
 interface ProjectCategory {
   _id: string;
