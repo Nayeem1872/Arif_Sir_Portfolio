@@ -1,5 +1,6 @@
 "use client";
 
+import { config } from "@/lib/config";
 import { Project } from "@/types/data";
 import { cn } from "@/utils/cn";
 import {
@@ -18,11 +19,7 @@ const getImageUrl = (url: string) => {
   if (url.startsWith("http")) {
     return url;
   }
-  const baseUrl =
-    process.env.NODE_ENV === "production"
-      ? "https://arif-sir-blog-backend.onrender.com"
-      : "http://localhost:8000";
-  return `${baseUrl}${url}`;
+  return `${config.baseUrl}${url}`;
 };
 
 const TechChip = ({ tech, index }: { tech: string; index: number }) => {

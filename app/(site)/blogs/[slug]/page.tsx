@@ -1,5 +1,6 @@
 "use client";
 
+import { config } from "@/lib/config";
 import type { Blog } from "@/types/data";
 import {
   IconArrowLeft,
@@ -15,11 +16,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const BLOG_API_BASE_URL =
-  process.env.NEXT_PUBLIC_BLOG_API_BASE_URL ||
-  (process.env.NODE_ENV === "production"
-    ? "https://arif-sir-blog-backend.onrender.com/api/blog"
-    : "http://localhost:8000/api/blog");
+// Use centralized config for API base URL
 
 const BlogDetailsPage = () => {
   const params = useParams();
@@ -32,31 +29,21 @@ const BlogDetailsPage = () => {
     const fetchBlog = async () => {
       try {
         setLoading(true);
-        console.log("Fetching blog with slug:", slug);
-        console.log("API Base URL:", BLOG_API_BASE_URL);
 
         // Try different API endpoints
         let response;
         try {
           // First try with slug
-          console.log(
-            "Trying direct API call:",
-            `${BLOG_API_BASE_URL}/${slug}`,
-          );
-          response = await axios.get(`${BLOG_API_BASE_URL}/${slug}`);
-          console.log("Direct API call successful:", response.data);
-        } catch (slugError) {
-          console.log("Direct API call failed, trying fallback:", slugError);
+
+          response = await axios.get(`${config.blogApiBaseUrl}/${slug}`);
+        } catch {
           // If slug fails, try getting all blogs and find by slug or title
           try {
-            console.log("Fetching all blogs for fallback search");
-            const allBlogsResponse = await axios.get(BLOG_API_BASE_URL);
-            console.log("All blogs response:", allBlogsResponse.data);
+            const allBlogsResponse = await axios.get(config.blogApiBaseUrl);
 
             // Handle different response structures
             const blogs =
               allBlogsResponse.data.posts || allBlogsResponse.data || [];
-            console.log("Blogs array:", blogs);
 
             const foundBlog = blogs.find((blog: Blog) => {
               const titleSlug = blog.title
@@ -64,18 +51,10 @@ const BlogDetailsPage = () => {
                 .replace(/\s+/g, "-")
                 .replace(/[^a-z0-9-]/g, "");
 
-              console.log("Comparing slug:", slug, "with:", {
-                blogSlug: blog.slug,
-                blogId: blog._id,
-                titleSlug,
-              });
-
               return (
                 blog.slug === slug || blog._id === slug || titleSlug === slug
               );
             });
-
-            console.log("Found blog:", foundBlog);
 
             if (foundBlog) {
               response = { data: foundBlog };
@@ -88,7 +67,6 @@ const BlogDetailsPage = () => {
           }
         }
 
-        console.log("Setting blog data:", response.data);
         setBlog(response.data);
       } catch (err) {
         setError("Blog post not found");
@@ -112,11 +90,7 @@ const BlogDetailsPage = () => {
   };
 
   const getImageUrl = (imagePath: string) => {
-    const baseUrl =
-      process.env.NODE_ENV === "production"
-        ? "https://arif-sir-blog-backend.onrender.com"
-        : "http://localhost:8000";
-    return `${baseUrl}${imagePath}`;
+    return `${config.baseUrl}${imagePath}`;
   };
 
   if (loading) {

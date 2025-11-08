@@ -60,10 +60,8 @@ export async function updateProfile(
 export async function getProjects(): Promise<Project[]> {
   try {
     const apiUrl = `${config.apiBaseUrl}/projects?published=true`;
-    console.log("Fetching projects from:", apiUrl);
 
     const response = await axios.get(apiUrl);
-    console.log("Projects API response status:", response.status);
 
     // Check if response has the expected structure
     if (!response.data || !response.data.success || !response.data.data) {
@@ -113,7 +111,6 @@ export async function getProjects(): Promise<Project[]> {
         : undefined,
     }));
 
-    console.log("Transformed projects:", projects);
     return projects;
   } catch (error) {
     console.error("Failed to fetch projects from API:", error);
@@ -126,7 +123,6 @@ export async function getProjects(): Promise<Project[]> {
       });
     }
     // Fallback to local data if API fails
-    console.log("Falling back to local project data");
     return projectsData;
   }
 }
@@ -170,11 +166,8 @@ export async function getProjectSlugs(): Promise<string[]> {
 export async function getBlogs(): Promise<Blog[]> {
   try {
     const response = await axios.get(
-      `${BLOG_API_BASE_URL}?isFeatured=true&includeContent=true`,
+      `${config.blogApiBaseUrl}?isFeatured=true&includeContent=true`,
     );
-    console.log("Featured blogs API response:", response.data);
-    console.log("Featured blogs posts:", response.data.posts);
-    console.log("Featured blogs pagination:", response.data.pagination);
 
     return response.data.posts || [];
   } catch (error) {
@@ -220,11 +213,7 @@ export async function getBlogSlugs(): Promise<string[]> {
 }
 
 // Blog API functions for dashboard
-const BLOG_API_BASE_URL =
-  process.env.NEXT_PUBLIC_BLOG_API_BASE_URL ||
-  (process.env.NODE_ENV === "production"
-    ? "https://arif-sir-blog-backend.onrender.com/api/blog"
-    : "http://localhost:8000/api/blog");
+// Remove this constant as we'll use config.blogApiBaseUrl
 
 export async function fetchBlogsFromAPI(params: {
   page?: number;
@@ -248,7 +237,9 @@ export async function fetchBlogsFromAPI(params: {
     if (params.isFeatured !== undefined)
       searchParams.append("isFeatured", params.isFeatured.toString());
 
-    const response = await axios.get(`${BLOG_API_BASE_URL}?${searchParams}`);
+    const response = await axios.get(
+      `${config.blogApiBaseUrl}?${searchParams}`,
+    );
     return response.data;
   } catch (error) {
     console.error("Failed to fetch blogs from API:", error);
@@ -258,7 +249,7 @@ export async function fetchBlogsFromAPI(params: {
 
 export async function getBlogFromAPI(id: string) {
   try {
-    const response = await axios.get(`${BLOG_API_BASE_URL}/${id}`);
+    const response = await axios.get(`${config.blogApiBaseUrl}/${id}`);
     return response.data;
   } catch (error) {
     console.error("Failed to fetch blog from API:", error);
@@ -268,7 +259,7 @@ export async function getBlogFromAPI(id: string) {
 
 export async function createBlogPost(formData: FormData) {
   try {
-    const response = await axios.post(BLOG_API_BASE_URL, formData, {
+    const response = await axios.post(config.blogApiBaseUrl, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -282,11 +273,15 @@ export async function createBlogPost(formData: FormData) {
 
 export async function updateBlogPost(id: string, formData: FormData) {
   try {
-    const response = await axios.put(`${BLOG_API_BASE_URL}/${id}`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
+    const response = await axios.put(
+      `${config.blogApiBaseUrl}/${id}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       },
-    });
+    );
     return response.data;
   } catch (error) {
     console.error("Failed to update blog post:", error);
@@ -296,7 +291,7 @@ export async function updateBlogPost(id: string, formData: FormData) {
 
 export async function deleteBlogPost(id: string) {
   try {
-    const response = await axios.delete(`${BLOG_API_BASE_URL}/${id}`);
+    const response = await axios.delete(`${config.blogApiBaseUrl}/${id}`);
     return response.data;
   } catch (error) {
     console.error("Failed to delete blog post:", error);
@@ -306,7 +301,7 @@ export async function deleteBlogPost(id: string) {
 
 export async function getBlogTags() {
   try {
-    const response = await axios.get(`${BLOG_API_BASE_URL}/tags/all`);
+    const response = await axios.get(`${config.blogApiBaseUrl}/tags/all`);
     return response.data;
   } catch (error) {
     console.error("Failed to fetch blog tags:", error);
@@ -316,7 +311,7 @@ export async function getBlogTags() {
 
 export async function getBlogCategories() {
   try {
-    const response = await axios.get(`${BLOG_API_BASE_URL}/categories/all`);
+    const response = await axios.get(`${config.blogApiBaseUrl}/categories/all`);
     return response.data;
   } catch (error) {
     console.error("Failed to fetch blog categories:", error);

@@ -29,11 +29,8 @@ export const useAuth = (): UseAuthReturn => {
   };
 
   const handleAuthError = (error: any) => {
-    console.log("Error details:", error);
-
     // Check if it's actually a successful response (status 200-299)
     if (error?.response?.status >= 200 && error?.response?.status < 300) {
-      console.log("This is actually a successful response, not an error");
       return;
     }
 
@@ -58,7 +55,6 @@ export const useAuth = (): UseAuthReturn => {
 
     try {
       const response = await authApi.signup(data);
-      console.log("Signup response:", response); // Debug log
 
       // Check if response has the expected structure
       // Your API returns: { message, token, user } directly
@@ -82,7 +78,6 @@ export const useAuth = (): UseAuthReturn => {
 
     try {
       const response = await authApi.signin(data);
-      console.log("Signin response:", response); // Debug log
 
       // Check if response has the expected structure
       // Your API returns: { message, token, user } directly

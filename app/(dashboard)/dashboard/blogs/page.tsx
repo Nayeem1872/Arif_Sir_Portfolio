@@ -1,5 +1,6 @@
 "use client";
 
+import { config } from "@/lib/config";
 import {
   IconCheck,
   IconEdit,
@@ -54,11 +55,7 @@ interface Notification {
   message: string;
 }
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_BLOG_API_BASE_URL ||
-  (process.env.NODE_ENV === "production"
-    ? "https://arif-sir-blog-backend.onrender.com/api/blog"
-    : "http://localhost:8000/api/blog");
+// Use centralized config for API base URL
 
 const BlogsPage = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
@@ -116,7 +113,7 @@ const BlogsPage = () => {
         params.append("isFeatured", featuredFilter.toString());
 
       const response = await axios.get(
-        `${API_BASE_URL}?${params}&includeContent=true`,
+        `${config.blogApiBaseUrl}?${params}&includeContent=true`,
       );
       setBlogs(response.data.posts || []);
       setTotalPages(response.data.pagination?.totalPages || 1);
@@ -139,8 +136,8 @@ const BlogsPage = () => {
   const fetchFilters = async () => {
     try {
       const [categoriesRes, tagsRes] = await Promise.all([
-        axios.get(`${API_BASE_URL}/categories/all`),
-        axios.get(`${API_BASE_URL}/tags/all`),
+        axios.get(`${config.blogApiBaseUrl}/categories/all`),
+        axios.get(`${config.blogApiBaseUrl}/tags/all`),
       ]);
 
       setCategories(categoriesRes.data.categories || categoriesRes.data || []);
@@ -184,7 +181,7 @@ const BlogsPage = () => {
       formData.append("published", "true"); // Default to published
       formData.append("isFeatured", isFeatured.toString());
 
-      const response = await axios.post(API_BASE_URL, formData, {
+      const response = await axios.post(config.blogApiBaseUrl, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -270,7 +267,7 @@ const BlogsPage = () => {
       formData.append("isFeatured", isFeatured.toString());
 
       const response = await axios.put(
-        `${API_BASE_URL}/${editingBlog._id}`,
+        `${config.blogApiBaseUrl}/${editingBlog._id}`,
         formData,
         {
           headers: {
@@ -300,7 +297,7 @@ const BlogsPage = () => {
     if (!confirm("Are you sure you want to delete this blog post?")) return;
 
     try {
-      await axios.delete(`${API_BASE_URL}/${id}`);
+      await axios.delete(`${config.blogApiBaseUrl}/${id}`);
       fetchBlogs(); // Refresh the list
       showNotification("success", "Blog post deleted successfully!");
     } catch (err) {
@@ -498,11 +495,7 @@ const BlogsPage = () => {
                 <div
                   className="h-full w-full bg-cover bg-center"
                   style={{
-                    backgroundImage: `url(${
-                      process.env.NODE_ENV === "production"
-                        ? "https://arif-sir-blog-backend.onrender.com"
-                        : "http://localhost:8000"
-                    }${blog.images[0]})`,
+                    backgroundImage: `url(${config.baseUrl}${blog.images[0]})`,
                   }}
                   role="img"
                   aria-label={blog.title}
@@ -915,11 +908,7 @@ const BlogsPage = () => {
                         <div
                           className="h-20 w-20 rounded border-2 border-transparent bg-cover bg-center transition-all duration-200 group-hover:border-red-300"
                           style={{
-                            backgroundImage: `url(${
-                              process.env.NODE_ENV === "production"
-                                ? "https://arif-sir-blog-backend.onrender.com"
-                                : "http://localhost:8000"
-                            }${image})`,
+                            backgroundImage: `url(${config.baseUrl}${image})`,
                           }}
                           role="img"
                           aria-label={`Blog image ${index + 1}`}

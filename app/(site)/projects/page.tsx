@@ -13,7 +13,6 @@ export const metadata: Metadata = getMetadata({
 const ProjectPage = async () => {
   try {
     const projects = await getProjects();
-    console.log("Fetched projects:", projects.length);
 
     return (
       <div className="relative w-full">

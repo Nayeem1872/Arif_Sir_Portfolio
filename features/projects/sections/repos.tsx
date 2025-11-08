@@ -27,8 +27,6 @@ const ProjectRepos = ({ projects }: { projects: Project[] }) => {
     handleSortChange,
   } = useProjectSearch(projects);
 
-  console.log("project data", projects);
-
   return (
     <SectionContainer className="">
       <div className="my-8 px-4 md:mt-16 md:mb-16">

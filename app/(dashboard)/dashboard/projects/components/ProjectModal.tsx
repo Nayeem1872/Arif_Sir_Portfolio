@@ -13,7 +13,7 @@ const getImageUrl = (imagePath: string) => {
   if (imagePath.startsWith("http")) {
     return imagePath;
   }
-  return `http://localhost:8000${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
+  return `${config.baseUrl}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
 };
 
 interface ProjectCategory {

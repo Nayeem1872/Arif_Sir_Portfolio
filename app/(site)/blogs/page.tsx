@@ -1,6 +1,7 @@
 "use client";
 
 import BlogCard from "@/features/home/components/blog-card";
+import { config } from "@/lib/config";
 import type { Blog } from "@/types/data";
 import {
   IconBookmark,
@@ -14,11 +15,7 @@ import { useRouter } from "next/navigation";
 
 import { useEffect, useState } from "react";
 
-const BLOG_API_BASE_URL =
-  process.env.NEXT_PUBLIC_BLOG_API_BASE_URL ||
-  (process.env.NODE_ENV === "production"
-    ? "https://arif-sir-blog-backend.onrender.com/api/blog"
-    : "http://localhost:8000/api/blog");
+// Use centralized config for API base URL
 
 const BlogsPage = () => {
   const router = useRouter();
@@ -33,10 +30,8 @@ const BlogsPage = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${BLOG_API_BASE_URL}?page=${page}&limit=12&includeContent=true`,
+        `${config.blogApiBaseUrl}?page=${page}&limit=12&includeContent=true`,
       );
-
-      console.log("All blogs API response:", response.data);
 
       setBlogs(response.data.posts || []);
       setTotalPages(response.data.pagination?.totalPages || 1);
@@ -70,13 +65,6 @@ const BlogsPage = () => {
         .toLowerCase()
         .replace(/\s+/g, "-")
         .replace(/[^a-z0-9-]/g, "");
-
-    console.log("Navigating to blog:", {
-      title: blog.title,
-      slug,
-      originalSlug: blog.slug,
-      id: blog._id,
-    });
 
     router.push(`/blogs/${slug}`);
   };

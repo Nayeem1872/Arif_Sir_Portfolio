@@ -1,4 +1,5 @@
 import ProjectImages from "@/features/projects/components/project-image";
+import { config } from "@/lib/config";
 import { getProjectDetail, getProjects, getProjectSlugs } from "@/lib/queries";
 import { getLanguageColor } from "@/utils/get-language-color";
 import { getMetadata } from "@/utils/meta";
@@ -23,11 +24,7 @@ const getImageUrl = (url: string) => {
     return url; // Already a full URL
   }
   // Add the base URL for relative paths
-  const baseUrl =
-    process.env.NODE_ENV === "production"
-      ? "https://arif-sir-blog-backend.onrender.com"
-      : "http://localhost:8000";
-  return `${baseUrl}${url}`;
+  return `${config.baseUrl}${url}`;
 };
 
 // Helper function to truncate text with ellipsis

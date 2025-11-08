@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
+import { config } from "@/lib/config";
 import { Project } from "@/types/data";
 import {
   IconArchive,
@@ -21,11 +22,7 @@ const getImageUrl = (url: string) => {
     return url; // Already a full URL
   }
   // Add the base URL for relative paths
-  const baseUrl =
-    process.env.NODE_ENV === "production"
-      ? "https://arif-sir-blog-backend.onrender.com"
-      : "http://localhost:8000";
-  return `${baseUrl}${url}`;
+  return `${config.baseUrl}${url}`;
 };
 
 // Helper function to truncate text with ellipsis

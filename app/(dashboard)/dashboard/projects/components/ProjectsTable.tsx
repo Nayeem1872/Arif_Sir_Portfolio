@@ -83,7 +83,6 @@ const ProjectsTable = ({
       </div>
     );
   }
-  console.log("projects", projects);
 
   return (
     <div className="bg-card border-border overflow-hidden rounded-lg border">

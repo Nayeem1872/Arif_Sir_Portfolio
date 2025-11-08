@@ -1,6 +1,7 @@
 "use client";
 
 import { HoverBorderButton } from "@/components/ui/hover-button";
+import { config } from "@/lib/config";
 import {
   IconArrowLeft,
   IconAt,
@@ -72,12 +73,7 @@ const ContactForm = () => {
       setStatus("submitting");
 
       try {
-        const apiUrl =
-          process.env.NODE_ENV === "production"
-            ? "https://arif-sir-blog-backend.onrender.com/api/contact"
-            : "http://localhost:8000/api/contact";
-
-        const response = await fetch(apiUrl, {
+        const response = await fetch(`${config.apiBaseUrl}/contact`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

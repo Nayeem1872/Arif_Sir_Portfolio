@@ -1,3 +1,4 @@
+import { config } from "@/lib/config";
 import type { Blog } from "@/types/data";
 import { IconArrowRight } from "@tabler/icons-react";
 
@@ -9,23 +10,13 @@ interface BlogCardProps {
 
 const BlogCard = ({ blog, isPrimary = false, onPostClick }: BlogCardProps) => {
   const handleClick = () => {
-    console.log("BlogCard clicked!", {
-      title: blog.title,
-      id: blog._id,
-      slug: blog.slug,
-      onPostClick: !!onPostClick,
-    });
     onPostClick?.(blog);
   };
 
   // Get the image URL with correct base URL for environment
   const getImageUrl = () => {
     if (blog.images && blog.images.length > 0) {
-      const baseUrl =
-        process.env.NODE_ENV === "production"
-          ? "https://arif-sir-blog-backend.onrender.com"
-          : "http://localhost:8000";
-      return `${baseUrl}${blog.images[0]}`;
+      return `${config.baseUrl}${blog.images[0]}`;
     }
     // Fallback to legacy image field or default
     return (

@@ -1,5 +1,6 @@
 "use client";
 
+import { config } from "@/lib/config";
 import { Project } from "@/types/data";
 import {
   IconBrandGithub,
@@ -21,7 +22,7 @@ const getProjectThumbnailUrl = (project: Project) => {
     return thumbnailUrl;
   }
 
-  return `http://localhost:8000${thumbnailUrl.startsWith("/") ? "" : "/"}${thumbnailUrl}`;
+  return `${config.baseUrl}${thumbnailUrl.startsWith("/") ? "" : "/"}${thumbnailUrl}`;
 };
 
 // Helper function to truncate text with ellipsis

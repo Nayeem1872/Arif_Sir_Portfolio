@@ -37,7 +37,7 @@ export const authApi = {
   signup: async (data: SignupData): Promise<AuthResponse> => {
     try {
       const response = await apiClient.post<AuthResponse>("/auth/signup", data);
-      console.log("Raw signup response:", response);
+
       return response.data;
     } catch (error) {
       console.error("Signup API error:", error);
@@ -48,7 +48,7 @@ export const authApi = {
   signin: async (data: SigninData): Promise<AuthResponse> => {
     try {
       const response = await apiClient.post<AuthResponse>("/auth/login", data);
-      console.log("Raw signin response:", response);
+
       return response.data;
     } catch (error) {
       console.error("Signin API error:", error);

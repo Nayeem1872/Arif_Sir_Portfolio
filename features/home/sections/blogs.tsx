@@ -24,18 +24,10 @@ const BlogSection = ({ blogs, className }: BlogSectionProps) => {
         .replace(/\s+/g, "-")
         .replace(/[^a-z0-9-]/g, "");
 
-    console.log("Navigating to blog:", {
-      title: blog.title,
-      slug,
-      originalSlug: blog.slug,
-      id: blog._id,
-    });
-
     router.push(`/blogs/${slug}`);
   };
 
   const handleBlogsClick = () => {
-    console.log("Button clicked, navigating to /blogs");
     router.push("/blogs");
   };
 
