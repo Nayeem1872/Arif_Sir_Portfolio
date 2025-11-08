@@ -257,6 +257,15 @@ const BlogsPage = () => {
       formData.append("content", editContent);
 
       // Handle existing images - send the current image list
+      console.log("=== IMAGE UPDATE DEBUG ===");
+      console.log("Current editingBlog.images:", editingBlog.images);
+      console.log("existingImages JSON:", JSON.stringify(editingBlog.images));
+
+      // Get new images from file input
+      const newImages = formData.getAll("images") as File[];
+      console.log("New images selected:", newImages);
+      console.log("New images count:", newImages.length);
+
       formData.append("existingImages", JSON.stringify(editingBlog.images));
 
       // Handle boolean fields - convert checkbox values to proper booleans
