@@ -22,7 +22,7 @@ const getProjectThumbnailUrl = (project: Project) => {
     return thumbnailUrl;
   }
 
-  return `${config.baseUrl}${thumbnailUrl.startsWith("/") ? "" : "/"}${thumbnailUrl}`;
+  return `${config.imageBaseUrl}${thumbnailUrl.startsWith("/") ? "" : "/"}${thumbnailUrl}`;
 };
 
 // Helper function to truncate text with ellipsis

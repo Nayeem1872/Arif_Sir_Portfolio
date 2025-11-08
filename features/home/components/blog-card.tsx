@@ -16,7 +16,13 @@ const BlogCard = ({ blog, isPrimary = false, onPostClick }: BlogCardProps) => {
   // Get the image URL with correct base URL for environment
   const getImageUrl = () => {
     if (blog.images && blog.images.length > 0) {
-      return `${config.baseUrl}${blog.images[0]}`;
+      const imageUrl = blog.images[0];
+      // If it's already a full URL, return as is
+      if (imageUrl.startsWith("http")) {
+        return imageUrl;
+      }
+      // Otherwise, prepend the image base URL
+      return `${config.imageBaseUrl}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
     }
     // Fallback to legacy image field or default
     return (

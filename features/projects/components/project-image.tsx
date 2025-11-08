@@ -1,5 +1,6 @@
 "use client";
 import ImageViewer from "@/components/ui/image-viewer";
+import { config } from "@/lib/config";
 import { cn } from "@/utils/cn";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import Image from "next/image";
@@ -16,6 +17,14 @@ const ProjectImages = ({
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
+
+  // Get full image URL
+  const getImageUrl = (url: string) => {
+    if (url.startsWith("http")) {
+      return url;
+    }
+    return `${config.imageBaseUrl}${url.startsWith("/") ? "" : "/"}${url}`;
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -71,7 +80,7 @@ const ProjectImages = ({
             >
               <Image
                 key={index}
-                src={image}
+                src={getImageUrl(image)}
                 alt={`${title} screenshot ${index + 1}`}
                 width={1000}
                 height={500}
@@ -118,7 +127,7 @@ const ProjectImages = ({
         open={open}
         index={index}
         onClose={() => setOpen(false)}
-        images={images}
+        images={images.map(getImageUrl)}
       />
     </>
   );

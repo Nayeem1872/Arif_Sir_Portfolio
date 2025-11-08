@@ -13,4 +13,9 @@ export const config = {
     process.env.NODE_ENV === "production"
       ? "https://arif-sir-blog-backend.onrender.com"
       : "http://localhost:8000",
+  imageBaseUrl:
+    process.env.NEXT_PUBLIC_IMAGE_BASE_URL ||
+    (process.env.NODE_ENV === "production"
+      ? "https://arif-sir-blog-backend.onrender.com"
+      : "http://localhost:8000"),
 } as const;

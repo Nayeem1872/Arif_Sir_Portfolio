@@ -1,3 +1,4 @@
+import { config } from "@/lib/config";
 import { IconPlus } from "@tabler/icons-react";
 import Image from "next/image";
 
@@ -14,6 +15,14 @@ const ProfileCard = ({
     return null;
   }
 
+  // Get full image URL
+  const getImageUrl = (url: string) => {
+    if (url.startsWith("http")) {
+      return url;
+    }
+    return `${config.imageBaseUrl}${url.startsWith("/") ? "" : "/"}${url}`;
+  };
+
   return (
     <div className="relative mx-auto flex max-w-sm flex-col items-start border border-white/[0.2] p-4">
       <IconPlus className="absolute -top-3 -left-3 h-6 w-6 text-white" />
@@ -22,7 +31,7 @@ const ProfileCard = ({
       <IconPlus className="absolute -right-3 -bottom-3 h-6 w-6 text-white" />
       <div className="group relative flex w-full items-center justify-center">
         <Image
-          src={photo}
+          src={getImageUrl(photo)}
           alt={alt ?? "Profile Photo"}
           width={200}
           height={500}

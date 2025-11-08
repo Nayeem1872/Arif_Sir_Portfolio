@@ -1,5 +1,6 @@
 "use client";
 
+import { config } from "@/lib/config";
 import type { Project } from "@/types/data";
 import { IconArrowUpRight } from "@tabler/icons-react";
 import { motion } from "motion/react";
@@ -9,6 +10,14 @@ import { useState } from "react";
 
 const ProjectCard = ({ project }: { project: Project }) => {
   const [hover, setHover] = useState(false);
+
+  // Get full image URL
+  const getImageUrl = (url: string) => {
+    if (url.startsWith("http")) {
+      return url;
+    }
+    return `${config.imageBaseUrl}${url.startsWith("/") ? "" : "/"}${url}`;
+  };
 
   const mouseEnter = () => {
     setHover(true);
@@ -59,7 +68,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
       </div>
       {project.screenshots?.[0].url ? (
         <Image
-          src={project.screenshots?.[0].url}
+          src={getImageUrl(project.screenshots[0].url)}
           width={500}
           height={500}
           alt={`screenshot-${project.name}`}

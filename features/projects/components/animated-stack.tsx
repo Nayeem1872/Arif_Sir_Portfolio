@@ -1,4 +1,5 @@
 "use client";
+import { config } from "@/lib/config";
 import {
   AnimatePresence,
   motion,
@@ -21,6 +22,14 @@ const AnimatedStack = ({
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const springConfig = { stiffness: 100, damping: 5 };
   const x = useMotionValue(0);
+
+  // Get full image URL
+  const getImageUrl = (url: string) => {
+    if (url.startsWith("http")) {
+      return url;
+    }
+    return `${config.imageBaseUrl}${url.startsWith("/") ? "" : "/"}${url}`;
+  };
 
   const rotate = useSpring(
     useTransform(x, [-100, 100], [-45, 45]),
@@ -78,7 +87,7 @@ const AnimatedStack = ({
             onMouseMove={handleMouseMove}
             height={50}
             width={50}
-            src={item.image}
+            src={getImageUrl(item.image)}
             alt={item.title}
             className="border-border bg-secondary relative !m-0 h-10 w-10 rounded-full border-2 object-cover object-top !p-0 transition duration-500 group-hover:z-30 group-hover:scale-105"
           />

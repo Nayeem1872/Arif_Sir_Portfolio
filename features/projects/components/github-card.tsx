@@ -21,8 +21,8 @@ const getImageUrl = (url: string) => {
   if (url.startsWith("http")) {
     return url; // Already a full URL
   }
-  // Add the base URL for relative paths
-  return `${config.baseUrl}${url}`;
+  // Add the image base URL for relative paths
+  return `${config.imageBaseUrl}${url.startsWith("/") ? "" : "/"}${url}`;
 };
 
 // Helper function to truncate text with ellipsis
