@@ -10,17 +10,19 @@ const ProjectsPage = () => {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-fg text-3xl font-bold">Projects Management</h1>
+        <h1 className="text-fg text-2xl font-bold sm:text-3xl">
+          Projects Management
+        </h1>
       </div>
 
       {/* Tab Navigation */}
-      <div className="bg-card border-border rounded-lg border">
-        <div className="border-border flex border-b">
+      <div className="bg-card border-border overflow-hidden rounded-lg border">
+        <div className="border-border flex overflow-x-auto border-b">
           <button
             onClick={() => setActiveTab("categories")}
-            className={`px-6 py-3 text-sm font-medium transition-colors ${
+            className={`px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors sm:px-6 ${
               activeTab === "categories"
                 ? "text-primary border-primary bg-primary/5 border-b-2"
                 : "text-text-muted hover:text-fg"
@@ -30,7 +32,7 @@ const ProjectsPage = () => {
           </button>
           <button
             onClick={() => setActiveTab("projects")}
-            className={`px-6 py-3 text-sm font-medium transition-colors ${
+            className={`px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors sm:px-6 ${
               activeTab === "projects"
                 ? "text-primary border-primary bg-primary/5 border-b-2"
                 : "text-text-muted hover:text-fg"
@@ -40,7 +42,7 @@ const ProjectsPage = () => {
           </button>
         </div>
 
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {activeTab === "categories" && <CategoriesTab />}
           {activeTab === "projects" && <ProjectsTab />}
         </div>

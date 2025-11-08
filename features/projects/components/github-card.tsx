@@ -2,7 +2,7 @@
 
 import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
 import { config } from "@/lib/config";
-import { Project } from "@/types/data";
+import type { ProjectApiResponse } from "@/types/data";
 import {
   IconArchive,
   IconArrowUpRight,
@@ -37,8 +37,10 @@ const truncateTitle = (title: string, maxLength: number = 25) => {
   return title.substring(0, maxLength).trim() + "...";
 };
 
-const GitHubCard = ({ project }: { project: Project }) => {
-  const renderStatusIcon = (status: Project["status"]) => {
+const GitHubCard = ({ project }: { project: ProjectApiResponse }) => {
+  const renderStatusIcon = (
+    status: "live" | "archived" | "development" | null,
+  ) => {
     switch (status) {
       case "live":
         return <IconWorld size={16} className="mr-1 inline-block" />;
@@ -58,18 +60,18 @@ const GitHubCard = ({ project }: { project: Project }) => {
           <div className="mb-1 flex items-center">
             <div className="bg-secondary-fg/20 flex h-8 w-8 items-center justify-center rounded-full">
               <span className="text-secondary-fg/60 text-sm font-medium">
-                {project.name?.charAt(0).toUpperCase()}
+                {project.title?.charAt(0).toUpperCase()}
               </span>
             </div>
             <span
               className="ml-2 text-sm font-medium capitalize"
-              title={project.name}
+              title={project.title}
             >
-              {truncateTitle(project.name || "", 20)}
+              {truncateTitle(project.title || "", 20)}
             </span>
           </div>
-          <span className="text-xs" title={project.tagline}>
-            {truncateText(project.tagline || "", 60)}
+          <span className="text-xs" title={project.shortDescription}>
+            {truncateText(project.shortDescription || "", 60)}
           </span>
           <div className="text-fg/80 flex items-center self-end text-xs">
             <span className="font-medium">Click to view</span>
@@ -85,10 +87,10 @@ const GitHubCard = ({ project }: { project: Project }) => {
         <div className="bg-secondary/40 hover:bg-secondary relative flex h-[280px] w-full flex-col overflow-hidden rounded-lg transition-colors">
           {/* Project Image or Placeholder */}
           <div className="bg-secondary/10 relative h-32 w-full">
-            {project.screenshots && project.screenshots.length > 0 ? (
+            {project.images && project.images.length > 0 ? (
               <Image
-                src={getImageUrl(project.screenshots[0].url)}
-                alt={project.name || "Project image"}
+                src={getImageUrl(project.images[0])}
+                alt={project.title || "Project image"}
                 fill
                 className="object-cover"
                 onError={(e) => {
@@ -111,16 +113,16 @@ const GitHubCard = ({ project }: { project: Project }) => {
               <div className="overflow-hidden">
                 <h3
                   className="mb-1 truncate text-sm font-medium"
-                  title={project.name}
+                  title={project.title}
                 >
-                  {truncateTitle(project.name || "", 25)}
+                  {truncateTitle(project.title || "", 25)}
                 </h3>
                 <div className="min-h-[32px]">
                   <p
                     className="text-secondary-fg text-xs leading-relaxed"
-                    title={project.tagline}
+                    title={project.shortDescription}
                   >
-                    {truncateText(project.tagline || "", 80)}
+                    {truncateText(project.shortDescription || "", 80)}
                   </p>
                 </div>
               </div>
@@ -128,7 +130,7 @@ const GitHubCard = ({ project }: { project: Project }) => {
 
             {/* Icons bar */}
             <div className="mb-2 flex gap-2">
-              {project.githubURL ? (
+              {project.sourceCodeUrl ? (
                 <div className="bg-fg/10 flex items-center gap-1 rounded-lg px-2 py-1 text-xs">
                   <IconBrandGithub size={16} className="stroke-[1.5]" />
                   <span>Public</span>
@@ -139,10 +141,14 @@ const GitHubCard = ({ project }: { project: Project }) => {
                   <span>Private</span>
                 </div>
               )}
-              {project.status && (
+              {project.isPublished && (
                 <div className="bg-fg/10 flex items-center gap-1 rounded-lg px-2 py-1 text-xs hover:brightness-110">
-                  {renderStatusIcon(project.status)}
-                  <span className="capitalize">{project.status}</span>
+                  {renderStatusIcon(
+                    project.isPublished ? "live" : "development",
+                  )}
+                  <span className="capitalize">
+                    {project.isPublished ? "live" : "development"}
+                  </span>
                 </div>
               )}
             </div>

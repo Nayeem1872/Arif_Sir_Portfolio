@@ -3,7 +3,7 @@
 import Heading from "@/components/common/heading";
 import { SectionContainer } from "@/components/layout/section";
 import { projectPage } from "@/config/content/pages";
-import type { Project } from "@/types/data";
+import type { ProjectApiResponse } from "@/types/data";
 import { cn } from "@/utils/cn";
 import {
   IconCoffee,
@@ -14,7 +14,7 @@ import { useRef } from "react";
 import GitHubCard from "../components/github-card";
 import { useProjectSearch } from "../hooks/use-project-search";
 
-const ProjectRepos = ({ projects }: { projects: Project[] }) => {
+const ProjectRepos = ({ projects }: { projects: ProjectApiResponse[] }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const {
     activeTags,
@@ -107,7 +107,7 @@ const ProjectRepos = ({ projects }: { projects: Project[] }) => {
         </div>
 
         <div className="relative grid w-full grid-cols-1 gap-2 md:grid-cols-3 lg:my-18 lg:gap-4">
-          {activeProjects.map((product: Project) => (
+          {activeProjects.map((product: ProjectApiResponse) => (
             <GitHubCard key={product._id} project={product} />
           ))}
           {activeProjects.length === 0 && (

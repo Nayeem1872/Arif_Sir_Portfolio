@@ -1,7 +1,6 @@
 import ProjectImages from "@/features/projects/components/project-image";
 import { config } from "@/lib/config";
 import { getProjectDetail, getProjects, getProjectSlugs } from "@/lib/queries";
-import { getLanguageColor } from "@/utils/get-language-color";
 import { getMetadata } from "@/utils/meta";
 import {
   IconArchive,
@@ -16,15 +15,22 @@ import {
 } from "@tabler/icons-react";
 import { Metadata } from "next";
 // Removed PortableText import - using simple text rendering
+import type { ProjectApiResponse } from "@/types/data";
 import Link from "next/link";
 
 // Helper function to get full image URL
-const getImageUrl = (url: string) => {
+const getImageUrl = (url: string | null | undefined) => {
+  if (!url || url === "null" || url.trim() === "") {
+    return null; // Return null for invalid URLs
+  }
+
   if (url.startsWith("http")) {
     return url; // Already a full URL
   }
+
   // Add the base URL for relative paths
-  return `${config.baseUrl}${url}`;
+  const cleanUrl = url.startsWith("/") ? url : `/${url}`;
+  return `${config.baseUrl}${cleanUrl}`;
 };
 
 // Helper function to truncate text with ellipsis
@@ -42,7 +48,7 @@ const truncateTitle = (title: string, maxLength: number = 30) => {
 export const revalidate = 3600; // Revalidate every hour
 
 export async function generateStaticParams() {
-  const slugs = (await getProjectSlugs()) as string[];
+  const slugs = await getProjectSlugs();
 
   return slugs.map((slug) => ({ slug }));
 }
@@ -57,17 +63,19 @@ export async function generateMetadata({
     ? routeParams.slug.join("/")
     : routeParams.slug || "";
 
-  const project = await getProjectDetail({ slug: slugPath });
+  const project = (await getProjectDetail({
+    slug: slugPath,
+  })) as ProjectApiResponse | null;
 
-  if (!project?.name)
+  if (!project || !project.title)
     return {
       title: "Project Not Found",
     };
 
   return getMetadata({
-    title: project.name,
-    description: project.tagline ?? "",
-    image: `/api/og?title=${encodeURIComponent(project.name)}`,
+    title: project.title,
+    description: project.shortDescription || project.description || "",
+    image: `/api/og?title=${encodeURIComponent(project.title)}`,
   });
 }
 
@@ -77,16 +85,23 @@ export default async function ProjectPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const data = await getProjectDetail({ slug });
-  const allProjects = await getProjects();
+  const data = (await getProjectDetail({ slug })) as ProjectApiResponse | null;
+  const allProjects = (await getProjects()) as ProjectApiResponse[];
+
+  if (!data) {
+    return <div className="text-fg text-center">Project not found</div>;
+  }
 
   const otherProjects = allProjects
     .filter((project) => project.slug !== slug)
     .slice(0, 5);
 
-  // Process images with full URLs
+  // Process images with full URLs, filtering out null/invalid URLs
   const projectImages =
-    data?.screenshots?.map((screenshot) => getImageUrl(screenshot.url)) ?? [];
+    data.images
+      ?.filter((img: string) => img && img !== "null" && img.trim() !== "")
+      ?.map((img: string) => getImageUrl(img))
+      .filter((url): url is string => url !== null) ?? [];
 
   const renderStatusIcon = (
     status: "live" | "archived" | "development" | null,
@@ -103,15 +118,24 @@ export default async function ProjectPage({
     }
   };
 
-  if (!data)
-    return <div className="text-fg text-center">Project not found</div>;
+  // Helper function to strip HTML tags
+  const stripHtml = (html: string) => {
+    if (!html) return "";
+    return html.replace(/<[^>]*>/g, "").trim();
+  };
+
+  // Get project status
+  const getStatus = () => {
+    if (data.isPublished === true) return "live";
+    return "development";
+  };
 
   return (
     <main className="max-container relative px-4">
       <nav className="my-6 text-sm tracking-wider">
         <Link
           href="/projects"
-          className="text-text-secondary flex w-fit items-center gap-1 hover:text-white"
+          className="text-muted-foreground hover:text-foreground flex w-fit items-center gap-1"
         >
           <IconChevronLeft className="mr-1 inline-block" />
           Projects
@@ -120,36 +144,33 @@ export default async function ProjectPage({
 
       <header className="mb-4">
         <div className="mb-2 flex items-center gap-3">
-          <h1 className="text-3xl font-bold text-white md:text-4xl lg:text-5xl">
-            {data.name}
+          <h1 className="text-foreground text-3xl font-bold md:text-4xl lg:text-5xl">
+            {data.title}
           </h1>
           <span className="bg-card text-card-fg border-fg/20 inline-block rounded-full border px-3 py-1 text-sm capitalize">
-            {renderStatusIcon(data.status)}
-            {data.status}
+            {/* {renderStatusIcon(getStatus())} */}
+            {getStatus()}
           </span>
         </div>
-        <p className="text-secondary-fg/80 tracking-tight md:text-lg lg:text-xl">
-          {data.tagline}
-        </p>
       </header>
 
       <div className="border-border mb-10 flex flex-col justify-between gap-4 border-b pb-2 md:flex-row md:items-center md:gap-1">
-        {data.tags && data.tags.length > 0 && (
+        {data.technologies && data.technologies.length > 0 && (
           <div className="flex flex-wrap gap-2">
-            {data.tags.map((tag, index) => (
+            {data.technologies.map((tech, index) => (
               <span
                 key={index}
                 className="bg-primary/20 text-primary border-primary/30 rounded-full border px-3 py-1 text-sm font-medium"
               >
-                {tag}
+                {tech}
               </span>
             ))}
           </div>
         )}
         <div className="flex gap-4">
-          {data.githubURL && (
+          {data.sourceCodeUrl && (
             <a
-              href={data.githubURL}
+              href={data.sourceCodeUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="text-secondary-fg/80 hover:text-secondary-fg flex cursor-pointer items-center justify-center gap-1 text-lg transition-colors"
@@ -158,9 +179,9 @@ export default async function ProjectPage({
               GitHub
             </a>
           )}
-          {data.liveURL && (
+          {data.liveUrl && (
             <a
-              href={data.liveURL}
+              href={data.liveUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="text-secondary-fg/80 hover:text-secondary-fg flex cursor-pointer items-center justify-center gap-1 text-lg transition-colors"
@@ -181,7 +202,7 @@ export default async function ProjectPage({
                 Project Screenshots
               </h2>
               <ProjectImages
-                title={data.name ?? "Project Screenshots"}
+                title={data.title ?? "Project Screenshots"}
                 images={projectImages}
               />
             </div>
@@ -194,95 +215,57 @@ export default async function ProjectPage({
                 About This Project
               </h2>
               <div className="bg-secondary/20 rounded-lg p-6">
-                {data.description?.map((block, index) => (
-                  <p key={index} className="mb-4 leading-relaxed last:mb-0">
-                    {block.children?.map((child, childIndex) => (
-                      <span key={childIndex}>{child.text}</span>
-                    ))}
-                  </p>
-                ))}
+                <div
+                  className="prose prose-invert max-w-none"
+                  dangerouslySetInnerHTML={{ __html: data.description }}
+                />
               </div>
             </article>
           )}
 
-          {/* Development Process */}
-          {data.development && (
+          {/* Features */}
+          {data.features && data.features.length > 0 && (
             <article className="prose prose-invert text-fg max-w-none lg:text-lg">
               <h2 className="border-primary mb-6 border-l-4 pl-4 text-lg font-medium capitalize md:text-xl lg:text-2xl">
-                Development Process
+                Key Features
               </h2>
               <div className="bg-secondary/20 rounded-lg p-6">
-                {data.development?.map((block, index) => (
-                  <p key={index} className="mb-4 leading-relaxed last:mb-0">
-                    {block.children?.map((child, childIndex) => (
-                      <span key={childIndex}>{child.text}</span>
-                    ))}
-                  </p>
-                ))}
+                <ul className="space-y-2">
+                  {data.features.map((feature, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <span className="text-primary mt-1 text-lg">•</span>
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </article>
           )}
 
           {/* Technologies Used */}
-          {data.tags && data.tags.length > 0 && (
+          {data.technologies && data.technologies.length > 0 && (
             <div className="mt-8">
               <h2 className="border-primary mb-6 border-l-4 pl-4 text-lg font-medium capitalize md:text-xl lg:text-2xl">
                 Technologies Used
               </h2>
               <div className="bg-secondary/20 rounded-lg p-6">
                 <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-                  {data.tags.map((tag, index) => (
+                  {data.technologies.map((tech, index) => (
                     <div
                       key={index}
                       className="bg-primary/10 border-primary/20 flex items-center gap-3 rounded-lg border p-3"
                     >
                       <div className="bg-primary/20 flex h-8 w-8 items-center justify-center rounded-full">
                         <span className="text-primary text-sm font-bold">
-                          {tag.charAt(0).toUpperCase()}
+                          {tech.charAt(0).toUpperCase()}
                         </span>
                       </div>
                       <span className="text-secondary-fg font-medium">
-                        {tag}
+                        {tech}
                       </span>
                     </div>
                   ))}
                 </div>
-              </div>
-            </div>
-          )}
-
-          {/* Languages (if available) */}
-          {data.languages && data.languages.length > 0 && (
-            <div className="mt-8">
-              <h2 className="border-primary mb-6 border-l-4 pl-4 text-lg font-medium capitalize md:text-xl lg:text-2xl">
-                Language Breakdown
-              </h2>
-              <div className="bg-secondary/20 rounded-lg p-6">
-                <ul className="space-y-3">
-                  {data.languages.map((lang) => (
-                    <li
-                      key={lang.language}
-                      className="text-secondary-fg flex items-center gap-4"
-                    >
-                      <div
-                        className="h-4 rounded-full"
-                        style={{
-                          backgroundColor: getLanguageColor(
-                            lang.language ?? "",
-                          ),
-                          width: lang.percent
-                            ? `${Math.max(lang.percent, 10)}%`
-                            : "20px",
-                          minWidth: "20px",
-                        }}
-                      />
-                      <span className="font-medium">{lang.language}</span>
-                      <span className="text-secondary-fg/60 ml-auto text-sm">
-                        {lang.percent}%
-                      </span>
-                    </li>
-                  ))}
-                </ul>
               </div>
             </div>
           )}
@@ -301,24 +284,24 @@ export default async function ProjectPage({
                 <div>
                   <span className="text-secondary-fg/60 text-sm">Status:</span>
                   <div className="mt-1 flex items-center gap-2">
-                    {renderStatusIcon(data.status)}
+                    {renderStatusIcon(getStatus())}
                     <span className="text-secondary-fg capitalize">
-                      {data.status}
+                      {getStatus()}
                     </span>
                   </div>
                 </div>
-                {data.tags && data.tags.length > 0 && (
+                {data.technologies && data.technologies.length > 0 && (
                   <div>
                     <span className="text-secondary-fg/60 text-sm">
                       Technologies:
                     </span>
                     <div className="mt-2 flex flex-wrap gap-2">
-                      {data.tags.map((tag) => (
+                      {data.technologies.map((tech, index) => (
                         <span
-                          key={tag}
+                          key={index}
                           className="bg-primary/20 text-primary border-primary/30 rounded-full border px-2 py-1 text-xs"
                         >
-                          {tag}
+                          {tech}
                         </span>
                       ))}
                     </div>
@@ -335,9 +318,9 @@ export default async function ProjectPage({
                 Quick Links
               </h3>
               <div className="space-y-2">
-                {data.githubURL && (
+                {data.sourceCodeUrl && (
                   <a
-                    href={data.githubURL}
+                    href={data.sourceCodeUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="bg-secondary/40 hover:bg-secondary flex w-full items-center gap-3 rounded-lg p-3 transition-colors"
@@ -346,9 +329,9 @@ export default async function ProjectPage({
                     <span>View Source Code</span>
                   </a>
                 )}
-                {data.liveURL && (
+                {data.liveUrl && (
                   <a
-                    href={data.liveURL}
+                    href={data.liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="bg-secondary/40 hover:bg-secondary flex w-full items-center gap-3 rounded-lg p-3 transition-colors"
@@ -374,13 +357,20 @@ export default async function ProjectPage({
                     <Link
                       href={`/projects/${project.slug}`}
                       className="bg-secondary/20 hover:bg-secondary/40 block w-full rounded-lg p-3 transition-colors"
-                      title={`${project.name} - ${project.tagline}`}
+                      title={`${project.title} - ${project.shortDescription || project.description || ""}`}
                     >
                       <div className="text-fg mb-1 text-sm leading-tight font-medium">
-                        {truncateTitle(project.name, 25)}
+                        {truncateTitle(project.title, 25)}
                       </div>
                       <div className="text-secondary-fg/60 text-xs leading-relaxed">
-                        {truncateText(project.tagline || "", 40)}
+                        {truncateText(
+                          stripHtml(
+                            project.shortDescription ||
+                              project.description ||
+                              "",
+                          ),
+                          40,
+                        )}
                       </div>
                     </Link>
                   </li>

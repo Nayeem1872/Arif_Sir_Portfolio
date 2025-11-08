@@ -1,11 +1,9 @@
 import { blogsData } from "@/data/blogs";
-import { projectsData } from "@/data/projects";
 import { servicesData } from "@/data/services";
 import { technologiesData } from "@/data/technologies";
 import type {
   Blog,
   Profile,
-  Project,
   ProjectApiResponse,
   Service,
   Technology,
@@ -57,7 +55,7 @@ export async function updateProfile(
   }
 }
 
-export async function getProjects(): Promise<Project[]> {
+export async function getProjects(): Promise<ProjectApiResponse[]> {
   try {
     const apiUrl = `${config.apiBaseUrl}/projects?published=true`;
 
@@ -69,49 +67,7 @@ export async function getProjects(): Promise<Project[]> {
       throw new Error("Invalid API response structure");
     }
 
-    // Transform API data to match the Project interface
-    const projects = response.data.data.map((project: ProjectApiResponse) => ({
-      _id: project._id,
-      _updatedAt: project.updatedAt,
-      name: project.title,
-      slug: project.slug,
-      tagline: project.shortDescription || project.description,
-      description: project.description
-        ? [
-            {
-              _type: "block",
-              children: [
-                {
-                  _type: "span",
-                  text: project.description,
-                },
-              ],
-            },
-          ]
-        : undefined,
-      features: project.features
-        ? project.features.map((feature: string) => ({
-            _type: "block",
-            children: [
-              {
-                _type: "span",
-                text: feature,
-              },
-            ],
-          }))
-        : undefined,
-      status: project.isPublished
-        ? "live"
-        : ("development" as "live" | "archived" | "development"),
-      githubURL: project.sourceCodeUrl,
-      liveURL: project.liveUrl,
-      tags: project.technologies || [],
-      screenshots: project.images
-        ? project.images.map((img: string) => ({ url: img }))
-        : undefined,
-    }));
-
-    return projects;
+    return response.data.data;
   } catch (error) {
     console.error("Failed to fetch projects from API:", error);
     if (axios.isAxiosError(error)) {
@@ -122,8 +78,11 @@ export async function getProjects(): Promise<Project[]> {
         data: error.response?.data,
       });
     }
-    // Fallback to local data if API fails
-    return projectsData;
+    // Fallback to empty array if API fails (since local data has different structure)
+    console.warn(
+      "Using empty array as fallback - local data structure doesn't match API",
+    );
+    return [];
   }
 }
 
@@ -139,15 +98,18 @@ export async function getProjectDetail({
   slug,
 }: {
   slug: string;
-}): Promise<Project | null> {
+}): Promise<ProjectApiResponse | null> {
   try {
     // First try to get from API
     const projects = await getProjects();
     return projects.find((project) => project.slug === slug) || null;
   } catch (error) {
     console.error("Failed to fetch project detail from API:", error);
-    // Fallback to local data
-    return projectsData.find((project) => project.slug === slug) || null;
+    // Fallback to null if API fails (since local data has different structure)
+    console.warn(
+      "Using null as fallback - local data structure doesn't match API",
+    );
+    return null;
   }
 }
 
@@ -155,11 +117,12 @@ export async function getProjectSlugs(): Promise<string[]> {
   try {
     // First try to get from API
     const projects = await getProjects();
-    return projects.map((project) => project.slug);
+    return projects.map((project) => project.slug).filter(Boolean);
   } catch (error) {
     console.error("Failed to fetch project slugs from API:", error);
-    // Fallback to local data
-    return projectsData.map((project) => project.slug);
+    // Fallback to empty array if API fails
+    console.warn("Using empty array as fallback for slugs");
+    return [];
   }
 }
 

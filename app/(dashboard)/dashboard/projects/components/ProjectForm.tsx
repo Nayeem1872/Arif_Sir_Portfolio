@@ -23,13 +23,6 @@ const getImageUrl = (imagePath: string) => {
   return `${config.imageBaseUrl}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
 };
 
-// Helper function to strip HTML tags and get plain text length
-const getPlainTextLength = (html: string): number => {
-  const div = document.createElement("div");
-  div.innerHTML = html;
-  return (div.textContent || div.innerText || "").trim().length;
-};
-
 interface ProjectCategory {
   _id: string;
   name: string;
@@ -47,7 +40,6 @@ interface Project {
   title: string;
   slug: string;
   description: string;
-  shortDescription: string;
   categoryId: ProjectCategory;
   images: string[];
   thumbnailImage: string;
@@ -55,12 +47,10 @@ interface Project {
   features: string[];
   liveUrl?: string;
   sourceCodeUrl?: string;
-  demoUrl?: string;
   isPublished: boolean;
   isFeatured: boolean;
   viewCount: number;
   likes: number;
-  completedAt: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -83,7 +73,6 @@ const ProjectForm = ({
   const [formData, setFormData] = useState({
     title: project?.title || "",
     description: project?.description || "",
-    shortDescription: project?.shortDescription || "",
     categoryId: project?.categoryId._id || "",
     thumbnailImage: null as File | null,
     images: [] as File[],
@@ -97,10 +86,8 @@ const ProjectForm = ({
         : [""],
     liveUrl: project?.liveUrl || "",
     sourceCodeUrl: project?.sourceCodeUrl || "",
-    demoUrl: project?.demoUrl || "",
     isPublished: project?.isPublished || false,
     isFeatured: project?.isFeatured || false,
-    completedAt: project?.completedAt ? project.completedAt.split("T")[0] : "",
   });
 
   const [existingImages, setExistingImages] = useState<string[]>(
@@ -115,24 +102,16 @@ const ProjectForm = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate short description length
-    if (getPlainTextLength(formData.shortDescription) > 300) {
-      return;
-    }
-
     const formDataToSend = new FormData();
 
     // Add text fields
     formDataToSend.append("title", formData.title);
     formDataToSend.append("description", formData.description);
-    formDataToSend.append("shortDescription", formData.shortDescription);
     formDataToSend.append("categoryId", formData.categoryId);
     formDataToSend.append("liveUrl", formData.liveUrl);
     formDataToSend.append("sourceCodeUrl", formData.sourceCodeUrl);
-    formDataToSend.append("demoUrl", formData.demoUrl);
     formDataToSend.append("isPublished", formData.isPublished.toString());
     formDataToSend.append("isFeatured", formData.isFeatured.toString());
-    formDataToSend.append("completedAt", formData.completedAt);
 
     // Add arrays (filter out empty strings)
     const cleanTechnologies = formData.technologies.filter(
@@ -301,37 +280,6 @@ const ProjectForm = ({
                 ))}
             </select>
           </div>
-        </div>
-
-        <div>
-          <label className="text-fg mb-2 flex items-center justify-between text-sm font-medium">
-            <span>Short Description</span>
-            <span
-              className={`text-xs ${
-                getPlainTextLength(formData.shortDescription) > 300
-                  ? "text-red-500"
-                  : "text-text-muted"
-              }`}
-            >
-              {getPlainTextLength(formData.shortDescription)}/300 characters
-            </span>
-          </label>
-          <RichTextEditor
-            value={formData.shortDescription}
-            onChange={(value) =>
-              setFormData((prev) => ({
-                ...prev,
-                shortDescription: value,
-              }))
-            }
-            placeholder="Brief description for cards and previews..."
-            className="min-h-[120px]"
-          />
-          {getPlainTextLength(formData.shortDescription) > 300 && (
-            <p className="mt-1 text-xs text-red-500">
-              Short description exceeds 300 characters. Please shorten it.
-            </p>
-          )}
         </div>
 
         <div>
@@ -542,7 +490,7 @@ const ProjectForm = ({
         </div>
 
         {/* Links */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
             <label className="text-fg mb-2 block text-sm font-medium">
               Live URL
@@ -570,72 +518,39 @@ const ProjectForm = ({
               placeholder="https://github.com/username/repo"
             />
           </div>
-
-          <div>
-            <label className="text-fg mb-2 block text-sm font-medium">
-              Demo URL
-            </label>
-            <input
-              type="url"
-              name="demoUrl"
-              value={formData.demoUrl}
-              onChange={handleChange}
-              className="bg-secondary/40 border-border text-fg focus:ring-primary/50 w-full rounded-md border px-3 py-2 focus:ring-2 focus:outline-none"
-              placeholder="https://demo.example.com"
-            />
-          </div>
         </div>
 
         {/* Settings */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div>
-            <label className="text-fg mb-2 block text-sm font-medium">
-              Completion Date
-            </label>
+        <div className="flex flex-col gap-3">
+          <label className="flex items-center gap-2">
             <input
-              type="date"
-              name="completedAt"
-              value={formData.completedAt}
+              type="checkbox"
+              name="isPublished"
+              checked={formData.isPublished}
               onChange={handleChange}
-              className="bg-secondary/40 border-border text-fg focus:ring-primary/50 w-full rounded-md border px-3 py-2 focus:ring-2 focus:outline-none"
+              className="text-primary focus:ring-primary/50 rounded border-gray-300"
             />
-          </div>
+            <span className="text-fg text-sm">
+              Published (visible to public)
+            </span>
+          </label>
 
-          <div className="flex flex-col gap-3">
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                name="isPublished"
-                checked={formData.isPublished}
-                onChange={handleChange}
-                className="text-primary focus:ring-primary/50 rounded border-gray-300"
-              />
-              <span className="text-fg text-sm">
-                Published (visible to public)
-              </span>
-            </label>
-
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                name="isFeatured"
-                checked={formData.isFeatured}
-                onChange={handleChange}
-                className="text-primary focus:ring-primary/50 rounded border-gray-300"
-              />
-              <span className="text-fg text-sm">
-                Featured (show on homepage)
-              </span>
-            </label>
-          </div>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              name="isFeatured"
+              checked={formData.isFeatured}
+              onChange={handleChange}
+              className="text-primary focus:ring-primary/50 rounded border-gray-300"
+            />
+            <span className="text-fg text-sm">Featured (show on homepage)</span>
+          </label>
         </div>
 
         <div className="flex justify-end gap-3 pt-4">
           <button
             type="submit"
-            disabled={
-              loading || getPlainTextLength(formData.shortDescription) > 300
-            }
+            disabled={loading}
             className="bg-primary hover:bg-primary-dark text-bg rounded-md px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
           >
             {loading

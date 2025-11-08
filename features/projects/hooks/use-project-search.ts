@@ -1,8 +1,8 @@
-import { Project } from "@/types/data";
+import type { ProjectApiResponse } from "@/types/data";
 import { useEffect, useMemo, useState } from "react";
 
-export function useProjectSearch(projects: Project[]) {
-  const [filtered, setFiltered] = useState<Project[]>([]);
+export function useProjectSearch(projects: ProjectApiResponse[]) {
+  const [filtered, setFiltered] = useState<ProjectApiResponse[]>([]);
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
   const [activeTags, setActiveTags] = useState<string[]>([]);
 
@@ -17,22 +17,12 @@ export function useProjectSearch(projects: Project[]) {
       } else {
         const filteredProjects = projects.filter(
           (p) =>
-            p.name?.toLowerCase().includes(debouncedSearch) ||
-            p.tagline?.toLowerCase().includes(debouncedSearch) ||
+            p.title?.toLowerCase().includes(debouncedSearch) ||
+            p.shortDescription?.toLowerCase().includes(debouncedSearch) ||
+            p.description?.toLowerCase().includes(debouncedSearch) ||
             p.slug?.toLowerCase().includes(debouncedSearch) ||
-            p.tags?.some((tag) => {
-              // Handle both array of strings and array with comma-separated string
-              if (typeof tag === "string" && tag.includes(",")) {
-                return tag
-                  .split(",")
-                  .some((t) =>
-                    t.trim().toLowerCase().includes(debouncedSearch),
-                  );
-              }
-              return tag.toLowerCase().includes(debouncedSearch);
-            }) ||
-            p.languages?.some((l) =>
-              l.language?.toLowerCase().includes(debouncedSearch),
+            p.technologies?.some((tech) =>
+              tech.toLowerCase().includes(debouncedSearch),
             ),
         );
         setFiltered(filteredProjects);
@@ -42,16 +32,11 @@ export function useProjectSearch(projects: Project[]) {
     return () => clearTimeout(timeoutId);
   }, [debouncedSearch, projects]);
 
-  // Tags change based on filtered projects
+  // Tags change based on filtered projects (using technologies as tags)
   const tags = useMemo(() => {
     const allTags = filtered.flatMap((project) => {
-      if (!project.tags) return [];
-      // Handle both array of strings and array with comma-separated string
-      return project.tags.flatMap((tag) =>
-        typeof tag === "string" && tag.includes(",")
-          ? tag.split(",").map((t) => t.trim())
-          : [tag],
-      );
+      if (!project.technologies) return [];
+      return project.technologies;
     });
     return Array.from(new Set(allTags.map((tag) => tag.toLowerCase())));
   }, [filtered]);
@@ -62,12 +47,9 @@ export function useProjectSearch(projects: Project[]) {
       return filtered;
     }
     return filtered.filter((project) => {
-      if (!project.tags) return false;
-      // Handle both array of strings and array with comma-separated string
-      const projectTags = project.tags.flatMap((tag) =>
-        typeof tag === "string" && tag.includes(",")
-          ? tag.split(",").map((t) => t.trim().toLowerCase())
-          : [tag.toLowerCase()],
+      if (!project.technologies) return false;
+      const projectTags = project.technologies.map((tech) =>
+        tech.toLowerCase(),
       );
       return activeTags.some((activeTag) => projectTags.includes(activeTag));
     });
@@ -91,11 +73,11 @@ export function useProjectSearch(projects: Project[]) {
     if (sortValue === "recent") {
       sortedProjects.sort(
         (a, b) =>
-          new Date(b._updatedAt ?? "").getTime() -
-          new Date(a._updatedAt ?? "").getTime(),
+          new Date(b.updatedAt ?? "").getTime() -
+          new Date(a.updatedAt ?? "").getTime(),
       );
     } else if (sortValue === "alphabetical") {
-      sortedProjects.sort((a, b) => a.name?.localeCompare(b.name || "") || 0);
+      sortedProjects.sort((a, b) => a.title?.localeCompare(b.title || "") || 0);
     }
 
     setFiltered(sortedProjects);

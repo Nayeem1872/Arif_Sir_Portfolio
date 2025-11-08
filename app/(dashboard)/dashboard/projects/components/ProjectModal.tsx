@@ -22,7 +22,6 @@ interface Project {
   title: string;
   slug: string;
   description: string;
-  shortDescription: string;
   categoryId: ProjectCategory;
   images: string[];
   thumbnailImage: string;
@@ -30,12 +29,10 @@ interface Project {
   features: string[];
   liveUrl?: string;
   sourceCodeUrl?: string;
-  demoUrl?: string;
   isPublished: boolean;
   isFeatured: boolean;
   viewCount: number;
   likes: number;
-  completedAt: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -103,8 +100,8 @@ const ProjectModal = ({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
       onClick={handleBackdropClick}
     >
-      <div className="bg-card border-border max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-lg border shadow-lg">
-        <div className="bg-card border-border sticky top-0 border-b p-6">
+      <div className="bg-card border-border relative z-50 max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-lg border shadow-lg">
+        <div className="bg-card border-border relative sticky top-0 z-60 border-b p-6">
           <div className="flex items-center justify-between">
             <h3 className="text-fg text-lg font-semibold">
               {isEditing ? "Edit Project" : "Add Project"}

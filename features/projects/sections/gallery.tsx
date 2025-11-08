@@ -33,8 +33,14 @@ const GallerySection = async () => {
 
 const ProjectGridWrapper = async () => {
   const projects = await getProjects();
-  const featuredProjects = projects.slice(0, 6);
-  return <ProjectGrid projects={featuredProjects} />;
+
+  console.log("projectwwwwwww", projects);
+
+  // Filter for featured projects or just take the first 6
+  const featuredProjects = projects.filter((p) => p.isFeatured).slice(0, 6);
+  const displayProjects =
+    featuredProjects.length > 0 ? featuredProjects : projects.slice(0, 6);
+  return <ProjectGrid projects={displayProjects} />;
 };
 
 export default GallerySection;

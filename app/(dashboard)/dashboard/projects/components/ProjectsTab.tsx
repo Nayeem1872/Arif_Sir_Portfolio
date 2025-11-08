@@ -23,7 +23,6 @@ interface Project {
   title: string;
   slug: string;
   description: string;
-  shortDescription: string;
   categoryId: ProjectCategory;
   images: string[];
   thumbnailImage: string;
@@ -31,12 +30,10 @@ interface Project {
   features: string[];
   liveUrl?: string;
   sourceCodeUrl?: string;
-  demoUrl?: string;
   isPublished: boolean;
   isFeatured: boolean;
   viewCount: number;
   likes: number;
-  completedAt: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -187,17 +184,17 @@ const ProjectsTab = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-fg text-xl font-semibold">Projects</h2>
+          <h2 className="text-fg text-lg font-semibold sm:text-xl">Projects</h2>
           <p className="text-text-muted text-sm">
             Manage your portfolio projects
           </p>
         </div>
         <button
           onClick={handleAddProject}
-          className="bg-primary hover:bg-primary-dark text-bg flex items-center gap-2 rounded-md px-4 py-2 font-medium transition-colors"
+          className="bg-primary hover:bg-primary-dark text-bg flex w-full items-center justify-center gap-2 rounded-md px-4 py-2 font-medium transition-colors sm:w-auto"
         >
           <IconPlus className="h-4 w-4" />
           Add Project
@@ -206,7 +203,7 @@ const ProjectsTab = () => {
 
       {/* Filters */}
       <div className="bg-card border-border rounded-lg border p-4">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div>
             <label className="text-fg mb-2 block text-sm font-medium">
               Search
@@ -236,7 +233,7 @@ const ProjectsTab = () => {
               ))}
             </select>
           </div>
-          <div className="flex items-end">
+          <div className="flex items-end sm:col-span-2 lg:col-span-1">
             <label className="flex items-center gap-2">
               <input
                 type="checkbox"

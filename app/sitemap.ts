@@ -7,7 +7,7 @@ export default async function sitemap() {
 
   const projects = projectList.map((project) => ({
     url: `${siteUrl}/projects/${project.slug}`,
-    lastModified: new Date(project._updatedAt).toISOString(),
+    lastModified: new Date(project.updatedAt).toISOString(),
   }));
 
   const routes = navLinks
