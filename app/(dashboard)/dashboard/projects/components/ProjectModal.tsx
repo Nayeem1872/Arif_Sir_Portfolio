@@ -5,15 +5,36 @@ import { IconPlus, IconTrash, IconX } from "@tabler/icons-react";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 
-// Dynamically import ReactQuill to avoid SSR issues
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+const RichTextEditor = dynamic(
+  () => import("@/components/ui/rich-text-editor"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="bg-secondary/40 border-border h-32 w-full animate-pulse rounded-md border" />
+    ),
+  },
+);
 
 // Helper function to get full image URL
 const getImageUrl = (imagePath: string) => {
   if (imagePath.startsWith("http")) {
     return imagePath;
   }
-  return `${config.baseUrl}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
+  return `${config.imageBaseUrl}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
+};
+
+// Helper function to strip HTML tags and get plain text length
+const getPlainTextLength = (html: string): number => {
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  return (div.textContent || div.innerText || "").trim().length;
+};
+
+// Helper function to get plain text from HTML
+const getPlainText = (html: string): string => {
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  return (div.textContent || div.innerText || "").trim();
 };
 
 interface ProjectCategory {
@@ -82,6 +103,8 @@ const ProjectModal = ({
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [removedImages, setRemovedImages] = useState<string[]>([]);
 
   const isEditing = !!project;
 
@@ -106,6 +129,8 @@ const ProjectModal = ({
           ? project.completedAt.split("T")[0]
           : "",
       });
+      setExistingImages(project.images || []);
+      setRemovedImages([]);
     }
   }, [project]);
 
@@ -113,6 +138,15 @@ const ProjectModal = ({
     e.preventDefault();
     setLoading(true);
     setError("");
+
+    // Validate short description length
+    if (getPlainTextLength(formData.shortDescription) > 300) {
+      setError(
+        "Short description must be 300 characters or less (excluding HTML tags)",
+      );
+      setLoading(false);
+      return;
+    }
 
     try {
       const formDataToSend = new FormData();
@@ -154,6 +188,13 @@ const ProjectModal = ({
       formData.images.forEach((image) => {
         formDataToSend.append("images", image);
       });
+
+      // Add removed images list (for edit mode)
+      if (isEditing && removedImages.length > 0) {
+        removedImages.forEach((imageUrl) => {
+          formDataToSend.append("removedImages[]", imageUrl);
+        });
+      }
 
       const url = isEditing
         ? `${config.apiBaseUrl}/projects/${project._id}`
@@ -343,82 +384,48 @@ const ProjectModal = ({
             </div>
 
             <div>
-              <label className="text-fg mb-2 block text-sm font-medium">
-                Short Description
+              <label className="text-fg mb-2 flex items-center justify-between text-sm font-medium">
+                <span>Short Description</span>
+                <span
+                  className={`text-xs ${
+                    getPlainTextLength(formData.shortDescription) > 300
+                      ? "text-red-500"
+                      : "text-text-muted"
+                  }`}
+                >
+                  {getPlainTextLength(formData.shortDescription)}/300 characters
+                </span>
               </label>
-              <div className="quill-wrapper">
-                <ReactQuill
-                  value={formData.shortDescription}
-                  onChange={(value) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      shortDescription: value,
-                    }))
-                  }
-                  placeholder="Brief description for cards and previews..."
-                  modules={{
-                    toolbar: [
-                      ["bold", "italic", "underline"],
-                      ["link"],
-                      [{ list: "ordered" }, { list: "bullet" }],
-                      ["clean"],
-                    ],
-                  }}
-                  formats={[
-                    "bold",
-                    "italic",
-                    "underline",
-                    "link",
-                    "list",
-                    "bullet",
-                  ]}
-                  style={{ height: "120px", marginBottom: "50px" }}
-                />
-              </div>
+              <RichTextEditor
+                value={formData.shortDescription}
+                onChange={(value) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    shortDescription: value,
+                  }))
+                }
+                placeholder="Brief description for cards and previews..."
+                className="min-h-[120px]"
+              />
+              {getPlainTextLength(formData.shortDescription) > 300 && (
+                <p className="mt-1 text-xs text-red-500">
+                  Short description exceeds 300 characters. Please shorten it.
+                </p>
+              )}
             </div>
 
             <div>
               <label className="text-fg mb-2 block text-sm font-medium">
                 Detailed Description *
               </label>
-              <div className="quill-wrapper">
-                <ReactQuill
-                  value={formData.description}
-                  onChange={(value) =>
-                    setFormData((prev) => ({ ...prev, description: value }))
-                  }
-                  placeholder="Detailed project description..."
-                  modules={{
-                    toolbar: [
-                      [{ header: [1, 2, 3, false] }],
-                      ["bold", "italic", "underline", "strike"],
-                      [{ color: [] }, { background: [] }],
-                      ["link", "image"],
-                      [{ list: "ordered" }, { list: "bullet" }],
-                      [{ indent: "-1" }, { indent: "+1" }],
-                      ["blockquote", "code-block"],
-                      ["clean"],
-                    ],
-                  }}
-                  formats={[
-                    "header",
-                    "bold",
-                    "italic",
-                    "underline",
-                    "strike",
-                    "color",
-                    "background",
-                    "link",
-                    "image",
-                    "list",
-                    "bullet",
-                    "indent",
-                    "blockquote",
-                    "code-block",
-                  ]}
-                  style={{ height: "200px", marginBottom: "50px" }}
-                />
-              </div>
+              <RichTextEditor
+                value={formData.description}
+                onChange={(value) =>
+                  setFormData((prev) => ({ ...prev, description: value }))
+                }
+                placeholder="Detailed project description..."
+                className="min-h-[200px]"
+              />
             </div>
 
             {/* Images */}
@@ -472,23 +479,37 @@ const ProjectModal = ({
               </div>
 
               {/* Show existing images when editing */}
-              {isEditing && project?.images && project.images.length > 0 && (
+              {isEditing && existingImages.length > 0 && (
                 <div className="mb-4">
                   <p className="text-text-muted mb-2 text-sm">
                     Current images:
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {project.images.map((image, index) => (
-                      <img
-                        key={index}
-                        src={getImageUrl(image)}
-                        alt={`Project image ${index + 1}`}
-                        className="border-border h-16 w-16 rounded-lg border object-cover"
-                      />
+                    {existingImages.map((image, index) => (
+                      <div key={index} className="relative">
+                        <img
+                          src={getImageUrl(image)}
+                          alt={`Project image ${index + 1}`}
+                          className="border-border h-16 w-16 rounded-lg border object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setRemovedImages((prev) => [...prev, image]);
+                            setExistingImages((prev) =>
+                              prev.filter((_, i) => i !== index),
+                            );
+                          }}
+                          className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white hover:bg-red-600"
+                          title="Remove image"
+                        >
+                          <IconX className="h-3 w-3" />
+                        </button>
+                      </div>
                     ))}
                   </div>
                   <p className="text-text-muted mt-1 text-xs">
-                    Upload new images below to replace existing ones
+                    Click X to remove images, or upload new images below
                   </p>
                 </div>
               )}
@@ -696,7 +717,9 @@ const ProjectModal = ({
               </button>
               <button
                 type="submit"
-                disabled={loading}
+                disabled={
+                  loading || getPlainTextLength(formData.shortDescription) > 300
+                }
                 className="bg-primary hover:bg-primary-dark text-bg rounded-md px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
               >
                 {loading
@@ -709,80 +732,6 @@ const ProjectModal = ({
           </form>
         </div>
       </div>
-
-      {/* React Quill Styles */}
-      <style jsx global>{`
-        .quill-wrapper .ql-editor {
-          background-color: rgb(30 41 59 / 0.4);
-          border: 1px solid rgb(71 85 105);
-          color: rgb(248 250 252);
-          border-radius: 0.375rem;
-          min-height: 80px;
-        }
-
-        .quill-wrapper .ql-editor::before {
-          color: rgb(148 163 184);
-        }
-
-        .quill-wrapper .ql-toolbar {
-          background-color: rgb(30 41 59 / 0.6);
-          border: 1px solid rgb(71 85 105);
-          border-bottom: none;
-          border-radius: 0.375rem 0.375rem 0 0;
-        }
-
-        .quill-wrapper .ql-toolbar .ql-stroke {
-          stroke: rgb(148 163 184);
-        }
-
-        .quill-wrapper .ql-toolbar .ql-fill {
-          fill: rgb(148 163 184);
-        }
-
-        .quill-wrapper .ql-toolbar button:hover {
-          background-color: rgb(51 65 85);
-        }
-
-        .quill-wrapper .ql-toolbar button.ql-active {
-          background-color: rgb(59 130 246);
-        }
-
-        .quill-wrapper .ql-toolbar button.ql-active .ql-stroke {
-          stroke: white;
-        }
-
-        .quill-wrapper .ql-toolbar button.ql-active .ql-fill {
-          fill: white;
-        }
-
-        .quill-wrapper .ql-container {
-          border: 1px solid rgb(71 85 105);
-          border-top: none;
-          border-radius: 0 0 0.375rem 0.375rem;
-        }
-
-        .quill-wrapper .ql-editor.ql-blank::before {
-          color: rgb(148 163 184);
-          font-style: normal;
-        }
-
-        .quill-wrapper .ql-picker-label {
-          color: rgb(148 163 184);
-        }
-
-        .quill-wrapper .ql-picker-options {
-          background-color: rgb(30 41 59);
-          border: 1px solid rgb(71 85 105);
-        }
-
-        .quill-wrapper .ql-picker-item {
-          color: rgb(248 250 252);
-        }
-
-        .quill-wrapper .ql-picker-item:hover {
-          background-color: rgb(51 65 85);
-        }
-      `}</style>
     </div>
   );
 };
