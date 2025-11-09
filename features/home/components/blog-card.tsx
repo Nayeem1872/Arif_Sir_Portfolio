@@ -8,43 +8,57 @@ interface BlogCardProps {
   onPostClick?: (blog: Blog) => void;
 }
 
-const BlogCard = ({ blog, isPrimary = false, onPostClick }: BlogCardProps) => {
-  const handleClick = () => {
-    onPostClick?.(blog);
-  };
+const DEFAULT_IMAGE =
+  "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=600&fit=crop";
 
-  // Get the image URL with correct base URL for environment
-  const getImageUrl = () => {
-    if (blog.images && blog.images.length > 0) {
-      const imageUrl = blog.images[0];
-      // If it's already a full URL, return as is
-      if (imageUrl.startsWith("http")) {
-        return imageUrl;
-      }
-      // Otherwise, prepend the image base URL
-      return `${config.imageBaseUrl}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
-    }
-    // Fallback to legacy image field or default
-    return (
-      blog.image ||
-      "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=600&fit=crop"
-    );
-  };
+const BlogCard = ({ blog, isPrimary = false, onPostClick }: BlogCardProps) => {
+  // Get image URL - prioritize images array, fallback to legacy image field
+  const imageUrl = blog.images?.[0] || blog.image || DEFAULT_IMAGE;
+
+  // Build full URL only if it's a relative path
+  const fullImageUrl = imageUrl.startsWith("http")
+    ? imageUrl
+    : `${config.imageBaseUrl}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
+
+  // Debug logging for image URL issues
+  console.log("🖼️ BlogCard Image Debug:", {
+    blogId: blog._id,
+    blogTitle: blog.title,
+    hasImagesArray: !!blog.images,
+    imagesArrayLength: blog.images?.length || 0,
+    firstImageInArray: blog.images?.[0] || "N/A",
+    legacyImageField: blog.image || "N/A",
+    selectedImageUrl: imageUrl,
+    isFullUrl: imageUrl.startsWith("http"),
+    imageBaseUrl: config.imageBaseUrl,
+    finalImageUrl: fullImageUrl,
+    possibleIssues: [
+      !blog.images?.length &&
+        !blog.image &&
+        "⚠️ No images array or legacy image field",
+      blog.images?.length &&
+        !blog.images[0] &&
+        "⚠️ Images array exists but first item is empty/undefined",
+      imageUrl &&
+        !imageUrl.startsWith("http") &&
+        !config.imageBaseUrl &&
+        "⚠️ Relative URL but no imageBaseUrl configured",
+      imageUrl === DEFAULT_IMAGE && "ℹ️ Using default fallback image",
+    ].filter(Boolean),
+  });
 
   // Extract read time number
-  const readTime = blog.readTime
-    ? parseInt(blog.readTime.replace(/\D/g, "")) || 5
-    : 5;
+  const readTime = blog.readTime ? parseInt(blog.readTime) || 5 : 5;
 
   return (
     <div
-      style={{ backgroundImage: `url(${getImageUrl()})` }}
+      style={{ backgroundImage: `url(${fullImageUrl})` }}
       className={`group relative row-span-1 flex size-full cursor-pointer flex-col justify-end overflow-hidden rounded-[16px] bg-cover bg-center bg-no-repeat p-4 text-white transition-all duration-300 hover:scale-[0.98] hover:rotate-[0.3deg] max-md:h-[250px] ${
         isPrimary
           ? "col-span-1 row-span-1 md:col-span-2 md:row-span-2 lg:col-span-1"
           : ""
       }`}
-      onClick={handleClick}
+      onClick={() => onPostClick?.(blog)}
     >
       <div className="absolute inset-0 -z-0 h-[130%] w-full bg-gradient-to-t from-black/80 to-transparent transition-all duration-500 group-hover:h-full" />
 
