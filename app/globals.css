@@ -96,41 +96,7 @@
 }
 
 @layer base {
-  /* Light theme overrides */
-  .light {
-    --color-bg: hsl(0, 0%, 98%);
-    --color-fg: hsl(240, 10%, 10%);
-    --color-card: hsl(0, 0%, 100%);
-    --color-card-fg: hsl(240, 10%, 10%);
-    --color-secondary: hsl(0, 0%, 95%);
-    --color-secondary-fg: hsl(240, 10%, 10%);
-    --color-border: hsl(37, 18%, 66%, 0.4);
-    --color-primary: hsl(155, 85%, 35%);
-    --color-primary-dark: #1ba568;
-    --color-primary-darker: #1c8550;
-    --color-grid: #e5e5e5;
-    --color-text-secondary: hsl(240, 10%, 25%);
-    --color-text-muted: hsl(240, 10%, 40%);
-    --color-accent: #2bc578;
-  }
-
-  /* Dark theme (explicit) */
-  .dark {
-    --color-bg: hsl(240, 10%, 5%);
-    --color-fg: hsl(240, 5.79%, 78%);
-    --color-card: hsl(240, 10%, 3.9%);
-    --color-card-fg: hsl(0, 0%, 100%);
-    --color-secondary: hsl(225, 6.67%, 11.76%);
-    --color-secondary-fg: hsl(0, 0%, 88%);
-    --color-border: hsl(37, 18%, 66%, 0.3);
-    --color-primary: hsl(155, 100%, 72%);
-    --color-primary-dark: #1ba568;
-    --color-primary-darker: #1c8550;
-    --color-grid: #333;
-    --color-text-secondary: #adb5bd;
-    --color-text-muted: #6c757d;
-    --color-accent: #2bc578;
-  }
+  /* Single dark theme - no light theme support */
 
   body {
     font-family: var(--font-body);
@@ -240,11 +206,7 @@
   @apply bg-gradient-to-r bg-clip-text text-transparent;
 }
 
-.light .text-gradient {
-  @apply from-gray-900 to-gray-600;
-}
-
-.dark .text-gradient {
+.text-gradient {
   @apply from-white to-neutral-400;
 }
 
