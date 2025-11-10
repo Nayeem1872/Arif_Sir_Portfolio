@@ -1,7 +1,7 @@
 import { cn } from "@/utils/cn";
 import { fadeIn } from "@/utils/motion";
 import { IconArrowDownLeft } from "@tabler/icons-react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 
 type FieldProps = {
   name: string;

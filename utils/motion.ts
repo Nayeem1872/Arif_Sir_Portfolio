@@ -1,4 +1,4 @@
-import { AnimationGeneratorType, Variants } from "motion";
+import { AnimationGeneratorType, Variants } from "framer-motion";
 
 export const textContainer: Variants = {
   hidden: {

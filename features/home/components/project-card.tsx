@@ -3,7 +3,7 @@
 import { config } from "@/lib/config";
 import type { Project } from "@/types/data";
 import { IconArrowUpRight } from "@tabler/icons-react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";

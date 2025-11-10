@@ -10,7 +10,7 @@ import {
   useTransform,
   useVelocity,
   wrap,
-} from "motion/react";
+} from "framer-motion";
 import { ReactNode, useRef } from "react";
 
 interface ParallaxProps {

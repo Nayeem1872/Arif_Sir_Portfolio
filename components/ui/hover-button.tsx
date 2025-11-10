@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/utils/cn";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 
 type Direction = "TOP" | "LEFT" | "BOTTOM" | "RIGHT";

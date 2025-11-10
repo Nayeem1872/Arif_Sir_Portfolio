@@ -10,7 +10,7 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 import axios from "axios";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";

@@ -1,6 +1,6 @@
 import { cn } from "@/utils/cn";
 import { fadeIn } from "@/utils/motion";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { ReactNode } from "react";
 
 type AuthFieldProps = {

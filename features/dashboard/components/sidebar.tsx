@@ -8,6 +8,7 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconDashboard,
+  IconFileText,
   IconLogout,
   IconMail,
   IconSettings,
@@ -37,6 +38,11 @@ const sidebarItems = [
     title: "Projects",
     href: "/dashboard/projects",
     icon: IconChartArcs,
+  },
+  {
+    title: "CV Config",
+    href: "/dashboard/cv-config",
+    icon: IconFileText,
   },
   {
     title: "Messages",

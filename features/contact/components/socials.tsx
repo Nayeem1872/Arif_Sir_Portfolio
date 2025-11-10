@@ -1,3 +1,5 @@
+"use client";
+
 import { getProfile } from "@/lib/queries";
 import {
   IconBrandFacebook,
@@ -6,8 +8,8 @@ import {
   IconBrandX,
   IconMail,
 } from "@tabler/icons-react";
-import { Variants } from "motion";
-import * as motion from "motion/react-client";
+import { Variants, motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 const variants: Variants = {
   hidden: {
@@ -54,8 +56,20 @@ const SocialButton = ({
   );
 };
 
-const Socials = async () => {
-  const profile = await getProfile();
+const Socials = () => {
+  const [profile, setProfile] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const profileData = await getProfile();
+      setProfile(profileData);
+    };
+    fetchProfile();
+  }, []);
+
+  if (!profile) {
+    return <div className="flex w-full flex-wrap items-center justify-center gap-4">Loading...</div>;
+  }
 
   return (
     <motion.div
