@@ -1,0 +1,54 @@
+# Enable rewrite engine
+RewriteEngine On
+
+# Set the base directory
+RewriteBase /
+
+# Redirect CV showcase URLs (e.g., /pos, /ml) to /cv?slug=xxx
+# This handles dynamic CV paths that aren't actual files/folders
+# Exclude known routes: about, blogs, contact, projects, dashboard, signin, cv, _next, api
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/(about|blogs|contact|projects|dashboard|signin|cv|_next|api|sitemap)
+RewriteCond %{REQUEST_URI} !.*\.(css|js|html|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|json|webp|avif|xml)$
+RewriteCond %{REQUEST_URI} ^/([a-zA-Z0-9_-]+)/?$
+RewriteRule ^([a-zA-Z0-9_-]+)/?$ /cv/?slug=$1 [L,QSA]
+
+# Handle client-side routing for SPA
+# If the requested file or directory doesn't exist, serve index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !.*\.(css|js|html|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|json|webp|avif)$
+RewriteRule ^(.*)$ /$1/index.html [L]
+
+# Fallback to main index.html for any unmatched routes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]
+
+# Enable GZIP compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+
+# Cache static assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType application/font-woff "access plus 1 year"
+    ExpiresByType application/font-woff2 "access plus 1 year"
+</IfModule>
+
+# Security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>

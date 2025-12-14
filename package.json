@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:static": "cross-env STATIC_EXPORT=true next build",
     "start": "next start",
     "lint": "next lint",
     "knip": "knip"
@@ -37,6 +38,7 @@
     "@types/react-dom": "^18",
     "autoprefixer": "^10.4.20",
     "clsx": "^2.1.1",
+    "cross-env": "^10.1.0",
     "eslint": "^8",
     "eslint-config-next": "15.0.2",
     "knip": "^5.61.3",

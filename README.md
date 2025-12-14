@@ -1,38 +1,56 @@
-![Screenshot](/.github/banner.png)
+# Arif Rahim Portfolio
 
-# Stellar Portfolio
+A modern full-stack portfolio website built with [Next.js](https://nextjs.org) and a custom backend API.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/IndieCoderMM/stellar-portfolio)
-
-A modern developer portfolio website built with [Next.js](https://nextjs.org), packed with smooth animations and customizable content.
-
-Perfect for developers who want a fast, unique, and fully customizable site to showcase their work.
+Features a complete admin dashboard for managing projects, blogs, CV showcases, and more.
 
 ## Features
 
-- Sleek, modern layout – Clean design focused on clarity and structure.
-- Subtle motion effects – Thoughtful animations add life without getting in the way.
-- Optimized for SEO – Static pages, auto-generated sitemap and built-in Open Graph support via `next/og`.
-- Easy content management – Update content through simple data files.
-- Easy customization – Personalize site content and structure easily.
-- Built-in contact form – Emails are delivered instantly with EmailJS integration.
-- Responsive by default – Designed to look great on all screen sizes out of the box.
+- **Admin Dashboard** – Full-featured dashboard for managing content
+- **Projects Management** – Create, edit, and showcase your projects with images and details
+- **Blog System** – Write and publish blog posts with rich text editor
+- **CV Showcase** – Dynamic CV pages with custom URLs (e.g., `/pos`, `/ml`)
+- **Contact Form** – EmailJS integration for handling messages
+- **Responsive Design** – Works seamlessly on all devices
+- **SEO Optimized** – Auto-generated sitemap and Open Graph support
+- **Static Export** – Deploy to any hosting including cPanel
 
 ## Tech Stack
 
-- Next.js – React framework for SSR and performance
-- Static data files – Simple content management without external dependencies
-- Motion.dev – Animation library for React
-- Tailwind CSS – Utility-first CSS framework
-- EmailJS – Email service for handling contact form messages
+### Frontend
+
+- **Next.js 15** – React framework with App Router
+- **TypeScript** – Type-safe development
+- **Tailwind CSS** – Utility-first styling
+- **Framer Motion** – Smooth animations
+- **Axios** – HTTP client for API calls
+
+### Backend
+
+- Custom REST API (separate repository)
+- MongoDB for data storage
+- File uploads for images and attachments
+
+### Deployment
+
+- Static export for cPanel hosting
+- Vercel-ready for serverless deployment
 
 ## Getting Started
 
-1. **Clone the repo**
+### Prerequisites
+
+- Node.js 18+ installed
+- Backend API running (separate repository)
+- EmailJS account for contact form
+
+### Installation
+
+1. **Clone the repository**
 
 ```bash
-git clone https://github.com/indiecodermm/stellar-portfolio.git
-cd stellar-portfolio
+git clone <your-repo-url>
+cd arif-sir-portfolio
 ```
 
 2. **Install dependencies**
@@ -43,45 +61,48 @@ npm install
 
 3. **Set up environment variables**
 
-Copy the example env file and add your own config:
+Create a `.env.local` file:
 
-```bash
-cp .env.example .env.local
+```env
+# Backend API URL
+NEXT_PUBLIC_API_BASE_URL=https://your-backend-api.com
+
+# EmailJS Configuration
+NEXT_PUBLIC_EMAILJS_SERVICE_ID=your_service_id
+NEXT_PUBLIC_EMAILJS_TEMPLATE_ID=your_template_id
+NEXT_PUBLIC_EMAILJS_USER_ID=your_public_key
 ```
 
-4. **Run the dev server**
+4. **Configure the base URL**
+
+Update `lib/config.ts` with your backend API URL:
+
+```typescript
+export const config = {
+  baseUrl: "https://your-backend-api.com",
+  blogApiBaseUrl: "https://your-backend-api.com/api/blogs",
+};
+```
+
+5. **Run the development server**
 
 ```bash
 npm run dev
 ```
 
-Your app should now be running at [http://localhost:3000](http://localhost:3000)
-
-5. **Customize Your Content**
-
-Update the data files in the `/data` directory to customize your portfolio content:
-
-- `profile.ts` - Your personal information and bio
-- `projects.ts` - Your project portfolio
-- `services.ts` - Services you offer
-- `technologies.ts` - Technologies you work with
-
-## Customization
-
-All page content can be modified in the `/config/` folder.
-
-_No need to dig into components unless you want to._
+Visit [http://localhost:3000](http://localhost:3000)
 
 ## Content Management
 
-This template uses simple TypeScript data files for content management, making it easy to customize without external dependencies.
+All content is managed through the admin dashboard at `/dashboard`:
 
-- Update `/data/profile.ts` for personal information
-- Modify `/data/projects.ts` to showcase your projects
-- Edit `/data/services.ts` to list your services
-- Customize `/data/technologies.ts` for your tech stack
+- **Projects** – Add/edit projects with images, technologies, and links
+- **Blogs** – Write blog posts with rich text editor
+- **CV Showcase** – Create dynamic CV pages with custom URLs
+- **Messages** – View contact form submissions
+- **Profile** – Update your personal information
 
-All content is statically generated at build time for optimal performance.
+Access the dashboard by navigating to `/dashboard` (authentication required).
 
 ## Contact Form
 
@@ -116,31 +137,103 @@ Message:
 
 Deploy anywhere Next.js is supported:
 
-- **Vercel** (Recommended)
+### Vercel (Recommended)
 
 Make sure to set environment variables in your deployment settings.
 
-## Contributing
+### cPanel Static Hosting
 
-Feel free to fork, customize, or contribute. Open an issue or PR if you have suggestions or improvements.
+For shared hosting with cPanel, use the static export method:
 
-## License
+#### Step 1: Build Locally
 
-This project is released under [The Unlicense](https://unlicense.org/), which means you can use, modify, and distribute it however you want.
+```bash
+npm run build:static
+```
 
-Do whatever you like. No credit required (but appreciated).
+This creates an `out` folder with all static files.
 
-## Credits
+#### Step 2: Upload to cPanel
 
-Thanks to all the amazing developers and designers whose work have inspired me to create this project.
+1. Log into your cPanel
+2. Open **File Manager**
+3. Navigate to `public_html/` (or your domain's root folder)
+4. **Delete** all existing files in `public_html/`
+5. Upload **ALL contents** from the `out` folder directly into `public_html/`
+6. Make sure `.htaccess` is uploaded (enable "Show Hidden Files" in File Manager settings)
 
-Animattions and UI elements are from these awesome resources:
+#### Step 3: Verify .htaccess
 
-- Acternity UI – for the elegant components and design inspiration.
-- Uiverse.io – for the open-source UI interactions and effects.
+The `.htaccess` file in `public/.htaccess` handles:
+
+- Client-side routing (SPA fallback)
+- CV showcase dynamic URLs (e.g., `/pos` → `/cv?slug=pos`)
+- GZIP compression
+- Browser caching
+- Security headers
+
+#### Important Notes
+
+- **No Node.js app needed** - This is a static export, no server required
+- **Dynamic routes**: CV showcase URLs like `https://yourdomain.com/pos` are redirected to `/cv?slug=pos` via `.htaccess`
+- **Project detail pages**: Work normally at `/projects/[slug]`
+- **API calls**: Data is fetched from your backend API at runtime
+
+#### Troubleshooting
+
+**404 Errors on Page Refresh:**
+
+- Verify `.htaccess` is uploaded and in the correct location
+- Check if `mod_rewrite` is enabled (contact your host if needed)
+
+**CV Showcase Not Working:**
+
+- Ensure `.htaccess` redirect rules are in place
+- Check that the CV URL path matches what's stored in your backend
+
+**CORS Errors:**
+
+- Add your cPanel domain to your backend's CORS whitelist
+
+## Project Structure
+
+```
+├── app/                      # Next.js App Router
+│   ├── (site)/              # Public pages
+│   │   ├── about/
+│   │   ├── blogs/
+│   │   ├── contact/
+│   │   └── projects/
+│   ├── (dashboard)/         # Admin dashboard
+│   │   └── dashboard/
+│   │       ├── blogs/
+│   │       ├── cv-config/
+│   │       ├── messages/
+│   │       ├── profile/
+│   │       ├── projects/
+│   │       └── settings/
+│   └── cv/                  # CV showcase page
+├── components/              # Reusable components
+├── features/               # Feature-specific components
+├── lib/                    # Utilities and configurations
+├── public/                 # Static assets
+└── types/                  # TypeScript type definitions
+```
+
+## Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run build:static` - Build static export for cPanel
+- `npm start` - Start production server
+- `npm run lint` - Run ESLint
+
+## Deployment
+
+See [CPANEL_DEPLOYMENT.md](./CPANEL_DEPLOYMENT.md) for detailed cPanel deployment instructions.
+
+For Vercel deployment, simply connect your repository and set environment variables.
 
 ---
 
-_I hope this template helps you build your own stunning portfolio site!_
-
-_Happy building 🚀_
+Built with ❤️ using Next.js

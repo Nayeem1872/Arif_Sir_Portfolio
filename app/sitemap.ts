@@ -2,6 +2,8 @@ import { siteUrl } from "@/config";
 import { navLinks } from "@/config/navLinks";
 import { getProjects } from "@/lib/queries";
 
+export const dynamic = "force-static";
+
 export default async function sitemap() {
   const projectList = await getProjects();
 
